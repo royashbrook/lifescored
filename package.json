@@ -10,7 +10,7 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "vitest run",
+		"test": "vitest run --passWithNoTests",
 		"deploy": "npm run build && wrangler deploy"
 	},
 	"devDependencies": {
@@ -26,6 +26,9 @@
 		"vite": "^8.0.16",
 		"vitest": "^4.1.8",
 		"wrangler": "^4.100.0"
+	},
+	"engines": {
+		"node": ">=20.19.0"
 	},
 	"dependencies": {
 		"@fontsource-variable/fraunces": "^5.2.9",
