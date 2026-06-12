@@ -45,11 +45,13 @@ export const DEFAULT_INPUTS: Inputs = {
 	education: 'hs',
 	employment: 'employed',
 	outlook: 'stable',
+	housing: 'stable',
 	socialConnection: 1,
 	partnered: false,
 	volunteers: false,
 	drivingIncidents: 0,
 	digitalFootprint: 1,
+	banking: 'banked',
 	criminalRecord: false,
 	voterRegistered: true
 };
@@ -75,7 +77,9 @@ const STRING_ENUMS = {
 	bmiBand: ['under', 'normal', 'over', 'obese'],
 	education: ['none', 'hs', 'some', 'bachelor', 'graduate'],
 	employment: ['employed', 'self', 'unemployed', 'student', 'retired'],
-	outlook: ['declining', 'stable', 'growing']
+	outlook: ['declining', 'stable', 'growing'],
+	housing: ['unhoused', 'insecure', 'stable'],
+	banking: ['unbanked', 'underbanked', 'banked']
 } as const;
 
 const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalFootprint', 'latePayments'] as const;

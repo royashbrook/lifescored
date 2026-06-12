@@ -8,9 +8,9 @@ const all = [...EDUCATION_RULES, ...SOCIAL_RULES, ...CIVIC_RULES];
 const byId = (id: string) => all.find((r) => r.id === id)!;
 
 describe('education / social / civic rules', () => {
-	it('satisfy universal invariants and counts (3 + 5 + 2)', () => {
+	it('satisfy universal invariants and counts (3 + 6 + 2)', () => {
 		expect(EDUCATION_RULES).toHaveLength(3);
-		expect(SOCIAL_RULES).toHaveLength(5);
+		expect(SOCIAL_RULES).toHaveLength(6);
 		expect(CIVIC_RULES).toHaveLength(2);
 		for (const r of all) expectRuleInvariants(r);
 	});
@@ -59,5 +59,18 @@ describe('education ladder (v2)', () => {
 		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, education: 'hs' })).toBe(true);
 		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, education: 'bachelor' })).toBe(false);
 		expect(r.whatIf!.transform({ ...DEFAULT_INPUTS, education: 'some' }).education).toBe('bachelor');
+	});
+});
+
+describe('housing stability (v2)', () => {
+	const r = SOCIAL_RULES.find((x) => x.id === 'housing-stability')!;
+	it('subtracts only for unhoused, within declared bounds, not controllable', () => {
+		const p = (housing: 'unhoused' | 'insecure' | 'stable') => r.position!({ ...DEFAULT_INPUTS, housing });
+		expect(p('unhoused')).toBe(-0.5);
+		expect(p('insecure')).toBeGreaterThan(0);
+		expect(p('insecure')).toBeLessThan(p('stable'));
+		expect(p('stable')).toBe(1);
+		expect(r.controllable).toBe(false);
+		expect(r.caveat).toBeTruthy();
 	});
 });

@@ -39,11 +39,14 @@ export interface Inputs {
 	employment: 'employed' | 'self' | 'unemployed' | 'student' | 'retired';
 	outlook: 'declining' | 'stable' | 'growing';
 	// social
+	housing: 'unhoused' | 'insecure' | 'stable';
 	socialConnection: 0 | 1 | 2; // rarely / sometimes / regularly see people you're close to
 	partnered: boolean;
 	volunteers: boolean;
 	drivingIncidents: number; // at-fault accidents + moving violations, last 3y
 	digitalFootprint: 0 | 1 | 2; // risky / neutral / curated public footprint
+	// finance / banking
+	banking: 'unbanked' | 'underbanked' | 'banked';
 	// civic
 	criminalRecord: boolean;
 	voterRegistered: boolean;

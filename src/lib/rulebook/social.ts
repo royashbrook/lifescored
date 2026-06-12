@@ -98,5 +98,31 @@ export const SOCIAL_RULES: Rule[] = [
 		inputs: ['digitalFootprint'],
 		score: (i, w) => Math.round([0.2, 0.6, 1][i.digitalFootprint] * w),
 		describe: (i) => ['a public footprint that screens badly — recruiters do look', 'an unremarkable public footprint', 'a curated public footprint — passive credentialing'][i.digitalFootprint]
+	},
+	{
+		id: 'housing-stability',
+		domain: 'social',
+		tier: 'your_moves',
+		label: 'Housing stability',
+		controllable: false,
+		defaultWeight: 12,
+		logic: 'Where you sleep is the gateway condition for everything else scored here. Stable housing scores full; doubled-up or eviction-threatened partial; unhoused subtracts — because the systems above (credit, employment, health) all actively punish it.',
+		evidence: 'SOURCED',
+		caveat: "Marked not-controllable deliberately: eviction research shows housing loss precedes and causes the poverty that follows it — people rarely choose their way into or out of it. Its place in the 'your moves' tier reflects where existing systems file it, not fault.",
+		source: {
+			name: 'Eviction Lab (Desmond et al.)',
+			finding: 'Eviction causes job loss, depression, and long-run instability — Milwaukee cohort studies show eviction precedes, not merely follows, deepened poverty.',
+			url: 'https://evictionlab.org/',
+			accessed: '2026-06-12'
+		},
+		inputs: ['housing'],
+		position: (i) => ({ unhoused: -0.5, insecure: 0.3, stable: 1 })[i.housing],
+		bounds: [-0.5, 1],
+		weightRationale: 'Eviction sits upstream of job loss, credit destruction, and health collapse — weighted with education at 1.2×. The negative floor qualifies under the subtractive principle: every cited system actively punishes housing loss.',
+		describe: (i) => ({
+			unhoused: 'unhoused — every other system on this page is currently scoring this against you',
+			insecure: 'housing-insecure — doubled-up or one notice from the cliff',
+			stable: 'stably housed — the precondition the other rules quietly assume'
+		})[i.housing]
 	}
 ];

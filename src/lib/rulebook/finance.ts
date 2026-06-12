@@ -184,5 +184,30 @@ export const FINANCE_RULES: Rule[] = [
 		inputs: ['homeowner'],
 		score: (i, w) => Math.round((i.homeowner ? 1 : 0.3) * w),
 		describe: (i) => (i.homeowner ? 'owner — riding the main US wealth escalator' : 'renting — the 40× median-wealth gap is the system, not a verdict')
+	},
+	{
+		id: 'banked',
+		domain: 'finance',
+		tier: 'your_moves',
+		label: 'Banked status',
+		controllable: true,
+		defaultWeight: 6,
+		logic: 'No bank account means check-cashing fees, money orders, and no credit-building rail — a measured tax on being poor. Underbanked (account, but relying on payday/check-cashing services) pays part of it.',
+		evidence: 'SOURCED',
+		source: {
+			name: 'FDIC — National Survey of Unbanked and Underbanked Households',
+			finding: 'Millions of US households lack any bank account; unbanked households pay fees for basic transactions that banked households get free, and cannot build credit history from ordinary payments.',
+			url: 'https://www.fdic.gov/household-survey',
+			accessed: '2026-06-12'
+		},
+		inputs: ['banking'],
+		position: (i) => ({ unbanked: 0, underbanked: 0.5, banked: 1 })[i.banking],
+		bounds: [0, 1],
+		weightRationale: "The FDIC's measured poverty premium — fees where wealth earns interest — at 0.6× the baseline, kept low because its dollar magnitude is small even though its direction is vicious.",
+		describe: (i) => ({
+			unbanked: 'unbanked — paying fees for what wealth gets free, building no credit history',
+			underbanked: 'underbanked — an account, plus the payday-services tax',
+			banked: 'banked — the free rail everyone above assumes'
+		})[i.banking]
 	}
 ];

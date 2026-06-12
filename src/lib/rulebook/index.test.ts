@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { DOMAINS, RULES, TIERS } from './index';
 
 describe('rulebook aggregate', () => {
-	it('contains all 29 rules with unique ids', () => {
-		expect(RULES).toHaveLength(29);
-		expect(new Set(RULES.map((r) => r.id)).size).toBe(29);
+	it('contains all 31 rules with unique ids', () => {
+		expect(RULES).toHaveLength(31);
+		expect(new Set(RULES.map((r) => r.id)).size).toBe(31);
 	});
 
 	it('every rule belongs to a declared domain and tier', () => {

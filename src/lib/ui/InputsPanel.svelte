@@ -26,6 +26,7 @@
 		latePayments: field('latePayments'), creditUtil: field('creditUtil'),
 		emergencyMonths: field('emergencyMonths'), homeowner: field('homeowner'),
 		employment: field('employment'), outlook: field('outlook'),
+		housing: field('housing'), banking: field('banking'),
 		socialConnection: field('socialConnection'), partnered: field('partnered'),
 		volunteers: field('volunteers'), drivingIncidents: field('drivingIncidents'),
 		digitalFootprint: field('digitalFootprint'), criminalRecord: field('criminalRecord'),
@@ -46,7 +47,7 @@
 	</div>
 
 	<button class="mt-3 text-[11px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)" onclick={() => (expanded = !expanded)}>
-		{expanded ? '− less detail' : '+ add detail (21 more inputs — each one feeds a cited rule)'}
+		{expanded ? '− less detail' : '+ add detail (23 more inputs — each one feeds a cited rule)'}
 	</button>
 
 	{#if expanded}
@@ -70,6 +71,8 @@
 			<Field label="Volunteers"><Toggle bind:value={f.volunteers.value} /></Field>
 			<Field label="Driving incidents 3y"><NumInput bind:value={f.drivingIncidents.value} step={1} prefix="" /></Field>
 			<Field label="Public footprint"><SelectInput bind:value={f.digitalFootprint.value} opts={[[0, 'Screens badly'], [1, 'Neutral'], [2, 'Curated']]} /></Field>
+			<Field label="Housing"><SelectInput bind:value={f.housing.value} opts={[['stable', 'Stable'], ['insecure', 'Insecure'], ['unhoused', 'Unhoused']]} /></Field>
+			<Field label="Banking"><SelectInput bind:value={f.banking.value} opts={[['banked', 'Banked'], ['underbanked', 'Underbanked'], ['unbanked', 'Unbanked']]} /></Field>
 			<Field label="Criminal record"><Toggle bind:value={f.criminalRecord.value} /></Field>
 			<Field label="Registered to vote"><Toggle bind:value={f.voterRegistered.value} /></Field>
 		</div>

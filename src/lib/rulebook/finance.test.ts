@@ -6,7 +6,7 @@ const byId = (id: string) => FINANCE_RULES.find((r) => r.id === id)!;
 
 describe('finance rules', () => {
 	it('satisfy universal invariants', () => {
-		expect(FINANCE_RULES).toHaveLength(7);
+		expect(FINANCE_RULES).toHaveLength(8);
 		for (const r of FINANCE_RULES) {
 			expectRuleInvariants(r);
 			expect(r.domain).toBe('finance');
@@ -92,5 +92,15 @@ describe('log wealth (v2)', () => {
 		expect(p(0)).toBe(0);
 		expect(p(30000)).toBeCloseTo(0.25, 5);
 		expect(p(6_000_000)).toBeGreaterThan(p(600000));
+	});
+});
+
+describe('banked (v2)', () => {
+	const r = byId('banked');
+	it('prices the poverty premium: unbanked 0, underbanked half, banked full', () => {
+		const p = (banking: 'unbanked' | 'underbanked' | 'banked') => r.position!({ ...DEFAULT_INPUTS, banking });
+		expect(p('unbanked')).toBe(0);
+		expect(p('underbanked')).toBe(0.5);
+		expect(p('banked')).toBe(1);
 	});
 });
