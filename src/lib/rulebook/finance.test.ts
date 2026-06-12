@@ -21,8 +21,9 @@ describe('finance rules', () => {
 
 	it('networth: above the age median scores positive, far below scores negative', () => {
 		const r = byId('networth');
-		expect(r.score!({ ...DEFAULT_INPUTS, age: 27, netWorth: 100000 }, r.defaultWeight)).toBeGreaterThan(0);
-		expect(r.score!({ ...DEFAULT_INPUTS, age: 27, netWorth: -40000 }, r.defaultWeight)).toBeLessThan(0);
+		// v2: position-based (log scale above median, linear below)
+		expect(r.position!({ ...DEFAULT_INPUTS, age: 27, netWorth: 100000 })).toBeGreaterThan(0);
+		expect(r.position!({ ...DEFAULT_INPUTS, age: 27, netWorth: -40000 })).toBeLessThan(0);
 	});
 
 	it('dti: more debt never raises the score; zero debt scores max', () => {
@@ -56,5 +57,40 @@ describe('finance rules', () => {
 		expect(s(12)).toBe(s(3));
 		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, emergencyMonths: 1 })).toBe(true);
 		expect(r.whatIf!.transform({ ...DEFAULT_INPUTS, emergencyMonths: 1 }).emergencyMonths).toBe(3);
+	});
+});
+
+describe('log wealth (v2)', () => {
+	const nw = byId('networth');
+	const inc = byId('income');
+	const at = (netWorth: number, age = 27) => nw.position!({ ...DEFAULT_INPUTS, age, netWorth });
+
+	it('networth: continuous at the median seam and monotonic', () => {
+		const median = medianNetWorthForAge(27);
+		expect(at(median)).toBeCloseTo(0, 5);
+		expect(at(median - 1)).toBeLessThanOrEqual(0);
+		expect(at(median * 10)).toBeCloseTo(1, 5);   // one decade above
+		expect(at(median * 100)).toBeCloseTo(2, 5);  // two decades
+		expect(at(median * 100)).toBeGreaterThan(at(median * 10));
+	});
+
+	it('networth: below-median behavior unchanged from v1 (linear, floored at -0.5)', () => {
+		const median = medianNetWorthForAge(27);
+		expect(at(0)).toBeCloseTo(-0.5, 5);
+		expect(at(-1_000_000)).toBe(-0.5); // bounds floor
+	});
+
+	it('networth: a trillionaire visibly dominates (the uncapped principle)', () => {
+		const v = Math.round(Math.max(-0.5, at(1e12, 54)) * nw.defaultWeight);
+		expect(v).toBeGreaterThan(100);
+	});
+
+	it('income: 0.5 at median, +1 per decade above, floor 0, monotonic', () => {
+		const p = (income: number) => inc.position!({ ...DEFAULT_INPUTS, income });
+		expect(p(60000)).toBeCloseTo(0.5, 5);
+		expect(p(600000)).toBeCloseTo(1.5, 5);
+		expect(p(0)).toBe(0);
+		expect(p(30000)).toBeCloseTo(0.25, 5);
+		expect(p(6_000_000)).toBeGreaterThan(p(600000));
 	});
 });

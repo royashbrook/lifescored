@@ -20,7 +20,7 @@ export const FINANCE_RULES: Rule[] = [
 		label: 'Net-worth position',
 		controllable: false, // your number now is partly past luck; the levers below move it
 		defaultWeight: 16,
-		logic: 'Net worth measured against the median for your age band, not in a vacuum. Above the age-median scores up; far below scores down.',
+		logic: 'Net worth against the median for your age band. Below the median: a linear drag, floored at half this weight. Above it: each 10× adds the full weight again, uncapped — because the real world does not cap the advantage of money.',
 		evidence: 'SOURCED',
 		source: {
 			name: 'Federal Reserve — Survey of Consumer Finances (2022)',
@@ -29,12 +29,19 @@ export const FINANCE_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['netWorth', 'age'],
-		score: (i, w) => {
+		position: (i) => {
 			const median = medianNetWorthForAge(i.age);
-			return Math.round(clamp((i.netWorth - median) / (2 * median), -0.5, 1) * w) || 0;
+			if (i.netWorth < median) return Math.max(-0.5, (i.netWorth - median) / (2 * median));
+			return Math.log10(i.netWorth / median);
 		},
+		bounds: [-0.5, Infinity],
+		weightRationale: 'Stock beats flow: wealth absorbs shocks income cannot, and SCF gaps between wealth deciles exceed income gaps — 1.6× the baseline, uncapped above because the world does not cap it.',
 		describe: (i) => {
 			const median = medianNetWorthForAge(i.age);
+			if (i.netWorth >= median * 10) {
+				const decades = Math.log10(i.netWorth / median);
+				return `${usd(i.netWorth)} — ${decades.toFixed(1)} decades above your age-band median (${usd(median)}); uncapped, because the world doesn't cap it`;
+			}
 			const d = i.netWorth - median;
 			return d >= 0
 				? `${usd(i.netWorth)} — about ${usd(d)} above your age-band median (${usd(median)})`
@@ -145,7 +152,7 @@ export const FINANCE_RULES: Rule[] = [
 		label: 'Income vs. median',
 		controllable: true,
 		defaultWeight: 10,
-		logic: 'Annual income against the US full-time median (~$60k). Saturates at 2× median — beyond that, income stops differentiating life outcomes in this model.',
+		logic: 'Annual income against the US full-time median: half marks at the median, then each 10× above adds the full weight again, uncapped — see the net-worth rule for why.',
 		evidence: 'SOURCED',
 		source: {
 			name: 'BLS — Usual Weekly Earnings of Wage and Salary Workers',
@@ -154,7 +161,9 @@ export const FINANCE_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['income'],
-		score: (i, w) => Math.round(clamp(i.income / (2 * MEDIAN_INCOME), 0, 1) * w),
+		position: (i) => (i.income <= MEDIAN_INCOME ? i.income / (2 * MEDIAN_INCOME) : 0.5 + Math.log10(i.income / MEDIAN_INCOME)),
+		bounds: [0, Infinity],
+		weightRationale: 'THE BASELINE (1.0×). Income is the dimension every other system prices most legibly; every other weight in this book is a stated deviation from this one.',
 		describe: (i) => `${usd(i.income)}/yr vs. the ~${usd(MEDIAN_INCOME)} full-time median`
 	},
 	{
