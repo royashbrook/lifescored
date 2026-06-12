@@ -68,7 +68,14 @@ export interface Rule {
 	evidence: Evidence;
 	source: Source;
 	inputs: InputKey[];
-	score(i: Inputs, weight: number): number;
+	/** Legacy v1 scorer — removed once all domains use position(). */
+	score?(i: Inputs, weight: number): number;
+	/** Measured fact, normalized: 1.0 = full marks. May exceed bounds; engine clamps. */
+	position?(i: Inputs): number;
+	/** Declared position bounds; upper may be Infinity (uncapped). */
+	bounds?: [number, number];
+	/** Why this default weight, relative to the 1.0× income baseline. */
+	weightRationale?: string;
 	describe(i: Inputs): string;
 	whatIf?: WhatIf;
 	caveat?: string; // known criticisms of the measure, shown in-app

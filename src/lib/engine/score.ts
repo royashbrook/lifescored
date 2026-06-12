@@ -1,11 +1,23 @@
-import { clampInputs, RULES } from '../rulebook';
-import type { Domain, Evidence, Inputs, Tier } from '../rulebook';
+import { clamp, clampInputs, RULES } from '../rulebook';
+import type { Domain, Evidence, Inputs, Rule, Tier } from '../rulebook';
 
 export interface RuleOverride {
 	weight?: number;
 	enabled?: boolean;
 }
 export type Overrides = Partial<Record<string, RuleOverride>>;
+
+/** Weight 1.0× ≡ this many points; income is the anchor rule. */
+export const BASELINE_WEIGHT = 10;
+
+/** The one place the formula lives: points = round(clamped position × weight). */
+export function pointsFor(rule: Rule, inputs: Inputs, weight: number): number {
+	if (rule.position && rule.bounds) {
+		const p = clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1]);
+		return Math.round(p * weight) || 0;
+	}
+	return rule.score!(inputs, weight);
+}
 
 export interface RuleScore {
 	id: string;
@@ -18,6 +30,7 @@ export interface RuleScore {
 	max: number;
 	enabled: boolean;
 	description: string;
+	position?: number;
 }
 
 export interface WhatIfDelta {
@@ -42,7 +55,7 @@ function compositeOf(inputs: Inputs, overrides: Overrides): number {
 	for (const rule of RULES) {
 		const o = overrides[rule.id];
 		if (o?.enabled === false) continue;
-		total += rule.score(inputs, clampWeight(o?.weight ?? rule.defaultWeight));
+		total += pointsFor(rule, inputs, clampWeight(o?.weight ?? rule.defaultWeight));
 	}
 	return total;
 }
@@ -59,7 +72,10 @@ export function computeScore(rawInputs: Inputs, overrides: Overrides = {}): Scor
 		const o = overrides[rule.id];
 		const enabled = o?.enabled !== false;
 		const max = clampWeight(o?.weight ?? rule.defaultWeight);
-		const value = rule.score(inputs, max);
+		const value = pointsFor(rule, inputs, max);
+		const position = rule.position && rule.bounds
+			? clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1])
+			: undefined;
 		if (enabled) {
 			tierSubtotals[rule.tier] += value;
 			domainSubtotals[rule.domain] += value;
@@ -67,7 +83,7 @@ export function computeScore(rawInputs: Inputs, overrides: Overrides = {}): Scor
 		return {
 			id: rule.id, label: rule.label, domain: rule.domain, tier: rule.tier,
 			evidence: rule.evidence, controllable: rule.controllable,
-			value, max, enabled, description: rule.describe(inputs)
+			value, max, enabled, description: rule.describe(inputs), position
 		};
 	});
 

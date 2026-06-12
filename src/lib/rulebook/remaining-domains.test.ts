@@ -18,8 +18,8 @@ describe('education / social / civic rules', () => {
 	it('degree: holding one scores higher; lever only when missing', () => {
 		const r = byId('degree');
 		const w = r.defaultWeight;
-		expect(r.score({ ...DEFAULT_INPUTS, degree: true }, w)).toBeGreaterThan(
-			r.score({ ...DEFAULT_INPUTS, degree: false }, w)
+		expect(r.score!({ ...DEFAULT_INPUTS, degree: true }, w)).toBeGreaterThan(
+			r.score!({ ...DEFAULT_INPUTS, degree: false }, w)
 		);
 		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, degree: false })).toBe(true);
 		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, degree: true })).toBe(false);
@@ -27,14 +27,14 @@ describe('education / social / civic rules', () => {
 
 	it('social connection is monotonic (Holt-Lunstad)', () => {
 		const r = byId('connection');
-		const s = [0, 1, 2].map((c) => r.score({ ...DEFAULT_INPUTS, socialConnection: c as 0 | 1 | 2 }, r.defaultWeight));
+		const s = [0, 1, 2].map((c) => r.score!({ ...DEFAULT_INPUTS, socialConnection: c as 0 | 1 | 2 }, r.defaultWeight));
 		expect(s[0]).toBeLessThan(s[1]);
 		expect(s[1]).toBeLessThan(s[2]);
 	});
 
 	it('driving: incidents only ever lower the score, floor is mildly negative', () => {
 		const r = byId('driving');
-		const s = (n: number) => r.score({ ...DEFAULT_INPUTS, drivingIncidents: n }, r.defaultWeight);
+		const s = (n: number) => r.score!({ ...DEFAULT_INPUTS, drivingIncidents: n }, r.defaultWeight);
 		expect(s(0)).toBeGreaterThan(s(1));
 		expect(s(1)).toBeGreaterThan(s(3));
 		expect(s(10)).toBeGreaterThanOrEqual(-r.defaultWeight);

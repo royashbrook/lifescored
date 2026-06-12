@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_INPUTS, RULES } from '../rulebook';
-import { computeScore } from './score';
+import { BASELINE_WEIGHT, computeScore, pointsFor } from './score';
+import type { Rule } from '../rulebook';
 
 describe('computeScore', () => {
 	it('produces one entry per rule and consistent totals', () => {
@@ -60,5 +61,33 @@ describe('computeScore', () => {
 		const r = computeScore(hostile);
 		expect(Number.isFinite(r.composite)).toBe(true);
 		expect(r.perRule.every((p) => Number.isFinite(p.value))).toBe(true);
+	});
+});
+
+const syntheticRule = {
+	id: 'synthetic', domain: 'finance', tier: 'your_moves', label: 'Synthetic',
+	controllable: true, defaultWeight: 10,
+	logic: 'test', evidence: 'SOURCED',
+	source: { name: 't', finding: 't', url: 'https://example.com', accessed: '2026-06-12' },
+	inputs: [], describe: () => 'synthetic',
+	position: (i: typeof DEFAULT_INPUTS) => i.age / 100,
+	bounds: [-0.5, Infinity] as [number, number],
+	weightRationale: 'test'
+} as unknown as Rule;
+
+describe('engine formula (position × weight)', () => {
+	it('computes points = round(position × weight), clamped to bounds', () => {
+		const i = { ...DEFAULT_INPUTS, age: 75 };
+		expect(pointsFor(syntheticRule, i, 10)).toBe(8); // round(0.75 × 10)
+		expect(pointsFor(syntheticRule, i, 0)).toBe(0);
+	});
+	it('clamps position to declared lower bound and tolerates Infinity upper', () => {
+		const lowRule = { ...syntheticRule, position: () => -3 } as Rule;
+		expect(pointsFor(lowRule, DEFAULT_INPUTS, 10)).toBe(-5); // clamped to -0.5
+		const highRule = { ...syntheticRule, position: () => 6.6 } as Rule;
+		expect(pointsFor(highRule, DEFAULT_INPUTS, 10)).toBe(66); // uncapped above
+	});
+	it('exports the baseline weight', () => {
+		expect(BASELINE_WEIGHT).toBe(10);
 	});
 });

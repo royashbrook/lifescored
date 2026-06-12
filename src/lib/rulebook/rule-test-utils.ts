@@ -27,17 +27,33 @@ export const SAMPLE_INPUTS: Inputs[] = [
 
 /** Universal invariants every rule must satisfy. */
 export function expectRuleInvariants(rule: Rule) {
+	const score = (r: Rule, i: Inputs, w: number) =>
+		r.position && r.bounds
+			? Math.round(Math.max(r.bounds[0], Math.min(r.bounds[1], r.position(i))) * w) || 0
+			: r.score!(i, w);
+
 	for (const i of SAMPLE_INPUTS) {
 		for (const w of [rule.defaultWeight, 1, 40]) {
-			const v = rule.score(i, w);
+			const v = score(rule, i, w);
 			expect(Number.isInteger(v), `${rule.id} returns integers`).toBe(true);
-			expect(Math.abs(v), `${rule.id} |score| ≤ weight ${w}`).toBeLessThanOrEqual(w);
+			expect(Number.isFinite(v), `${rule.id} returns finite scores`).toBe(true);
+			if (rule.bounds) {
+				const [lo, hi] = rule.bounds;
+				expect(v, `${rule.id} score ≥ lo×w`).toBeGreaterThanOrEqual(Math.round(lo * w));
+				if (hi !== Infinity) expect(v, `${rule.id} score ≤ hi×w`).toBeLessThanOrEqual(Math.round(hi * w));
+			} else {
+				expect(Math.abs(v), `${rule.id} |score| ≤ weight ${w}`).toBeLessThanOrEqual(w);
+			}
 		}
-		expect(rule.score(i, 0), `${rule.id} zero weight → zero`).toBe(0);
+		expect(score(rule, i, 0), `${rule.id} zero weight → zero`).toBe(0);
 		expect(rule.describe(i).length, `${rule.id} describes every profile`).toBeGreaterThan(0);
 	}
+	if (rule.position) {
+		expect(rule.bounds, `${rule.id}: position requires bounds`).toBeDefined();
+		expect((rule.weightRationale ?? '').length, `${rule.id}: position contract requires weightRationale`).toBeGreaterThan(0);
+	}
 	expect(rule.source.url).toMatch(/^https:\/\//);
-	expect(rule.source.accessed).toBe('2026-06-11');
+	expect(['2026-06-11', '2026-06-12']).toContain(rule.source.accessed);
 	if (rule.whatIf) {
 		expect(rule.controllable, `${rule.id}: only controllable rules get levers`).toBe(true);
 	}

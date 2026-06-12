@@ -21,13 +21,13 @@ describe('finance rules', () => {
 
 	it('networth: above the age median scores positive, far below scores negative', () => {
 		const r = byId('networth');
-		expect(r.score({ ...DEFAULT_INPUTS, age: 27, netWorth: 100000 }, r.defaultWeight)).toBeGreaterThan(0);
-		expect(r.score({ ...DEFAULT_INPUTS, age: 27, netWorth: -40000 }, r.defaultWeight)).toBeLessThan(0);
+		expect(r.score!({ ...DEFAULT_INPUTS, age: 27, netWorth: 100000 }, r.defaultWeight)).toBeGreaterThan(0);
+		expect(r.score!({ ...DEFAULT_INPUTS, age: 27, netWorth: -40000 }, r.defaultWeight)).toBeLessThan(0);
 	});
 
 	it('dti: more debt never raises the score; zero debt scores max', () => {
 		const r = byId('dti');
-		const s = (debt: number) => r.score({ ...DEFAULT_INPUTS, debt }, r.defaultWeight);
+		const s = (debt: number) => r.score!({ ...DEFAULT_INPUTS, debt }, r.defaultWeight);
 		expect(s(0)).toBe(r.defaultWeight);
 		expect(s(10000)).toBeLessThan(s(0));
 		expect(s(60000)).toBeLessThan(s(10000));
@@ -36,21 +36,21 @@ describe('finance rules', () => {
 
 	it('dti handles zero income without dividing by zero', () => {
 		const r = byId('dti');
-		const v = r.score({ ...DEFAULT_INPUTS, income: 0, debt: 50000 }, r.defaultWeight);
+		const v = r.score!({ ...DEFAULT_INPUTS, income: 0, debt: 50000 }, r.defaultWeight);
 		expect(Number.isFinite(v)).toBe(true);
 		expect(v).toBe(-r.defaultWeight);
 	});
 
 	it('utilization: lower is better, very high goes negative', () => {
 		const r = byId('utilization');
-		const s = (u: number) => r.score({ ...DEFAULT_INPUTS, creditUtil: u }, r.defaultWeight);
+		const s = (u: number) => r.score!({ ...DEFAULT_INPUTS, creditUtil: u }, r.defaultWeight);
 		expect(s(5)).toBeGreaterThan(s(40));
 		expect(s(95)).toBeLessThan(0);
 	});
 
 	it('emergency fund saturates at 3 months and has a lever', () => {
 		const r = byId('emergency-fund');
-		const s = (m: number) => r.score({ ...DEFAULT_INPUTS, emergencyMonths: m }, r.defaultWeight);
+		const s = (m: number) => r.score!({ ...DEFAULT_INPUTS, emergencyMonths: m }, r.defaultWeight);
 		expect(s(0)).toBe(0);
 		expect(s(3)).toBe(r.defaultWeight);
 		expect(s(12)).toBe(s(3));
