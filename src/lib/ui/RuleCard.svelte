@@ -53,6 +53,7 @@
 			min="0"
 			max="50"
 			value={weight}
+			aria-label="weight for {rule.label}"
 			class="h-1 w-40 accent-[var(--moves)]"
 			oninput={(e) => onOverride({ weight: Number(e.currentTarget.value) })}
 		/>
