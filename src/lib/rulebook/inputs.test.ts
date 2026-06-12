@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { clampInputs, COUNTRIES, DEFAULT_INPUTS, NUMERIC_CLAMPS } from './inputs';
+import type { CountryCode } from './types';
 
 describe('inputs', () => {
 	it('defaults are already within clamps (round-trips unchanged)', () => {
@@ -20,6 +21,12 @@ describe('inputs', () => {
 			expect(c.baseFrac).toBeGreaterThanOrEqual(0);
 			expect(c.baseFrac).toBeLessThanOrEqual(1);
 			expect([0, 1, 2]).toContain(c.henleyBand);
+			expect(['high', 'upper-middle', 'lower-middle', 'low']).toContain(c.tier);
 		}
+	});
+
+	it('invalid country falls back to us', () => {
+		const bad = { ...DEFAULT_INPUTS, country: 'xx' as unknown as CountryCode };
+		expect(clampInputs(bad).country).toBe('us');
 	});
 });
