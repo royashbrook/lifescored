@@ -27,7 +27,11 @@ every weight visible and editable. Transparency, not judgment.
 ## Editing the rulebook
 
 Rules live in `src/lib/rulebook/<domain>.ts`. Each rule is declarative: logic,
-evidence tag (`SOURCED`/`SPECULATIVE`), citation with access date, and a pure
-`score(inputs, weight)` function. Add a rule, and the UI, weight editor, share
+evidence tag (`SOURCED`/`SPECULATIVE`), citation with access date, a pure
+`position(inputs)` (the measured fact, normalized to a numeric position), declared
+`bounds` (negative floors only where the cited system itself subtracts; the wealth
+rules are uncapped above), and a `weightRationale` justifying its weight against
+the 1.0× income baseline; the engine computes `points = round(position × weight)`.
+Add a rule, and the UI, weight editor, share
 codec, and about-page source list pick it up automatically. `npm test` enforces
 the invariants (bounds, integer scores, citation present).

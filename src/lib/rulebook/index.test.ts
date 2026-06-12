@@ -19,4 +19,14 @@ describe('rulebook aggregate', () => {
 			expect(RULES.some((r) => r.domain === d), d).toBe(true);
 		}
 	});
+
+	it('only the blessed rules may subtract (constrained-subtractive principle)', () => {
+		const subtractive = RULES.filter((r) => r.bounds[0] < 0).map((r) => r.id).sort();
+		expect(subtractive).toEqual(['driving', 'dti', 'education', 'housing-stability', 'networth', 'utilization']);
+	});
+
+	it('every uncapped rule is wealth (uncapped principle)', () => {
+		const uncapped = RULES.filter((r) => r.bounds[1] === Infinity).map((r) => r.id).sort();
+		expect(uncapped).toEqual(['income', 'networth']);
+	});
 });

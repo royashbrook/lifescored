@@ -42,4 +42,12 @@ describe('profile persistence', () => {
 		s.setItem('lifescore:profile', JSON.stringify({ inputs: { degree: true }, overrides: {} }));
 		expect(loadStoredProfile(s).inputs.education).toBe('bachelor');
 	});
+
+	it('sanitizes corrupt stored overrides', () => {
+		const s = memStorage();
+		s.setItem('lifescore:profile', JSON.stringify({ inputs: {}, overrides: { country: { weight: 'abc' }, dti: { enabled: false } } }));
+		const p = loadStoredProfile(s);
+		expect(p.overrides.country).toBeUndefined();
+		expect(p.overrides.dti).toEqual({ enabled: false });
+	});
 });

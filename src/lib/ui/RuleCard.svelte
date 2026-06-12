@@ -14,7 +14,7 @@
 	} = $props();
 
 	const accent = $derived(TIERS[rule.tier].accent);
-	const weight = $derived(override?.weight ?? rule.defaultWeight);
+	const weight = $derived(Math.max(0, Math.min(MAX_WEIGHT, override?.weight ?? rule.defaultWeight)));
 	const enabled = $derived(override?.enabled !== false);
 	const modified = $derived(weight !== rule.defaultWeight || !enabled);
 	const lo = $derived(Math.round(rule.bounds[0] * weight));

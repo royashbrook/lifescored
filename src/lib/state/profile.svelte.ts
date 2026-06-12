@@ -1,4 +1,4 @@
-import type { Profile } from '../share/codec';
+import { sanitizeOverrides, type Profile } from '../share/codec';
 import { DEFAULT_INPUTS, migrateLegacyInputs } from '../rulebook';
 
 const KEY = 'lifescore:profile';
@@ -13,7 +13,7 @@ export function loadStoredProfile(storage: Storage | null): Profile {
 		const migrated = migrateLegacyInputs((parsed.inputs ?? {}) as Record<string, unknown>);
 		return {
 			inputs: { ...DEFAULT_INPUTS, ...migrated } as Profile['inputs'],
-			overrides: parsed.overrides ?? {}
+			overrides: sanitizeOverrides(parsed.overrides)
 		};
 	} catch {
 		return fresh;

@@ -10,10 +10,16 @@ export type Overrides = Partial<Record<string, RuleOverride>>;
 /** Weight 1.0× ≡ this many points; income is the anchor rule. */
 export const BASELINE_WEIGHT = 10;
 
+const clampPosition = (rule: Rule, inputs: Inputs) => clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1]);
+
+/** Shared arithmetic: round(position × weight), coercing -0 to 0. */
+export function pointsFromPosition(position: number, weight: number): number {
+	return Math.round(position * weight) || 0;
+}
+
 /** The one place the formula lives: points = round(clamped position × weight). */
 export function pointsFor(rule: Rule, inputs: Inputs, weight: number): number {
-	const p = clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1]);
-	return Math.round(p * weight) || 0;
+	return pointsFromPosition(clampPosition(rule, inputs), weight);
 }
 
 export interface RuleScore {
@@ -69,8 +75,8 @@ export function computeScore(rawInputs: Inputs, overrides: Overrides = {}): Scor
 		const o = overrides[rule.id];
 		const enabled = o?.enabled !== false;
 		const max = clampWeight(o?.weight ?? rule.defaultWeight);
-		const position = clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1]);
-		const value = Math.round(position * max) || 0;
+		const position = clampPosition(rule, inputs);
+		const value = pointsFromPosition(position, max);
 		if (enabled) {
 			tierSubtotals[rule.tier] += value;
 			domainSubtotals[rule.domain] += value;

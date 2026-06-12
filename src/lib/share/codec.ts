@@ -28,6 +28,20 @@ export async function encodeProfile(profile: Profile): Promise<string> {
 	return `${VERSION}.${toB64url(deflated)}`;
 }
 
+export function sanitizeOverrides(raw: unknown): Overrides {
+	const overrides: Overrides = {};
+	if (!raw || typeof raw !== 'object') return overrides;
+	for (const [id, o] of Object.entries(raw as Record<string, unknown>)) {
+		if (!o || typeof o !== 'object') continue;
+		const { weight, enabled } = o as { weight?: unknown; enabled?: unknown };
+		const clean: { weight?: number; enabled?: boolean } = {};
+		if (typeof weight === 'number' && Number.isFinite(weight)) clean.weight = weight;
+		if (typeof enabled === 'boolean') clean.enabled = enabled;
+		if (Object.keys(clean).length > 0) overrides[id] = clean;
+	}
+	return overrides;
+}
+
 export async function decodeProfile(encoded: string): Promise<Profile | null> {
 	try {
 		const dot = encoded.indexOf('.');
@@ -40,16 +54,7 @@ export async function decodeProfile(encoded: string): Promise<Profile | null> {
 		const inputs = Object.fromEntries(
 			(Object.keys(DEFAULT_INPUTS) as (keyof typeof DEFAULT_INPUTS)[]).map((k) => [k, migrated[k] ?? DEFAULT_INPUTS[k]]) // Missing keys fill from defaults — deliberately generous for old links/profiles; do not "fix" to adverse assumptions.
 		) as unknown as Profile['inputs'];
-		const overrides: Profile['overrides'] = {};
-		for (const [id, o] of Object.entries(parsed.overrides as Record<string, unknown>)) {
-			if (!o || typeof o !== 'object') continue;
-			const { weight, enabled } = o as { weight?: unknown; enabled?: unknown };
-			const clean: { weight?: number; enabled?: boolean } = {};
-			if (typeof weight === 'number' && Number.isFinite(weight)) clean.weight = weight;
-			if (typeof enabled === 'boolean') clean.enabled = enabled;
-			if (Object.keys(clean).length > 0) overrides[id] = clean;
-		}
-		return { inputs, overrides };
+		return { inputs, overrides: sanitizeOverrides(parsed.overrides) };
 	} catch {
 		return null;
 	}
