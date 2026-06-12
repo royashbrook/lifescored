@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RuleScore } from '$lib/engine/score';
+	import { BASELINE_WEIGHT, type RuleScore } from '$lib/engine/score';
 	import Bar from './Bar.svelte';
 	import Tag from './Tag.svelte';
 
@@ -20,5 +20,11 @@
 		</span>
 	</div>
 	<Bar value={row.value} max={row.max} {accent} />
+	<div class="mt-1 text-[10px] tabular-nums" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+		position {(row.position * 10).toFixed(1)} × weight {(row.max / BASELINE_WEIGHT).toFixed(1)}× = {row.value >= 0 ? '+' : ''}{row.value}
+		{#if row.max > 0 && Math.abs(row.value) > row.max}
+			<span style:color="var(--moves)">· ×{(Math.abs(row.value) / row.max).toFixed(1)} over scale</span>
+		{/if}
+	</div>
 	<div class="mt-1.5 text-[11px] leading-snug" style:color="var(--ink-dim)">{row.description}</div>
 </div>
