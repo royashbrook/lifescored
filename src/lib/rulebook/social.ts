@@ -19,7 +19,9 @@ export const SOCIAL_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['socialConnection'],
-		score: (i, w) => Math.round([0.1, 0.5, 1][i.socialConnection] * w),
+		position: (i) => [0.1, 0.5, 1][i.socialConnection],
+		bounds: [0, 1],
+		weightRationale: "Holt-Lunstad's ~50% survival effect rivals smoking cessation — weighted equal to the baseline and to smoking at 1.0×, the most underpriced rule in the book.",
 		describe: (i) => ['rarely see people you are close to — the meta-analysis prices this like a pack-a-day habit', 'some regular contact', 'regular close contact — a mortality hedge nobody invoices you for'][i.socialConnection]
 	},
 	{
@@ -39,7 +41,9 @@ export const SOCIAL_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['partnered'],
-		score: (i, w) => Math.round((i.partnered ? 1 : 0.5) * w),
+		position: (i) => (i.partnered ? 1 : 0.5),
+		bounds: [0, 1],
+		weightRationale: 'The longevity association is real but heavily selection-confounded (see caveat) — discounted to 0.6×.',
 		describe: (i) => (i.partnered ? 'partnered — pooled risk, pooled rent' : 'single — half credit, and the caveat on this rule matters')
 	},
 	{
@@ -58,7 +62,9 @@ export const SOCIAL_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['volunteers'],
-		score: (i, w) => Math.round((i.volunteers ? 1 : 0.4) * w),
+		position: (i) => (i.volunteers ? 1 : 0.4),
+		bounds: [0, 1],
+		weightRationale: 'The smallest sourced effect in the book — 0.4×, the floor for sourced rules.',
 		describe: (i) => (i.volunteers ? 'regular volunteer — the one score here you donate your way into' : 'no regular volunteering — partial credit, not a demerit')
 	},
 	{
@@ -77,7 +83,9 @@ export const SOCIAL_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['drivingIncidents'],
-		score: (i, w) => Math.round(Math.max(1 - i.drivingIncidents * 0.4, -0.2) * w) || 0,
+		position: (i) => 1 - i.drivingIncidents * 0.4,
+		bounds: [-0.2, 1],
+		weightRationale: 'Insurer-priced with a 3–5 year decay — 0.6×. Mildly subtractive because license points literally subtract.',
 		describe: (i) => (i.drivingIncidents === 0 ? 'clean record — the cheapest insurance tier' : `${i.drivingIncidents} incident(s) in 3 years — your insurer has already done this math`)
 	},
 	{
@@ -96,7 +104,9 @@ export const SOCIAL_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['digitalFootprint'],
-		score: (i, w) => Math.round([0.2, 0.6, 1][i.digitalFootprint] * w),
+		position: (i) => [0.2, 0.6, 1][i.digitalFootprint],
+		bounds: [0, 1],
+		weightRationale: 'Survey evidence only, no outcome dataset — speculative, so pinned to the 0.4× floor.',
 		describe: (i) => ['a public footprint that screens badly — recruiters do look', 'an unremarkable public footprint', 'a curated public footprint — passive credentialing'][i.digitalFootprint]
 	},
 	{

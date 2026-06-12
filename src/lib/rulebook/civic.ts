@@ -20,7 +20,9 @@ export const CIVIC_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['criminalRecord'],
-		score: (i, w) => Math.round((i.criminalRecord ? 0 : 1) * w),
+		position: (i) => (i.criminalRecord ? 0 : 1),
+		bounds: [0, 1],
+		weightRationale: 'The callback-halving effect is enormous, but the measure is binary and inherits enforcement bias (see caveat) — held to 0.8× rather than weighted like the gate it really is.',
 		describe: (i) => (i.criminalRecord ? 'record present — the callback penalty is measured and brutal' : 'no record — full marks on a gate most people never see')
 	},
 	{
@@ -39,7 +41,9 @@ export const CIVIC_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['voterRegistered'],
-		score: (i, w) => Math.round((i.voterRegistered ? 1 : 0.4) * w),
+		position: (i) => (i.voterRegistered ? 1 : 0.4),
+		bounds: [0, 1],
+		weightRationale: 'No outcome dataset ties registration to personal results — speculative, 0.4× floor.',
 		describe: (i) => (i.voterRegistered ? 'registered — present in the civic ledger' : 'not registered — absent from the civic ledger')
 	}
 ];

@@ -38,7 +38,7 @@ export async function decodeProfile(encoded: string): Promise<Profile | null> {
 		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object' || !parsed.overrides || typeof parsed.overrides !== 'object') return null;
 		const migrated = migrateLegacyInputs(parsed.inputs as Record<string, unknown>);
 		const inputs = Object.fromEntries(
-			(Object.keys(DEFAULT_INPUTS) as (keyof typeof DEFAULT_INPUTS)[]).map((k) => [k, migrated[k] ?? DEFAULT_INPUTS[k]])
+			(Object.keys(DEFAULT_INPUTS) as (keyof typeof DEFAULT_INPUTS)[]).map((k) => [k, migrated[k] ?? DEFAULT_INPUTS[k]]) // Missing keys fill from defaults — deliberately generous for old links/profiles; do not "fix" to adverse assumptions.
 		) as unknown as Profile['inputs'];
 		const overrides: Profile['overrides'] = {};
 		for (const [id, o] of Object.entries(parsed.overrides as Record<string, unknown>)) {

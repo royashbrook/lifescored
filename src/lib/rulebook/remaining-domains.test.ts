@@ -17,17 +17,19 @@ describe('education / social / civic rules', () => {
 
 	it('social connection is monotonic (Holt-Lunstad)', () => {
 		const r = byId('connection');
-		const s = [0, 1, 2].map((c) => r.score!({ ...DEFAULT_INPUTS, socialConnection: c as 0 | 1 | 2 }, r.defaultWeight));
+		const w = r.defaultWeight;
+		const s = [0, 1, 2].map((c) => Math.round(r.position!({ ...DEFAULT_INPUTS, socialConnection: c as 0 | 1 | 2 }) * w));
 		expect(s[0]).toBeLessThan(s[1]);
 		expect(s[1]).toBeLessThan(s[2]);
 	});
 
 	it('driving: incidents only ever lower the score, floor is mildly negative', () => {
 		const r = byId('driving');
-		const s = (n: number) => r.score!({ ...DEFAULT_INPUTS, drivingIncidents: n }, r.defaultWeight);
+		const w = r.defaultWeight;
+		const s = (n: number) => Math.round(Math.max(-0.2, r.position!({ ...DEFAULT_INPUTS, drivingIncidents: n })) * w);
 		expect(s(0)).toBeGreaterThan(s(1));
 		expect(s(1)).toBeGreaterThan(s(3));
-		expect(s(10)).toBeGreaterThanOrEqual(-r.defaultWeight);
+		expect(s(10)).toBeGreaterThanOrEqual(-r.defaultWeight); // clamp to bounds floor -0.2 × w
 	});
 
 	it('digital footprint and voting access are flagged speculative', () => {

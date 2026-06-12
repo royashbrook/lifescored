@@ -51,7 +51,9 @@ export const EDUCATION_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['employment'],
-		score: (i, w) => Math.round({ employed: 1, self: 1, student: 0.6, retired: 0.7, unemployed: 0 }[i.employment] * w),
+		position: (i) => ({ employed: 1, self: 1, student: 0.6, retired: 0.7, unemployed: 0 })[i.employment],
+		bounds: [0, 1],
+		weightRationale: 'The income flow is already counted by the baseline rule; this 0.8× prices the status gate every lender and landlord reads first.',
 		describe: (i) => ({ employed: 'employed — steady income, the input every other system keys on', self: 'self-employed — same credit, more paperwork', student: 'student — partial credit; the system reads this as investment phase', retired: 'retired — drawing down rather than earning', unemployed: 'unemployed — the status every scoring system punishes hardest' })[i.employment]
 	},
 	{
@@ -70,7 +72,9 @@ export const EDUCATION_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['outlook'],
-		score: (i, w) => Math.round({ declining: 0.2, stable: 0.6, growing: 1 }[i.outlook] * w),
+		position: (i) => ({ declining: 0.2, stable: 0.6, growing: 1 })[i.outlook],
+		bounds: [0, 1],
+		weightRationale: 'Ten-year BLS projections are directional, not destiny — 0.6×.',
 		describe: (i) => ({ declining: 'a shrinking field — the projection, not a prophecy', stable: 'a stable field', growing: 'a growing field — demand tailwind' })[i.outlook]
 	}
 ];

@@ -28,32 +28,36 @@ describe('finance rules', () => {
 
 	it('dti: more debt never raises the score; zero debt scores max', () => {
 		const r = byId('dti');
-		const s = (debt: number) => r.score!({ ...DEFAULT_INPUTS, debt }, r.defaultWeight);
-		expect(s(0)).toBe(r.defaultWeight);
+		const w = r.defaultWeight;
+		const s = (debt: number) => Math.round(Math.max(-1, Math.min(1, r.position!({ ...DEFAULT_INPUTS, debt }))) * w);
+		expect(s(0)).toBe(w);
 		expect(s(10000)).toBeLessThan(s(0));
 		expect(s(60000)).toBeLessThan(s(10000));
-		expect(s(500000)).toBe(-r.defaultWeight); // clamped at -weight
+		expect(s(500000)).toBe(-w); // clamped at -weight via bounds [-1, 1]
 	});
 
 	it('dti handles zero income without dividing by zero', () => {
 		const r = byId('dti');
-		const v = r.score!({ ...DEFAULT_INPUTS, income: 0, debt: 50000 }, r.defaultWeight);
+		const w = r.defaultWeight;
+		const v = Math.round(Math.max(-1, Math.min(1, r.position!({ ...DEFAULT_INPUTS, income: 0, debt: 50000 }))) * w);
 		expect(Number.isFinite(v)).toBe(true);
-		expect(v).toBe(-r.defaultWeight);
+		expect(v).toBe(-w);
 	});
 
 	it('utilization: lower is better, very high goes negative', () => {
 		const r = byId('utilization');
-		const s = (u: number) => r.score!({ ...DEFAULT_INPUTS, creditUtil: u }, r.defaultWeight);
+		const w = r.defaultWeight;
+		const s = (u: number) => Math.round(r.position!({ ...DEFAULT_INPUTS, creditUtil: u }) * w) || 0;
 		expect(s(5)).toBeGreaterThan(s(40));
 		expect(s(95)).toBeLessThan(0);
 	});
 
 	it('emergency fund saturates at 3 months and has a lever', () => {
 		const r = byId('emergency-fund');
-		const s = (m: number) => r.score!({ ...DEFAULT_INPUTS, emergencyMonths: m }, r.defaultWeight);
+		const w = r.defaultWeight;
+		const s = (m: number) => Math.round(Math.min(1, r.position!({ ...DEFAULT_INPUTS, emergencyMonths: m })) * w);
 		expect(s(0)).toBe(0);
-		expect(s(3)).toBe(r.defaultWeight);
+		expect(s(3)).toBe(w);
 		expect(s(12)).toBe(s(3));
 		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, emergencyMonths: 1 })).toBe(true);
 		expect(r.whatIf!.transform({ ...DEFAULT_INPUTS, emergencyMonths: 1 }).emergencyMonths).toBe(3);

@@ -1,4 +1,4 @@
-import { clamp, usd, type Rule } from './types';
+import { usd, type Rule } from './types';
 
 const ACCESSED = '2026-06-11';
 const DTI_BENCHMARK = 0.43; // CFPB Qualified Mortgage affordability line
@@ -64,10 +64,12 @@ export const FINANCE_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['debt', 'income'],
-		score: (i, w) => {
+		position: (i) => {
 			const ratio = i.income > 0 ? i.debt / i.income : i.debt > 0 ? Infinity : 0;
-			return Math.round(clamp((DTI_BENCHMARK - ratio) / DTI_BENCHMARK, -1, 1) * w) || 0;
+			return (DTI_BENCHMARK - ratio) / DTI_BENCHMARK;
 		},
+		bounds: [-1, 1],
+		weightRationale: "The lending world's primary gate (the CFPB 43% line) — 1.4×. The only symmetric rule in the book: the cited system punishes exactly as hard as it rewards.",
 		describe: (i) => {
 			if (i.debt === 0) return 'no debt — a quiet advantage that never shows up on a paycheck';
 			const ratio = i.income > 0 ? (i.debt / i.income).toFixed(2) : '∞';
@@ -95,7 +97,9 @@ export const FINANCE_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['latePayments'],
-		score: (i, w) => Math.round([1, 0.4, 0][i.latePayments] * w),
+		position: (i) => [1, 0.4, 0][i.latePayments],
+		bounds: [0, 1],
+		weightRationale: '35% of FICO — the heaviest input in the most consequential consumer score — 1.2×.',
 		describe: (i) => ['clean 24 months — the heaviest FICO input, fully banked', 'one recent late payment — FICO forgives slowly', 'multiple recent lates — the heaviest FICO input, zeroed'][i.latePayments]
 	},
 	{
@@ -114,11 +118,12 @@ export const FINANCE_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['creditUtil'],
-		score: (i, w) => {
+		position: (i) => {
 			const u = i.creditUtil;
-			const frac = u <= 9 ? 1 : u <= 30 ? 0.8 : u <= 50 ? 0.4 : u <= 80 ? 0.1 : -0.3;
-			return Math.round(frac * w) || 0;
+			return u <= 9 ? 1 : u <= 30 ? 0.8 : u <= 50 ? 0.4 : u <= 80 ? 0.1 : -0.3;
 		},
+		bounds: [-0.3, 1],
+		weightRationale: '30% of FICO, just behind payment history — 1.0×. Mildly subtractive at near-maxed because the bureaus genuinely reprice that downward.',
 		describe: (i) => `${i.creditUtil}% of available revolving credit in use — bureaus reprice this monthly`
 	},
 	{
@@ -137,7 +142,9 @@ export const FINANCE_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['emergencyMonths'],
-		score: (i, w) => Math.round(clamp(i.emergencyMonths / 3, 0, 1) * w),
+		position: (i) => i.emergencyMonths / 3,
+		bounds: [0, 1],
+		weightRationale: "The Fed's own resilience test: the 3-month line is what separates a setback from a spiral — 1.0×.",
 		describe: (i) => (i.emergencyMonths >= 3 ? `${i.emergencyMonths} months covered — the Fed's resilience test, passed` : `${i.emergencyMonths} month(s) covered — the 3-month line is the difference between a setback and a spiral`),
 		whatIf: {
 			label: 'Save a 3-month fund',
@@ -182,7 +189,9 @@ export const FINANCE_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['homeowner'],
-		score: (i, w) => Math.round((i.homeowner ? 1 : 0.3) * w),
+		position: (i) => (i.homeowner ? 1 : 0.3),
+		bounds: [0, 1],
+		weightRationale: 'The wealth effect is already counted in net worth; this 0.6× prices only the access premium to the main US wealth escalator.',
 		describe: (i) => (i.homeowner ? 'owner — riding the main US wealth escalator' : 'renting — the 40× median-wealth gap is the system, not a verdict')
 	},
 	{
@@ -208,6 +217,11 @@ export const FINANCE_RULES: Rule[] = [
 			unbanked: 'unbanked — paying fees for what wealth gets free, building no credit history',
 			underbanked: 'underbanked — an account, plus the payday-services tax',
 			banked: 'banked — the free rail everyone above assumes'
-		})[i.banking]
+		})[i.banking],
+		whatIf: {
+			label: 'Open a bank account',
+			applicable: (i) => i.banking !== 'banked',
+			transform: (i) => ({ ...i, banking: 'banked' })
+		}
 	}
 ];
