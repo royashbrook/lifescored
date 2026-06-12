@@ -64,7 +64,7 @@
 			Your inputs never leave your device. Scores compute in your browser; profiles persist in your browser's
 			local storage; share links carry the data in the URL fragment, which is never sent to any server. The one
 			network feature — the AI narrative — sends only rounded subtotals, never your inputs, and falls back to a
-			locally-composed narrative when unavailable.
+			locally-composed narrative when unavailable. Traffic is measured with Cloudflare Web Analytics — cookieless and aggregate; it cannot see your inputs, which never leave your device anyway.
 		</p>
 	</section>
 

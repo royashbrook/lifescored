@@ -10,6 +10,7 @@ A credit score, an actuarial row, a callback probability — this app rebuilds t
 - One dynamic endpoint: `POST /api/narrative` — KV-cached Gemini narratives with a
   deterministic local fallback (the app is fully functional with no API key at all)
 - All user data stays in the browser (localStorage + URL-fragment share links)
+- Traffic is measured with Cloudflare Web Analytics — cookieless and aggregate; it cannot see your inputs, which never leave your device anyway.
 
 ## Develop
 
@@ -24,6 +25,10 @@ A credit score, an actuarial row, a callback probability — this app rebuilds t
     npx wrangler secret put GEMINI_API_KEY          # optional — omit to run AI-free
     npm run deploy
 
+## Deploy your own
+
+See the [Deploy](#deploy-cloudflare-free-tier) section above.
+
 ## Editing the rulebook
 
 Rules live in `src/lib/rulebook/<domain>.ts`. Each rule is declarative: logic,
@@ -35,3 +40,7 @@ the 1.0× income baseline; the engine computes `points = round(position × weigh
 Add a rule, and the UI, weight editor, share
 codec, and about-page source list pick it up automatically. `npm test` enforces
 the invariants (bounds, integer scores, citation present).
+
+## License
+
+MIT — see LICENSE.
