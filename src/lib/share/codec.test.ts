@@ -20,6 +20,9 @@ describe('share codec', () => {
 		expect(await decodeProfile('1.!!!not-base64!!!')).toBeNull();
 		expect(await decodeProfile('1.AAAA')).toBeNull(); // valid b64, invalid deflate
 		expect(await decodeProfile('')).toBeNull();
+		expect(await decodeProfile('1.')).toBeNull(); // empty payload
+		const nulls = await encodeProfile({ inputs: null, overrides: null } as never);
+		expect(await decodeProfile(nulls)).toBeNull(); // null fields rejected
 	});
 
 	it('produces URLs meaningfully shorter than raw JSON', async () => {

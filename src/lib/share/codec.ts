@@ -34,7 +34,7 @@ export async function decodeProfile(encoded: string): Promise<Profile | null> {
 		const bytes = fromB64url(encoded.slice(dot + 1));
 		const inflated = await pipe(bytes, new DecompressionStream('deflate-raw'));
 		const parsed = JSON.parse(new TextDecoder().decode(inflated));
-		if (!parsed || typeof parsed.inputs !== 'object' || typeof parsed.overrides !== 'object') return null;
+		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object' || !parsed.overrides || typeof parsed.overrides !== 'object') return null;
 		return parsed as Profile;
 	} catch {
 		return null;
