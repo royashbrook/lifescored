@@ -54,4 +54,11 @@ describe('computeScore', () => {
 		const r = computeScore(inputs, { dti: { enabled: false } });
 		expect(r.whatIfs.map((w) => w.ruleId)).not.toContain('dti');
 	});
+
+	it('never produces NaN even from hostile decoded profiles', () => {
+		const hostile = { ...DEFAULT_INPUTS, smoker: 'yes', familySupport: 99 } as unknown as typeof DEFAULT_INPUTS;
+		const r = computeScore(hostile);
+		expect(Number.isFinite(r.composite)).toBe(true);
+		expect(r.perRule.every((p) => Number.isFinite(p.value))).toBe(true);
+	});
 });

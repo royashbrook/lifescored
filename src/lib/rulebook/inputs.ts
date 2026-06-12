@@ -68,6 +68,19 @@ export const NUMERIC_CLAMPS: Record<NumericKey, [number, number]> = {
 	drivingIncidents: [0, 10]
 };
 
+const STRING_ENUMS = {
+	sex: ['f', 'm'],
+	smoker: ['never', 'former', 'current'],
+	alcohol: ['none', 'moderate', 'heavy'],
+	bmiBand: ['under', 'normal', 'over', 'obese'],
+	employment: ['employed', 'self', 'unemployed', 'student', 'retired'],
+	outlook: ['declining', 'stable', 'growing']
+} as const;
+
+const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalFootprint', 'latePayments'] as const;
+
+const BOOLEANS = ['parentsDegree', 'insured', 'homeowner', 'degree', 'partnered', 'volunteers', 'criminalRecord', 'voterRegistered'] as const;
+
 export function clampInputs(i: Inputs): Inputs {
 	const out = { ...i };
 	for (const [key, [lo, hi]] of Object.entries(NUMERIC_CLAMPS) as [NumericKey, [number, number]][]) {
@@ -75,5 +88,19 @@ export function clampInputs(i: Inputs): Inputs {
 		out[key] = clamp(Number.isFinite(v) ? v : lo, lo, hi);
 	}
 	if (!COUNTRIES[out.country]) out.country = 'us';
+	for (const key of Object.keys(STRING_ENUMS) as (keyof typeof STRING_ENUMS)[]) {
+		const valid = STRING_ENUMS[key] as readonly string[];
+		if (!valid.includes(out[key] as string)) {
+			(out as Record<string, unknown>)[key] = DEFAULT_INPUTS[key];
+		}
+	}
+	for (const key of ORDINALS) {
+		const v = Number(out[key]);
+		const rounded = Number.isFinite(v) ? Math.round(v) : (DEFAULT_INPUTS[key] as number);
+		out[key] = clamp(rounded, 0, 2) as 0 | 1 | 2;
+	}
+	for (const key of BOOLEANS) {
+		out[key] = Boolean(out[key]) as never;
+	}
 	return out;
 }

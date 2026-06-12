@@ -29,4 +29,23 @@ describe('inputs', () => {
 		const bad = { ...DEFAULT_INPUTS, country: 'xx' as unknown as CountryCode };
 		expect(clampInputs(bad).country).toBe('us');
 	});
+
+	it('repairs invalid enum, ordinal, and boolean values from untrusted profiles', () => {
+		const hostile = {
+			...DEFAULT_INPUTS,
+			smoker: 'yes', sex: 'attack', bmiBand: 7, employment: null,
+			familySupport: 99, neighborhood: -3, latePayments: 1.7,
+			degree: 'truthy string', insured: 0
+		} as unknown as typeof DEFAULT_INPUTS;
+		const c = clampInputs(hostile);
+		expect(c.smoker).toBe(DEFAULT_INPUTS.smoker);
+		expect(c.sex).toBe(DEFAULT_INPUTS.sex);
+		expect(c.bmiBand).toBe(DEFAULT_INPUTS.bmiBand);
+		expect(c.employment).toBe(DEFAULT_INPUTS.employment);
+		expect(c.familySupport).toBe(2);
+		expect(c.neighborhood).toBe(0);
+		expect(c.latePayments).toBe(2);
+		expect(c.degree).toBe(true);
+		expect(c.insured).toBe(false);
+	});
 });
