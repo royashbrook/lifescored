@@ -2,6 +2,7 @@
 	import '../app.css';
 	import { browser } from '$app/environment';
 	import { page } from '$app/state';
+	import { replaceState } from '$app/navigation';
 	import { setContext } from 'svelte';
 	import { createProfileState, loadStoredProfile, storeProfile } from '$lib/state/profile.svelte';
 	import { decodeProfile } from '$lib/share/codec';
@@ -25,7 +26,7 @@
 			} else {
 				shareNotice = 'bad';
 			}
-			history.replaceState(null, '', location.pathname);
+			replaceState(location.pathname, {});
 		});
 	});
 
