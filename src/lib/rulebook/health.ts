@@ -1,4 +1,4 @@
-import { clamp, type Rule } from './types';
+import type { Rule } from './types';
 
 const ACCESSED = '2026-06-11';
 
@@ -19,7 +19,9 @@ export const HEALTH_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['age', 'sex'],
-		score: (i, w) => Math.round(clamp(((i.sex === 'f' ? 81 : 76) - i.age) / 60, 0, 1) * w),
+		position: (i) => ((i.sex === 'f' ? 81 : 76) - i.age) / 60,
+		bounds: [0, 1],
+		weightRationale: 'Actuarial position is priced exactly as legibly as income by the insurance industry — weighted equal to the baseline at 1.0×.',
 		describe: (i) => `age ${i.age}, ${i.sex === 'f' ? 'female' : 'male'} — this is literally how a life insurer opens your file`
 	},
 	{
@@ -38,7 +40,9 @@ export const HEALTH_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['smoker'],
-		score: (i, w) => Math.round({ never: 1, former: 0.6, current: 0 }[i.smoker] * w),
+		position: (i) => ({ never: 1, former: 0.6, current: 0 })[i.smoker],
+		bounds: [0, 1],
+		weightRationale: 'A ~10-year life-expectancy swing (CDC) — the single largest behavioral mortality factor, weighted equal to the baseline at 1.0×.',
 		describe: (i) => ({ never: 'never smoked — the cheapest points on the board', former: 'former smoker — most of the actuarial penalty fades with years quit', current: 'current smoker — the largest single behavioral penalty in any actuarial table' })[i.smoker],
 		whatIf: {
 			label: 'Quit smoking',
@@ -62,7 +66,9 @@ export const HEALTH_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['exerciseMins'],
-		score: (i, w) => Math.round(clamp(i.exerciseMins / 150, 0, 1) * w),
+		position: (i) => i.exerciseMins / 150,
+		bounds: [0, 1],
+		weightRationale: 'Meeting the WHO guideline associates with 20–30% lower all-cause mortality — large, but smaller than smoking\'s swing, so 0.8×.',
 		describe: (i) => (i.exerciseMins >= 150 ? `${i.exerciseMins} min/week — meets the WHO guideline` : `${i.exerciseMins} min/week — guideline is 150; the gap is the cheapest health points available`),
 		whatIf: {
 			label: 'Hit 150 min/week',
@@ -86,7 +92,9 @@ export const HEALTH_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['alcohol'],
-		score: (i, w) => Math.round({ none: 1, moderate: 0.7, heavy: 0 }[i.alcohol] * w),
+		position: (i) => ({ none: 1, moderate: 0.7, heavy: 0 })[i.alcohol],
+		bounds: [0, 1],
+		weightRationale: 'Heavy use is a leading preventable cause of death, but the population-level swing is smaller than smoking or inactivity — 0.6×.',
 		describe: (i) => ({ none: 'no alcohol — full marks on a measure most people assume is binary', moderate: 'moderate use — a small penalty current research no longer waves away', heavy: 'heavy use — a leading preventable mortality factor' })[i.alcohol]
 	},
 	{
@@ -105,11 +113,12 @@ export const HEALTH_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['sleepHours'],
-		score: (i, w) => {
+		position: (i) => {
 			const h = i.sleepHours;
-			const frac = h >= 7 && h <= 9 ? 1 : h >= 6 && h <= 10 ? 0.6 : 0.2;
-			return Math.round(frac * w);
+			return h >= 7 && h <= 9 ? 1 : h >= 6 && h <= 10 ? 0.6 : 0.2;
 		},
+		bounds: [0, 1],
+		weightRationale: 'The 7–9h association is consistent but partly confounded with everything else on this page — 0.6×.',
 		describe: (i) => (i.sleepHours >= 7 && i.sleepHours <= 9 ? `${i.sleepHours}h — inside the guideline band` : `${i.sleepHours}h — outside the 7–9h band the research keeps converging on`)
 	},
 	{
@@ -128,7 +137,9 @@ export const HEALTH_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['insured'],
-		score: (i, w) => Math.round((i.insured ? 1 : 0) * w),
+		position: (i) => (i.insured ? 1 : 0),
+		bounds: [0, 1],
+		weightRationale: 'Coverage removes an uncapped financial tail risk (medical debt is a leading bankruptcy driver) — 0.8×.',
 		describe: (i) => (i.insured ? 'covered — one uncapped downside risk removed' : 'uninsured — one ER visit can rewrite the whole financial section of this scorecard'),
 		whatIf: {
 			label: 'Get covered',
@@ -153,7 +164,9 @@ export const HEALTH_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['bmiBand'],
-		score: (i, w) => Math.round({ under: 0.5, normal: 1, over: 0.6, obese: 0.2 }[i.bmiBand] * w),
+		position: (i) => ({ under: 0.5, normal: 1, over: 0.6, obese: 0.2 })[i.bmiBand],
+		bounds: [0, 1],
+		weightRationale: 'Underwriters genuinely price it, but the measure itself is blunt (see caveat) — weighted at 0.6× accordingly.',
 		describe: (i) => ({ under: 'underweight band — priced as risk by underwriters', normal: 'the band underwriters price cheapest', over: 'overweight band — a modest underwriting penalty', obese: 'obese band — a significant underwriting penalty' })[i.bmiBand]
 	}
 ];

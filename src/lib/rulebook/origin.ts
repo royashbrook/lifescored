@@ -20,7 +20,9 @@ export const ORIGIN_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['country'],
-		score: (i, w) => Math.round(COUNTRIES[i.country].baseFrac * w),
+		position: (i) => COUNTRIES[i.country].baseFrac,
+		bounds: [0, 1],
+		weightRationale: 'The largest single predictor of lifetime outcomes is where you live — World Bank income tiers span a ~60× range in GNI per capita, dwarfing every behavioral lever in this book. 2.4× the baseline is, if anything, conservative.',
 		describe: (i) => COUNTRIES[i.country].note
 	},
 	{
@@ -39,7 +41,9 @@ export const ORIGIN_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['familySupport'],
-		score: (i, w) => Math.round([0, 0.4, 0.9][i.familySupport] * w),
+		position: (i) => [0, 0.4, 0.9][i.familySupport],
+		bounds: [0, 1],
+		weightRationale: "Chetty's mobility work shows parental resources rival education's effect on adult outcomes — but because no dataset maps it to an individual, this flagged guess is weighted at 1.6×, below country, above everything behavioral.",
 		describe: (i) => ['no family floor', 'some family support', 'substantial family backing'][i.familySupport]
 	},
 	{
@@ -58,7 +62,9 @@ export const ORIGIN_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['parentsDegree'],
-		score: (i, w) => Math.round((i.parentsDegree ? 1 : 0.3) * w),
+		position: (i) => (i.parentsDegree ? 1 : 0.3),
+		bounds: [0, 1],
+		weightRationale: 'First-generation status roughly halves college-completion odds (NCES), but part of its effect routes through the education rule — weighted down to 0.8× to avoid double-counting.',
 		describe: (i) => (i.parentsDegree ? 'a parent holds a degree — inherited navigational capital' : 'first-generation territory — every form is unfamiliar the first time')
 	},
 	{
@@ -77,7 +83,9 @@ export const ORIGIN_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['country'],
-		score: (i, w) => Math.round([0.2, 0.6, 1][COUNTRIES[i.country].henleyBand] * w),
+		position: (i) => [0.2, 0.6, 1][COUNTRIES[i.country].henleyBand],
+		bounds: [0, 1],
+		weightRationale: 'Binding only at borders and mostly latent day-to-day — 0.6× despite the huge Henley spread, because the option value is rarely exercised.',
 		describe: (i) => ['weak passport — much of the world needs a visa application', 'mid-tier passport', 'strong passport — most borders open on arrival'][COUNTRIES[i.country].henleyBand]
 	},
 	{
@@ -96,7 +104,9 @@ export const ORIGIN_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['neighborhood'],
-		score: (i, w) => Math.round([0.1, 0.5, 1][i.neighborhood] * w),
+		position: (i) => [0.1, 0.5, 1][i.neighborhood],
+		bounds: [0, 1],
+		weightRationale: 'Opportunity Atlas tract effects are causal but smaller than country-level differences — 0.8×, tied with parental education.',
 		describe: (i) => ['low-opportunity area — the Atlas says this drag is real', 'average-opportunity area', 'high-opportunity area — an invisible tailwind'][i.neighborhood]
 	}
 ];
