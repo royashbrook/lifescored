@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_INPUTS } from '../rulebook';
+import { DEFAULT_INPUTS, RULES } from '../rulebook';
 import { computeScore } from '../engine/score';
 import { composeLocalNarrative } from './local';
 
@@ -23,5 +23,12 @@ describe('composeLocalNarrative', () => {
 	it('is deterministic', () => {
 		const result = computeScore(DEFAULT_INPUTS);
 		expect(composeLocalNarrative(result)).toBe(composeLocalNarrative(result));
+	});
+
+	it('survives every rule being excluded', () => {
+		const overrides = Object.fromEntries(RULES.map((r) => [r.id, { enabled: false }]));
+		const result = computeScore(DEFAULT_INPUTS, overrides);
+		const text = composeLocalNarrative(result);
+		expect(text).toContain('excluded');
 	});
 });
