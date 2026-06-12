@@ -37,6 +37,7 @@ export interface ScoreResult {
 const MAX_WEIGHT = 50;
 
 function compositeOf(inputs: Inputs, overrides: Overrides): number {
+	inputs = clampInputs(inputs);
 	let total = 0;
 	for (const rule of RULES) {
 		const o = overrides[rule.id];
@@ -46,12 +47,13 @@ function compositeOf(inputs: Inputs, overrides: Overrides): number {
 	return total;
 }
 
+/** Weights are clamped to [0, 50]; negative overrides become 0 (rule contributes nothing but stays enabled). */
 const clampWeight = (w: number) => Math.max(0, Math.min(MAX_WEIGHT, w));
 
 export function computeScore(rawInputs: Inputs, overrides: Overrides = {}): ScoreResult {
 	const inputs = clampInputs(rawInputs);
 	const tierSubtotals: Record<Tier, number> = { starting_point: 0, your_moves: 0 };
-	const domainSubtotals = { origin: 0, health: 0, finance: 0, education: 0, social: 0, civic: 0 };
+	const domainSubtotals: Record<Domain, number> = { origin: 0, health: 0, finance: 0, education: 0, social: 0, civic: 0 };
 
 	const perRule: RuleScore[] = RULES.map((rule) => {
 		const o = overrides[rule.id];
