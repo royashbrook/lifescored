@@ -1,6 +1,11 @@
 import { usd, type Rule } from './types';
 
 const ACCESSED = '2026-06-11';
+
+/** Format a raw multiple for the dominance line: one decimal below 10×, thousands-separated integer at/above. */
+function multiple(m: number): string {
+	return m < 10 ? m.toFixed(1) : Math.round(m).toLocaleString('en-US');
+}
 const DTI_BENCHMARK = 0.43; // CFPB Qualified Mortgage affordability line
 const MEDIAN_INCOME = 60000; // ≈ BLS median full-time earnings, annualized
 
@@ -20,7 +25,7 @@ export const FINANCE_RULES: Rule[] = [
 		label: 'Net-worth position',
 		controllable: false, // your number now is partly past luck; the levers below move it
 		defaultWeight: 16,
-		logic: 'Net worth against the median for your age band. Below the median: a linear drag, floored at half this weight. Above it: each 10× adds the full weight again, uncapped — because the real world does not cap the advantage of money.',
+		logic: 'Net worth against the median for your age band. Below the median: a linear drag, floored at half this weight. Above it, points grow as the square root of your wealth multiple — quadruple your money to double your points — uncapped, because the real world does not cap the advantage of money.',
 		evidence: 'SOURCED',
 		source: {
 			name: 'Federal Reserve — Survey of Consumer Finances (2022)',
@@ -32,20 +37,18 @@ export const FINANCE_RULES: Rule[] = [
 		position: (i) => {
 			const median = medianNetWorthForAge(i.age);
 			if (i.netWorth < median) return Math.max(-0.5, (i.netWorth - median) / (2 * median));
-			return Math.log10(i.netWorth / median);
+			return Math.sqrt(i.netWorth / median) - 1;
 		},
 		bounds: [-0.5, Infinity],
 		weightRationale: 'Stock beats flow: wealth absorbs shocks income cannot, and SCF gaps between wealth deciles exceed income gaps — 1.6× the baseline, uncapped above because the world does not cap it.',
 		describe: (i) => {
 			const median = medianNetWorthForAge(i.age);
-			if (i.netWorth >= median * 10) {
-				const decades = Math.log10(i.netWorth / median);
-				return `${usd(i.netWorth)} — ${decades.toFixed(1)} decades above your age-band median (${usd(median)}); uncapped, because the world doesn't cap it`;
+			if (i.netWorth >= median) {
+				const m = i.netWorth / median;
+				return `${usd(i.netWorth)} — ${multiple(m)}× your age-band median (${usd(median)}); uncapped, because the world doesn't cap it`;
 			}
 			const d = i.netWorth - median;
-			return d >= 0
-				? `${usd(i.netWorth)} — about ${usd(d)} above your age-band median (${usd(median)})`
-				: `${usd(i.netWorth)} — ${usd(-d)} below your age-band median (${usd(median)})`;
+			return `${usd(i.netWorth)} — ${usd(-d)} below your age-band median (${usd(median)})`;
 		}
 	},
 	{
@@ -159,7 +162,7 @@ export const FINANCE_RULES: Rule[] = [
 		label: 'Income vs. median',
 		controllable: true,
 		defaultWeight: 10,
-		logic: 'Annual income against the US full-time median: half marks at the median, then each 10× above adds the full weight again, uncapped — see the net-worth rule for why.',
+		logic: 'Annual income against the US full-time median: half marks at the median, then points grow as the square root of your income multiple, uncapped — see the net-worth rule for why.',
 		evidence: 'SOURCED',
 		source: {
 			name: 'BLS — Usual Weekly Earnings of Wage and Salary Workers',
@@ -168,10 +171,16 @@ export const FINANCE_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['income'],
-		position: (i) => (i.income <= MEDIAN_INCOME ? i.income / (2 * MEDIAN_INCOME) : 0.5 + Math.log10(i.income / MEDIAN_INCOME)),
+		position: (i) => (i.income <= MEDIAN_INCOME ? i.income / (2 * MEDIAN_INCOME) : 0.5 + (Math.sqrt(i.income / MEDIAN_INCOME) - 1)),
 		bounds: [0, Infinity],
 		weightRationale: 'THE BASELINE (1.0×). Income is the dimension every other system prices most legibly; every other weight in this book is a stated deviation from this one.',
-		describe: (i) => `${usd(i.income)}/yr vs. the ~${usd(MEDIAN_INCOME)} full-time median`
+		describe: (i) => {
+			if (i.income > MEDIAN_INCOME) {
+				const m = i.income / MEDIAN_INCOME;
+				return `${usd(i.income)}/yr — ${multiple(m)}× the ~${usd(MEDIAN_INCOME)} full-time median`;
+			}
+			return `${usd(i.income)}/yr vs. the ~${usd(MEDIAN_INCOME)} full-time median`;
+		}
 	},
 	{
 		id: 'homeownership',

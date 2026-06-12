@@ -16,12 +16,12 @@
 			{/if}
 		</div>
 		<span class="shrink-0 text-[13px] tabular-nums" style:font-family="var(--font-mono)" style:color={accent}>
-			{row.value >= 0 ? '+' : ''}{row.value}
+			{row.value >= 0 ? '+' : ''}{row.value.toLocaleString('en-US')}
 		</span>
 	</div>
 	<Bar value={row.value} max={row.max} {accent} />
 	<div class="mt-1 text-[10px] tabular-nums" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
-		position {(row.position * 10).toFixed(1)} × weight {(row.max / BASELINE_WEIGHT).toFixed(1)}× = {row.value >= 0 ? '+' : ''}{row.value}
+		position {(row.position * 10).toFixed(1)} × weight {(row.max / BASELINE_WEIGHT).toFixed(1)}× = {row.value >= 0 ? '+' : ''}{row.value.toLocaleString('en-US')}
 		{#if row.max > 0 && Math.abs(row.value) > row.max}
 			<span style:color="var(--moves)">· ×{(Math.abs(row.value) / row.max).toFixed(1)} over scale</span>
 		{/if}

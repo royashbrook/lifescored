@@ -64,7 +64,7 @@ describe('finance rules', () => {
 	});
 });
 
-describe('log wealth (v2)', () => {
+describe('power-law wealth (v2.1)', () => {
 	const nw = byId('networth');
 	const inc = byId('income');
 	const at = (netWorth: number, age = 27) => nw.position!({ ...DEFAULT_INPUTS, age, netWorth });
@@ -73,8 +73,8 @@ describe('log wealth (v2)', () => {
 		const median = medianNetWorthForAge(27);
 		expect(at(median)).toBeCloseTo(0, 5);
 		expect(at(median - 1)).toBeLessThanOrEqual(0);
-		expect(at(median * 10)).toBeCloseTo(1, 5);   // one decade above
-		expect(at(median * 100)).toBeCloseTo(2, 5);  // two decades
+		expect(at(median * 4)).toBeCloseTo(1, 5);    // sqrt(4)-1 = 1
+		expect(at(median * 100)).toBeCloseTo(9, 5);  // sqrt(100)-1 = 9
 		expect(at(median * 100)).toBeGreaterThan(at(median * 10));
 	});
 
@@ -86,16 +86,22 @@ describe('log wealth (v2)', () => {
 
 	it('networth: a trillionaire visibly dominates (the uncapped principle)', () => {
 		const v = Math.round(Math.max(-0.5, at(1e12, 54)) * nw.defaultWeight);
-		expect(v).toBeGreaterThan(100);
+		expect(v).toBeGreaterThan(30000);
 	});
 
-	it('income: 0.5 at median, +1 per decade above, floor 0, monotonic', () => {
+	it('income: 0.5 at median, sqrt above, floor 0, monotonic', () => {
 		const p = (income: number) => inc.position!({ ...DEFAULT_INPUTS, income });
 		expect(p(60000)).toBeCloseTo(0.5, 5);
-		expect(p(600000)).toBeCloseTo(1.5, 5);
+		expect(p(240000)).toBeCloseTo(1.5, 5);  // 0.5 + sqrt(4) - 1 = 1.5
 		expect(p(0)).toBe(0);
 		expect(p(30000)).toBeCloseTo(0.25, 5);
 		expect(p(6_000_000)).toBeGreaterThan(p(600000));
+	});
+
+	it('describe states the raw multiple of the median (dominance line)', () => {
+		const d = nw.describe({ ...DEFAULT_INPUTS, age: 54, netWorth: 1e12 });
+		expect(d).toMatch(/4,0\d{2},\d{3}×/); // ~4,045,xxx× of the 247,200 median
+		expect(inc.describe({ ...DEFAULT_INPUTS, income: 600000 })).toContain('10×');
 	});
 });
 

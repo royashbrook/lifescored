@@ -8,6 +8,6 @@
 		<span class="ml-2 text-[11px]" style:color="var(--ink-dim)">{sub}</span>
 	</div>
 	<span class="shrink-0 text-[13px] tabular-nums" style:font-family="var(--font-mono)" style:color={accent}>
-		{subtotal >= 0 ? '+' : ''}{subtotal}
+		{subtotal >= 0 ? '+' : ''}{subtotal.toLocaleString('en-US')}
 	</span>
 </div>

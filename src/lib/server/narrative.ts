@@ -27,7 +27,7 @@ function validate(body: unknown): NarrativePayload | null {
 	const b = body as NarrativePayload;
 	if (!b || b.v !== 1 || !b.domains || !b.tiers || !Array.isArray(b.levers)) return null;
 	const nums = [...DOMAIN_ORDER.map((d) => b.domains[d]), b.tiers.starting_point, b.tiers.your_moves];
-	if (!nums.every((n) => typeof n === 'number' && Number.isFinite(n) && Math.abs(n) <= 10000)) return null;
+	if (!nums.every((n) => typeof n === 'number' && Number.isFinite(n) && Math.abs(n) <= 10_000_000)) return null;
 	if (b.levers.length > 20 || !b.levers.every((l) => typeof l === 'string' && l.length < 40)) return null;
 	return b;
 }

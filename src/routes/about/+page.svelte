@@ -53,8 +53,8 @@
 			Two principles govern the shape of every rule. <b>Constrained-subtractive:</b> a rule may score negative
 			only where the cited system itself subtracts (FICO delinquency, license points, underwater assets,
 			eviction) — and never more than it can add, unless the cited system does exactly that. <b>Uncapped
-			wealth:</b> the income and net-worth rules grow logarithmically with no upper limit — each 10× above
-			the median adds the rule's full weight again — because the real world does not cap the advantage of money.
+			wealth:</b> the income and net-worth rules grow as the square root of your multiple of the median — a power law,
+			matching how wealth itself distributes — with no upper limit, because the real world does not cap the advantage of money.
 		</p>
 	</section>
 
