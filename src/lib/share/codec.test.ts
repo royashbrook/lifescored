@@ -60,4 +60,15 @@ describe('share codec', () => {
 		expect('bogusField' in p.inputs).toBe(false);
 		expect(p.inputs.age).toBe(30);
 	});
+
+	it('preserves falsy values that differ from defaults', async () => {
+		const enc = await encodeProfile({
+			inputs: { ...DEFAULT_INPUTS, insured: false, voterRegistered: false, exerciseMins: 0 },
+			overrides: {}
+		});
+		const p = (await decodeProfile(enc))!;
+		expect(p.inputs.insured).toBe(false);
+		expect(p.inputs.voterRegistered).toBe(false);
+		expect(p.inputs.exerciseMins).toBe(0);
+	});
 });
