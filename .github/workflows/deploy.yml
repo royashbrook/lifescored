@@ -1,0 +1,46 @@
+name: deploy
+
+# Push to main → run the full test + typecheck gate, then deploy to Cloudflare.
+# A red build never reaches lifescored.com.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test + typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run check
+
+  deploy:
+    name: build + deploy
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # No `command:` → wrangler-action runs `wrangler deploy`, reading wrangler.jsonc.
+          # GEMINI_API_KEY is a Worker secret set once via `wrangler secret put` and
+          # persists across deploys — it is NOT passed here.

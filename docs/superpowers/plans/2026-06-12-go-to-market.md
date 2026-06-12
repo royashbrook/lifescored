@@ -90,3 +90,40 @@ story airtight.
 Rule packs, percentile comparisons, per-profile OG images (would require
 server-side rendering of fragments — privacy tradeoff, currently rejected),
 newsletter/domain email.
+
+---
+
+## Phase 2b — CI/CD via GitHub Actions (supersedes manual `npm run deploy`)
+
+Deploy is now GitHub-driven: push to `main` → `.github/workflows/deploy.yml`
+runs `npm ci && npm test && npm run check` (gate), then `npm run build` +
+`cloudflare/wrangler-action@v3` (deploy). Manual `npm run deploy` remains as a
+fallback.
+
+**Files prepped (committed):** `.github/workflows/deploy.yml`, `wrangler.jsonc`
+(KV id placeholder + loud comment), README deploy section + CI badge.
+
+**Runbook (order matters — repo must exist before secrets/Actions):**
+
+| # | Step | Who | Command / location |
+|---|------|-----|--------------------|
+| 1 | Create public repo `royashbrook/lifescored`, push `main` | agent (gh authed) | `gh repo create royashbrook/lifescored --public --source . --remote origin --description "You are already a number. Every rule cited, every weight editable." --push` |
+| 2 | Add repo topics | agent | `gh repo edit --add-topic svelte,cloudflare-workers,transparency,life-score` |
+| 3 | Create KV namespace, paste id into `wrangler.jsonc`, commit + push | Roy creates / agent commits | `npx wrangler kv namespace create NARRATIVE_KV` |
+| 4 | Set Worker secret `GEMINI_API_KEY` (one-time, persists) | Roy | `npx wrangler secret put GEMINI_API_KEY` |
+| 5 | Add GitHub Actions secrets `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | Roy (or agent via gh) | `gh secret set CLOUDFLARE_API_TOKEN` / `gh secret set CLOUDFLARE_ACCOUNT_ID` |
+| 6 | Trigger first deploy | either | push any commit, or `gh workflow run deploy.yml` |
+| 7 | Attach `lifescored.com` to the Worker | Roy | CF dashboard → Workers → lifescored → Domains & Routes |
+| 8 | Enable Web Analytics for the domain | Roy | CF dashboard → Analytics → Web Analytics |
+
+**Notes.**
+- The CF API token needs the *Edit Cloudflare Workers* template (Workers Scripts
+  + Workers KV write + the account/zone it runs in). Roy has tokens already from
+  other projects — reuse one with that scope or mint a fresh scoped token.
+- KV namespace ids are **not** secret and belong in `wrangler.jsonc`. Only the
+  API token, account id, and Gemini key are secrets.
+- `wrangler deploy` does not wipe Worker secrets, so `GEMINI_API_KEY` (step 4)
+  survives every CI deploy — it is never referenced in the workflow.
+- First push will **fail at the deploy job** until steps 3 (KV id) and 5 (CF
+  secrets) are done; the test job still runs and gates. This is expected — fix
+  forward by completing setup, then re-run.

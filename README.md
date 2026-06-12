@@ -1,5 +1,7 @@
 # life. scored.
 
+[![deploy](https://github.com/royashbrook/lifescored/actions/workflows/deploy.yml/badge.svg)](https://github.com/royashbrook/lifescored/actions/workflows/deploy.yml)
+
 **You are already a number.**
 
 A credit score, an actuarial row, a callback probability — this app rebuilds those numbers in the open: every rule cited or flagged as a guess, every weight visible and editable. Transparency, not judgment.
@@ -21,13 +23,35 @@ A credit score, an actuarial row, a callback probability — this app rebuilds t
 
 ## Deploy (Cloudflare free tier)
 
-    npx wrangler kv namespace create NARRATIVE_KV   # put the id in wrangler.jsonc
-    npx wrangler secret put GEMINI_API_KEY          # optional — omit to run AI-free
-    npm run deploy
+Deploys run automatically from GitHub Actions on every push to `main`
+([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)): the workflow
+runs the full test suite + typecheck, and only then builds and deploys.
+
+**One-time setup:**
+
+1. Create the KV namespace and paste its id into `wrangler.jsonc`:
+
+       npx wrangler kv namespace create NARRATIVE_KV
+
+2. Set the Gemini key as a Worker secret (persists across deploys; optional —
+   omit to run AI-free with the local narrative fallback):
+
+       npx wrangler secret put GEMINI_API_KEY
+
+3. Add two repository secrets in GitHub
+   (Settings → Secrets and variables → Actions):
+
+   - `CLOUDFLARE_API_TOKEN` — a token with the *Edit Cloudflare Workers* template
+   - `CLOUDFLARE_ACCOUNT_ID` — your account id
+
+Push to `main` and the action ships it. To deploy by hand instead:
+
+       npm run deploy
 
 ## Deploy your own
 
-See the [Deploy](#deploy-cloudflare-free-tier) section above.
+Fork the repo, do the one-time setup above with your own Cloudflare account, and
+push. The app is fully functional with no Gemini key at all.
 
 ## Editing the rulebook
 
