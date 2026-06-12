@@ -56,6 +56,13 @@ describe('computeScore', () => {
 		expect(r.whatIfs.map((w) => w.ruleId)).not.toContain('dti');
 	});
 
+	it('a trillionaire profile survives input clamping end-to-end (uncapped wealth)', () => {
+		const r = computeScore({ ...DEFAULT_INPUTS, age: 54, netWorth: 1e12 });
+		const nw = r.perRule.find((p) => p.id === 'networth')!;
+		expect(nw.value).toBeGreaterThan(100);
+		expect(Number.isFinite(r.composite)).toBe(true);
+	});
+
 	it('never produces NaN from hostile input values', () => {
 		const hostile = { ...DEFAULT_INPUTS, smoker: 'yes', familySupport: 99 } as unknown as typeof DEFAULT_INPUTS;
 		const r = computeScore(hostile);
