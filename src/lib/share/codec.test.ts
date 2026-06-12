@@ -43,4 +43,21 @@ describe('share codec', () => {
 		const encoded = await encodeProfile(profile);
 		expect(encoded.length).toBeLessThan(JSON.stringify(profile).length);
 	});
+
+	it('migrates v1 profiles: degree maps to education', async () => {
+		const legacyTrue = await encodeProfile({ inputs: { degree: true }, overrides: {} } as never);
+		expect((await decodeProfile(legacyTrue))!.inputs.education).toBe('bachelor');
+		const legacyFalse = await encodeProfile({ inputs: { degree: false }, overrides: {} } as never);
+		expect((await decodeProfile(legacyFalse))!.inputs.education).toBe('hs');
+		// explicit education wins over legacy degree
+		const both = await encodeProfile({ inputs: { degree: false, education: 'graduate' }, overrides: {} } as never);
+		expect((await decodeProfile(both))!.inputs.education).toBe('graduate');
+	});
+
+	it('drops unknown input keys entirely', async () => {
+		const noisy = await encodeProfile({ inputs: { age: 30, bogusField: 'x' }, overrides: {} } as never);
+		const p = (await decodeProfile(noisy))!;
+		expect('bogusField' in p.inputs).toBe(false);
+		expect(p.inputs.age).toBe(30);
+	});
 });

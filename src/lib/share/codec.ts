@@ -1,5 +1,5 @@
 import type { Overrides } from '../engine/score';
-import { DEFAULT_INPUTS } from '../rulebook';
+import { DEFAULT_INPUTS, migrateLegacyInputs } from '../rulebook';
 import type { Inputs } from '../rulebook';
 
 export interface Profile {
@@ -36,7 +36,10 @@ export async function decodeProfile(encoded: string): Promise<Profile | null> {
 		const inflated = await pipe(bytes, new DecompressionStream('deflate-raw'));
 		const parsed = JSON.parse(new TextDecoder().decode(inflated));
 		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object' || !parsed.overrides || typeof parsed.overrides !== 'object') return null;
-		const inputs = { ...DEFAULT_INPUTS, ...parsed.inputs } as Profile['inputs'];
+		const migrated = migrateLegacyInputs(parsed.inputs as Record<string, unknown>);
+		const inputs = Object.fromEntries(
+			(Object.keys(DEFAULT_INPUTS) as (keyof typeof DEFAULT_INPUTS)[]).map((k) => [k, migrated[k] ?? DEFAULT_INPUTS[k]])
+		) as unknown as Profile['inputs'];
 		const overrides: Profile['overrides'] = {};
 		for (const [id, o] of Object.entries(parsed.overrides as Record<string, unknown>)) {
 			if (!o || typeof o !== 'object') continue;

@@ -35,7 +35,7 @@ describe('inputs', () => {
 			...DEFAULT_INPUTS,
 			smoker: 'yes', sex: 'attack', bmiBand: 7, employment: null,
 			familySupport: 99, neighborhood: -3, latePayments: 1.7,
-			degree: 'truthy string', insured: 0
+			education: 'phd', insured: 0
 		} as unknown as typeof DEFAULT_INPUTS;
 		const c = clampInputs(hostile);
 		expect(c.smoker).toBe(DEFAULT_INPUTS.smoker);
@@ -45,7 +45,7 @@ describe('inputs', () => {
 		expect(c.familySupport).toBe(2);
 		expect(c.neighborhood).toBe(0);
 		expect(c.latePayments).toBe(2);
-		expect(c.degree).toBe(true);
+		expect(c.education).toBe(DEFAULT_INPUTS.education); // invalid enum falls back to default
 		expect(c.insured).toBe(false);
 	});
 });

@@ -35,7 +35,7 @@ export interface Inputs {
 	emergencyMonths: number;
 	homeowner: boolean;
 	// education / work
-	degree: boolean;
+	education: 'none' | 'hs' | 'some' | 'bachelor' | 'graduate';
 	employment: 'employed' | 'self' | 'unemployed' | 'student' | 'retired';
 	outlook: 'declining' | 'stable' | 'growing';
 	// social

@@ -37,11 +37,11 @@ describe('computeScore', () => {
 	});
 
 	it('what-ifs: only applicable levers appear, and applying one reproduces the delta', () => {
-		const inputs = { ...DEFAULT_INPUTS, debt: 20000, degree: false };
+		const inputs = { ...DEFAULT_INPUTS, debt: 20000, education: 'hs' as const };
 		const r = computeScore(inputs);
 		const ids = r.whatIfs.map((w) => w.ruleId);
 		expect(ids).toContain('dti'); // has debt → clear-the-debt lever
-		expect(ids).toContain('degree');
+		expect(ids).toContain('education');
 		expect(ids).not.toContain('smoking'); // default is never-smoker
 
 		const clear = r.whatIfs.find((w) => w.ruleId === 'dti')!;

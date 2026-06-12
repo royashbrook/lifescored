@@ -15,16 +15,6 @@ describe('education / social / civic rules', () => {
 		for (const r of all) expectRuleInvariants(r);
 	});
 
-	it('degree: holding one scores higher; lever only when missing', () => {
-		const r = byId('degree');
-		const w = r.defaultWeight;
-		expect(r.score!({ ...DEFAULT_INPUTS, degree: true }, w)).toBeGreaterThan(
-			r.score!({ ...DEFAULT_INPUTS, degree: false }, w)
-		);
-		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, degree: false })).toBe(true);
-		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, degree: true })).toBe(false);
-	});
-
 	it('social connection is monotonic (Holt-Lunstad)', () => {
 		const r = byId('connection');
 		const s = [0, 1, 2].map((c) => r.score!({ ...DEFAULT_INPUTS, socialConnection: c as 0 | 1 | 2 }, r.defaultWeight));
@@ -48,5 +38,26 @@ describe('education / social / civic rules', () => {
 	it('criminal record rule carries a systemic-bias caveat and partnership a selection caveat', () => {
 		expect(byId('criminal-record').caveat).toBeTruthy();
 		expect(byId('partnership').caveat).toBeTruthy();
+	});
+});
+
+describe('education ladder (v2)', () => {
+	const r = byId('education');
+	const p = (education: 'none' | 'hs' | 'some' | 'bachelor' | 'graduate') =>
+		r.position!({ ...DEFAULT_INPUTS, education });
+
+	it('is monotonic up the ladder and subtractive only at the bottom', () => {
+		expect(p('none')).toBeLessThan(0);
+		expect(p('none')).toBeGreaterThanOrEqual(-0.2);
+		expect(p('hs')).toBeGreaterThan(p('none'));
+		expect(p('some')).toBeGreaterThan(p('hs'));
+		expect(p('bachelor')).toBeGreaterThan(p('some'));
+		expect(p('graduate')).toBe(p('bachelor')); // field-dependent premium: capped at the BA rung
+	});
+
+	it('finish-a-degree lever applies below bachelor only', () => {
+		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, education: 'hs' })).toBe(true);
+		expect(r.whatIf!.applicable({ ...DEFAULT_INPUTS, education: 'bachelor' })).toBe(false);
+		expect(r.whatIf!.transform({ ...DEFAULT_INPUTS, education: 'some' }).education).toBe('bachelor');
 	});
 });

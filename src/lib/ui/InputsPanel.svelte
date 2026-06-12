@@ -20,7 +20,7 @@
 	const f = {
 		country: field('country'), familySupport: field('familySupport'), age: field('age'),
 		sex: field('sex'), income: field('income'), netWorth: field('netWorth'), debt: field('debt'),
-		degree: field('degree'), parentsDegree: field('parentsDegree'), neighborhood: field('neighborhood'),
+		education: field('education'), parentsDegree: field('parentsDegree'), neighborhood: field('neighborhood'),
 		smoker: field('smoker'), exerciseMins: field('exerciseMins'), alcohol: field('alcohol'),
 		sleepHours: field('sleepHours'), insured: field('insured'), bmiBand: field('bmiBand'),
 		latePayments: field('latePayments'), creditUtil: field('creditUtil'),
@@ -41,7 +41,7 @@
 		<Field label="Income / yr"><NumInput bind:value={f.income.value} /></Field>
 		<Field label="Net worth"><NumInput bind:value={f.netWorth.value} /></Field>
 		<Field label="Total debt"><NumInput bind:value={f.debt.value} /></Field>
-		<Field label="Has degree"><Toggle bind:value={f.degree.value} /></Field>
+		<Field label="Education"><SelectInput bind:value={f.education.value} opts={[['none', 'No diploma'], ['hs', 'High school'], ['some', 'Some college'], ['bachelor', "Bachelor's"], ['graduate', 'Graduate']]} /></Field>
 		<Field label="Smoker"><SelectInput bind:value={f.smoker.value} opts={[['never', 'Never'], ['former', 'Former'], ['current', 'Current']]} /></Field>
 	</div>
 

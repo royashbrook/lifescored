@@ -1,5 +1,5 @@
 import type { Profile } from '../share/codec';
-import { DEFAULT_INPUTS } from '../rulebook';
+import { DEFAULT_INPUTS, migrateLegacyInputs } from '../rulebook';
 
 const KEY = 'lifescore:profile';
 
@@ -10,8 +10,9 @@ export function loadStoredProfile(storage: Storage | null): Profile {
 		const raw = storage.getItem(KEY);
 		if (!raw) return fresh;
 		const parsed = JSON.parse(raw) as Partial<Profile>;
+		const migrated = migrateLegacyInputs((parsed.inputs ?? {}) as Record<string, unknown>);
 		return {
-			inputs: { ...DEFAULT_INPUTS, ...(parsed.inputs ?? {}) },
+			inputs: { ...DEFAULT_INPUTS, ...migrated } as Profile['inputs'],
 			overrides: parsed.overrides ?? {}
 		};
 	} catch {

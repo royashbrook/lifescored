@@ -36,4 +36,10 @@ describe('profile persistence', () => {
 		expect(p.inputs.age).toBe(50);
 		expect(p.inputs.country).toBe(DEFAULT_INPUTS.country);
 	});
+
+	it('migrates legacy stored profiles: degree maps to education', () => {
+		const s = memStorage();
+		s.setItem('lifescore:profile', JSON.stringify({ inputs: { degree: true }, overrides: {} }));
+		expect(loadStoredProfile(s).inputs.education).toBe('bachelor');
+	});
 });

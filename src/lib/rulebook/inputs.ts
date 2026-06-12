@@ -42,7 +42,7 @@ export const DEFAULT_INPUTS: Inputs = {
 	creditUtil: 12,
 	emergencyMonths: 1,
 	homeowner: false,
-	degree: false,
+	education: 'hs',
 	employment: 'employed',
 	outlook: 'stable',
 	socialConnection: 1,
@@ -73,13 +73,24 @@ const STRING_ENUMS = {
 	smoker: ['never', 'former', 'current'],
 	alcohol: ['none', 'moderate', 'heavy'],
 	bmiBand: ['under', 'normal', 'over', 'obese'],
+	education: ['none', 'hs', 'some', 'bachelor', 'graduate'],
 	employment: ['employed', 'self', 'unemployed', 'student', 'retired'],
 	outlook: ['declining', 'stable', 'growing']
 } as const;
 
 const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalFootprint', 'latePayments'] as const;
 
-const BOOLEANS = ['parentsDegree', 'insured', 'homeowner', 'degree', 'partnered', 'volunteers', 'criminalRecord', 'voterRegistered'] as const;
+const BOOLEANS = ['parentsDegree', 'insured', 'homeowner', 'partnered', 'volunteers', 'criminalRecord', 'voterRegistered'] as const;
+
+/** v1 stored/shared profiles used `degree: boolean`; map it onto the education ladder. */
+export function migrateLegacyInputs(raw: Record<string, unknown>): Record<string, unknown> {
+	const out = { ...raw };
+	if (!('education' in out) && 'degree' in out) {
+		out.education = out.degree === true ? 'bachelor' : 'hs';
+	}
+	delete out.degree;
+	return out;
+}
 
 export function clampInputs(i: Inputs): Inputs {
 	const out = { ...i };
