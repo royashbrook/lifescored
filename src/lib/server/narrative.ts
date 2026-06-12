@@ -89,9 +89,9 @@ export async function handleNarrative(
 	await deps.kv.put(budgetKey, String(budget + 1), { expirationTtl: COUNTER_TTL });
 
 	try {
-		const res = await deps.fetchFn(`${GEMINI_URL}?key=${deps.apiKey}`, {
+		const res = await deps.fetchFn(GEMINI_URL, {
 			method: 'POST',
-			headers: { 'content-type': 'application/json' },
+			headers: { 'content-type': 'application/json', 'x-goog-api-key': deps.apiKey },
 			body: JSON.stringify({
 				contents: [{ parts: [{ text: buildPrompt(payload) }] }],
 				generationConfig: { temperature: 0.4, maxOutputTokens: 400 }

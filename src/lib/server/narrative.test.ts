@@ -87,6 +87,7 @@ describe('handleNarrative', () => {
 		const r = await handleNarrative(PAYLOAD, '1.2.3.4', deps(kv, fetchFn));
 		expect(r).toEqual({ fallback: true });
 		expect(fetchFn).not.toHaveBeenCalled();
+		expect(kv.store.has('rl:1.2.3.4:2026-06-11')).toBe(false);
 	});
 
 	it('budget guard still serves cache hits', async () => {
