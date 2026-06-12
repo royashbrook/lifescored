@@ -1,0 +1,25 @@
+import { describe, expect, it } from 'vitest';
+import { clampInputs, COUNTRIES, DEFAULT_INPUTS, NUMERIC_CLAMPS } from './inputs';
+
+describe('inputs', () => {
+	it('defaults are already within clamps (round-trips unchanged)', () => {
+		expect(clampInputs(DEFAULT_INPUTS)).toEqual(DEFAULT_INPUTS);
+	});
+
+	it('clamps out-of-range numerics to their bounds', () => {
+		const wild = { ...DEFAULT_INPUTS, age: 900, debt: -5, creditUtil: 400 };
+		const c = clampInputs(wild);
+		expect(c.age).toBe(NUMERIC_CLAMPS.age[1]);
+		expect(c.debt).toBe(0);
+		expect(c.creditUtil).toBe(100);
+	});
+
+	it('every country has a name, income tier, base fraction and henley band', () => {
+		for (const c of Object.values(COUNTRIES)) {
+			expect(c.name.length).toBeGreaterThan(0);
+			expect(c.baseFrac).toBeGreaterThanOrEqual(0);
+			expect(c.baseFrac).toBeLessThanOrEqual(1);
+			expect([0, 1, 2]).toContain(c.henleyBand);
+		}
+	});
+});
