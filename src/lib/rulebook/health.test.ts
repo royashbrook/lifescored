@@ -15,7 +15,7 @@ describe('health rules', () => {
 
 	it('life-table is starting_point; behaviors are your_moves', () => {
 		expect(byId('life-table').tier).toBe('starting_point');
-		for (const id of ['smoking', 'exercise', 'alcohol', 'sleep', 'insurance']) {
+		for (const id of ['smoking', 'exercise', 'alcohol', 'sleep', 'insurance', 'bmi']) {
 			expect(byId(id).tier).toBe('your_moves');
 		}
 	});
@@ -58,5 +58,12 @@ describe('health rules', () => {
 
 	it('bmi carries a caveat about the measure itself', () => {
 		expect(byId('bmi').caveat).toBeTruthy();
+	});
+
+	it('alcohol: none > moderate > heavy', () => {
+		const r = byId('alcohol');
+		const s = (alcohol: 'none' | 'moderate' | 'heavy') => r.score({ ...DEFAULT_INPUTS, alcohol }, r.defaultWeight);
+		expect(s('none')).toBeGreaterThan(s('moderate'));
+		expect(s('moderate')).toBeGreaterThan(s('heavy'));
 	});
 });
