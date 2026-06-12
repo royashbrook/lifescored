@@ -55,7 +55,7 @@ describe('computeScore', () => {
 		expect(r.whatIfs.map((w) => w.ruleId)).not.toContain('dti');
 	});
 
-	it('never produces NaN even from hostile decoded profiles', () => {
+	it('never produces NaN from hostile input values', () => {
 		const hostile = { ...DEFAULT_INPUTS, smoker: 'yes', familySupport: 99 } as unknown as typeof DEFAULT_INPUTS;
 		const r = computeScore(hostile);
 		expect(Number.isFinite(r.composite)).toBe(true);

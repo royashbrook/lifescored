@@ -34,7 +34,7 @@ export interface ScoreResult {
 	whatIfs: WhatIfDelta[];
 }
 
-const MAX_WEIGHT = 50;
+export const MAX_WEIGHT = 50;
 
 function compositeOf(inputs: Inputs, overrides: Overrides): number {
 	inputs = clampInputs(inputs);

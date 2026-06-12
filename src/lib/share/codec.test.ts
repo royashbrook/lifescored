@@ -25,6 +25,19 @@ describe('share codec', () => {
 		expect(await decodeProfile(nulls)).toBeNull(); // null fields rejected
 	});
 
+	it('sanitizes hostile overrides and merges missing inputs over defaults', async () => {
+		const hostile = await encodeProfile({
+			inputs: { age: 44 },
+			overrides: { country: { weight: 'abc' }, dti: { enabled: 'yes' }, bmi: { weight: 12, enabled: false }, junk: null }
+		} as never);
+		const p = (await decodeProfile(hostile))!;
+		expect(p.inputs.age).toBe(44);
+		expect(p.inputs.country).toBe(DEFAULT_INPUTS.country); // missing keys filled
+		expect(p.overrides.country).toBeUndefined(); // NaN weight dropped
+		expect(p.overrides.dti).toBeUndefined(); // non-boolean enabled dropped
+		expect(p.overrides.bmi).toEqual({ weight: 12, enabled: false }); // valid survives
+	});
+
 	it('produces URLs meaningfully shorter than raw JSON', async () => {
 		const profile = { inputs: DEFAULT_INPUTS, overrides: {} };
 		const encoded = await encodeProfile(profile);

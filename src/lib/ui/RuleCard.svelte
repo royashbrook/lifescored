@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { RuleOverride } from '$lib/engine/score';
+	import { MAX_WEIGHT, type RuleOverride } from '$lib/engine/score';
 	import { TIERS, type Rule } from '$lib/rulebook';
 	import Tag from './Tag.svelte';
 
@@ -51,7 +51,7 @@
 		<input
 			type="range"
 			min="0"
-			max="50"
+			max={MAX_WEIGHT}
 			value={weight}
 			aria-label="weight for {rule.label}"
 			class="h-1 w-40 accent-[var(--moves)]"

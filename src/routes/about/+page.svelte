@@ -4,6 +4,10 @@
 	const speculative = RULES.length - sourced;
 </script>
 
+<svelte:head>
+	<title>Why this exists — Life Score</title>
+</svelte:head>
+
 <div class="mt-2 max-w-[620px] space-y-5 text-[13.5px] leading-relaxed" style:color="var(--ink)">
 	<section>
 		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">Why this exists</h2>

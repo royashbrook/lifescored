@@ -9,6 +9,10 @@
 	const edited = $derived(Object.keys(profile.overrides).length > 0);
 </script>
 
+<svelte:head>
+	<title>Rulebook — Life Score</title>
+</svelte:head>
+
 <p class="mt-1 mb-2 max-w-[560px] text-[12.5px] leading-snug" style:color="var(--ink-dim)">
 	The whole pile of business rules, in one place. Each rule states its logic in plain English, declares whether
 	it's <span style:color="var(--sourced)">sourced</span> or a flagged <span style:color="var(--spec)">guess</span>,

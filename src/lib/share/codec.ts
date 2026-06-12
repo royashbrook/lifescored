@@ -1,4 +1,5 @@
 import type { Overrides } from '../engine/score';
+import { DEFAULT_INPUTS } from '../rulebook';
 import type { Inputs } from '../rulebook';
 
 export interface Profile {
@@ -35,7 +36,17 @@ export async function decodeProfile(encoded: string): Promise<Profile | null> {
 		const inflated = await pipe(bytes, new DecompressionStream('deflate-raw'));
 		const parsed = JSON.parse(new TextDecoder().decode(inflated));
 		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object' || !parsed.overrides || typeof parsed.overrides !== 'object') return null;
-		return parsed as Profile;
+		const inputs = { ...DEFAULT_INPUTS, ...parsed.inputs } as Profile['inputs'];
+		const overrides: Profile['overrides'] = {};
+		for (const [id, o] of Object.entries(parsed.overrides as Record<string, unknown>)) {
+			if (!o || typeof o !== 'object') continue;
+			const { weight, enabled } = o as { weight?: unknown; enabled?: unknown };
+			const clean: { weight?: number; enabled?: boolean } = {};
+			if (typeof weight === 'number' && Number.isFinite(weight)) clean.weight = weight;
+			if (typeof enabled === 'boolean') clean.enabled = enabled;
+			if (Object.keys(clean).length > 0) overrides[id] = clean;
+		}
+		return { inputs, overrides };
 	} catch {
 		return null;
 	}

@@ -67,7 +67,7 @@
 		</button>
 	{:else if shareNotice === 'bad'}
 		<button class="mb-2 text-[11px]" style:color="var(--spec)" onclick={() => (shareNotice = null)}>
-			Couldn't read that share link — showing defaults. dismiss ×
+			Couldn't read that share link — your existing data is untouched. dismiss ×
 		</button>
 	{/if}
 

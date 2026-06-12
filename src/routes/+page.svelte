@@ -34,6 +34,10 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Life Score — every weight shown</title>
+</svelte:head>
+
 <div class="mt-1 mb-4 flex items-start justify-between gap-4">
 	<p class="max-w-[540px] text-[12.5px] leading-snug" style:color="var(--ink-dim)">
 		Not a verdict on your worth — a look at how existing systems would position you, every weight shown.
