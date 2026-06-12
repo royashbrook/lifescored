@@ -12,11 +12,8 @@ export const BASELINE_WEIGHT = 10;
 
 /** The one place the formula lives: points = round(clamped position × weight). */
 export function pointsFor(rule: Rule, inputs: Inputs, weight: number): number {
-	if (rule.position && rule.bounds) {
-		const p = clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1]);
-		return Math.round(p * weight) || 0;
-	}
-	return rule.score!(inputs, weight);
+	const p = clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1]);
+	return Math.round(p * weight) || 0;
 }
 
 export interface RuleScore {
@@ -30,7 +27,7 @@ export interface RuleScore {
 	max: number;
 	enabled: boolean;
 	description: string;
-	position?: number;
+	position: number;
 }
 
 export interface WhatIfDelta {
@@ -72,10 +69,8 @@ export function computeScore(rawInputs: Inputs, overrides: Overrides = {}): Scor
 		const o = overrides[rule.id];
 		const enabled = o?.enabled !== false;
 		const max = clampWeight(o?.weight ?? rule.defaultWeight);
-		const value = pointsFor(rule, inputs, max);
-		const position = rule.position && rule.bounds
-			? clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1])
-			: undefined;
+		const position = clamp(rule.position(inputs), rule.bounds[0], rule.bounds[1]);
+		const value = Math.round(position * max) || 0;
 		if (enabled) {
 			tierSubtotals[rule.tier] += value;
 			domainSubtotals[rule.domain] += value;
