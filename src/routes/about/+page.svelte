@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-	<title>Why this exists — Life Score</title>
+	<title>why · life. scored.</title>
 </svelte:head>
 
 <div class="mt-2 max-w-[620px] space-y-5 text-[13.5px] leading-relaxed" style:color="var(--ink)">

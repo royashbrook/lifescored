@@ -35,7 +35,7 @@
 </script>
 
 <svelte:head>
-	<title>Life Score — every weight shown</title>
+	<title>life. scored. — every weight shown</title>
 </svelte:head>
 
 <div class="mt-1 mb-4 flex items-start justify-between gap-4">

@@ -10,7 +10,7 @@
 </script>
 
 <svelte:head>
-	<title>Rulebook — Life Score</title>
+	<title>rulebook · life. scored.</title>
 </svelte:head>
 
 <p class="mt-1 mb-2 max-w-[560px] text-[12.5px] leading-snug" style:color="var(--ink-dim)">

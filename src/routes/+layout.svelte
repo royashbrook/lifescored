@@ -45,8 +45,8 @@
 <div class="mx-auto w-full max-w-[760px] px-5 pt-7 pb-10">
 	<header class="mb-1 flex flex-wrap items-end justify-between gap-2">
 		<h1 class="text-[30px] leading-none font-semibold tracking-[-0.01em]" style:font-family="var(--font-display)">
-			Life Score
-		</h1>
+			life. scored.
+</h1>
 		<nav class="flex gap-1">
 			{#each links as [href, label] (href)}
 				<a

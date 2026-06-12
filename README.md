@@ -1,8 +1,8 @@
-# Life Score
+# life. scored.
 
-You are already a number — a credit score, an actuarial row, a callback probability.
-This app rebuilds those numbers in the open: every rule cited or flagged as a guess,
-every weight visible and editable. Transparency, not judgment.
+**You are already a number.**
+
+A credit score, an actuarial row, a callback probability — this app rebuilds those numbers in the open: every rule cited or flagged as a guess, every weight visible and editable. Transparency, not judgment.
 
 ## Stack
 
