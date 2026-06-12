@@ -90,7 +90,7 @@ export const SOCIAL_RULES: Rule[] = [
 		logic: 'Employers and landlords screen public profiles, but no public dataset quantifies the effect on outcomes — so the weight is a flagged guess.',
 		evidence: 'SPECULATIVE',
 		source: {
-			name: 'Harvard Business School / CareerBuilder screening surveys',
+			name: 'CareerBuilder — social media screening survey (2018)',
 			finding: 'Majorities of employers report screening candidates online and rejecting some on what they find — survey evidence, not an outcome dataset. Hence speculative.',
 			url: 'https://www.press.careerbuilder.com/2018-08-09-More-Than-Half-of-Employers-Have-Found-Content-on-Social-Media-That-Caused-Them-NOT-to-Hire-a-Candidate-According-to-Recent-CareerBuilder-Survey',
 			accessed: ACCESSED

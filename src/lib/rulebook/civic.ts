@@ -8,7 +8,7 @@ export const CIVIC_RULES: Rule[] = [
 		domain: 'civic',
 		tier: 'your_moves',
 		label: 'Criminal record',
-		controllable: true,
+		controllable: false,
 		defaultWeight: 8,
 		logic: 'A record roughly halves employer callbacks in audit studies. Scored as the labor market scores it — which is exactly the kind of opaque penalty this app exists to expose.',
 		evidence: 'SOURCED',
