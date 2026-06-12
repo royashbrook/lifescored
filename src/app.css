@@ -1,0 +1,25 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/fraunces';
+@import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource/newsreader';
+
+:root {
+	--bg: #14161a;
+	--panel: #191c22;
+	--ink: #e7e4dc;
+	--ink-dim: #8b8f99;
+	--start: #7c93b8;
+	--moves: #d9a441;
+	--sourced: #6fbf96;
+	--spec: #d8a85c;
+	--line: rgba(255, 255, 255, 0.08);
+	--font-display: 'Fraunces Variable', serif;
+	--font-body: 'Newsreader', Georgia, serif;
+	--font-mono: 'JetBrains Mono Variable', monospace;
+}
+
+body {
+	background: var(--bg);
+	color: var(--ink);
+	font-family: var(--font-body);
+}

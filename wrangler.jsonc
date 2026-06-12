@@ -1,0 +1,8 @@
+{
+	"name": "lifescore",
+	"compatibility_date": "2026-06-01",
+	"main": ".svelte-kit/cloudflare/_worker.js",
+	"assets": { "binding": "ASSETS", "directory": ".svelte-kit/cloudflare" },
+	"kv_namespaces": [{ "binding": "NARRATIVE_KV", "id": "TO_BE_CREATED_AT_DEPLOY" }]
+	// GEMINI_API_KEY is a secret: `wrangler secret put GEMINI_API_KEY`
+}
