@@ -54,7 +54,7 @@ export const SOCIAL_RULES: Rule[] = [
 		source: {
 			name: 'AmeriCorps — Health Benefits of Volunteering',
 			finding: 'Volunteers report better health and lower depression; older volunteers show reduced mortality in longitudinal studies.',
-			url: 'https://americorps.gov/about/our-impact/evidence-research',
+			url: 'https://www.americorps.gov/about/our-impact/volunteering-civic-life',
 			accessed: ACCESSED
 		},
 		inputs: ['volunteers'],
@@ -92,7 +92,7 @@ export const SOCIAL_RULES: Rule[] = [
 		source: {
 			name: 'CareerBuilder — social media screening survey (2018)',
 			finding: 'Majorities of employers report screening candidates online and rejecting some on what they find — survey evidence, not an outcome dataset. Hence speculative.',
-			url: 'https://www.press.careerbuilder.com/2018-08-09-More-Than-Half-of-Employers-Have-Found-Content-on-Social-Media-That-Caused-Them-NOT-to-Hire-a-Candidate-According-to-Recent-CareerBuilder-Survey',
+			url: 'https://www.prnewswire.com/news-releases/more-than-half-of-employers-have-found-content-on-social-media-that-caused-them-not-to-hire-a-candidate-according-to-recent-careerbuilder-survey-300694437.html',
 			accessed: ACCESSED
 		},
 		inputs: ['digitalFootprint'],

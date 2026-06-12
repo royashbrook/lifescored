@@ -34,7 +34,7 @@ export const HEALTH_RULES: Rule[] = [
 		source: {
 			name: 'CDC — Tobacco-Related Mortality',
 			finding: 'Cigarette smoking reduces life expectancy by at least 10 years; quitting before 40 recovers nearly all of it.',
-			url: 'https://www.cdc.gov/tobacco/data_statistics/fact_sheets/health_effects/tobacco_related_mortality/index.htm',
+			url: 'https://archive.cdc.gov/www_cdc_gov/tobacco/data_statistics/fact_sheets/health_effects/tobacco_related_mortality/index.htm',
 			accessed: ACCESSED
 		},
 		inputs: ['smoker'],
