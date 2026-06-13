@@ -39,7 +39,7 @@
 </script>
 
 <div class="mb-5 rounded-lg p-3.5" style:background="var(--panel)" style:border="1px solid var(--line)">
-	<div class="grid grid-cols-2 gap-x-4 gap-y-3 sm:grid-cols-3">
+	<div class="grid grid-cols-2 gap-x-4 gap-y-4 sm:grid-cols-3">
 		<Field label="Country" help={FIELD_HELP.country}><SelectInput bind:value={f.country.value} opts={countryOpts} /></Field>
 		<Field label="Age" help={FIELD_HELP.age}><NumInput bind:value={f.age.value} step={1} prefix="" /></Field>
 		<Field label="Family support" help={FIELD_HELP.familySupport}><SelectInput bind:value={f.familySupport.value} opts={[[0, 'None'], [1, 'Some'], [2, 'Substantial']]} /></Field>

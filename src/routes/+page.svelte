@@ -43,13 +43,13 @@
 	<title>life. scored. {result.composite.toLocaleString('en-US')}</title>
 </svelte:head>
 
-<div class="mt-1 mb-4 flex items-start justify-between gap-4">
-	<p class="max-w-[540px] text-[12.5px] leading-snug" style:color="var(--ink-dim)">
+<div class="mt-2 mb-6 flex items-start justify-between gap-5">
+	<p class="max-w-[540px] text-[13px] leading-relaxed" style:color="var(--ink-dim)">
 		Not a verdict on your worth — a look at how existing systems would position you, every weight shown.
 		The composite below is the least useful number here; the breakdown is the point.
 	</p>
 	<div class="text-right">
-		<div class="text-[10px] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">COMPOSITE</div>
+		<div class="text-[11px] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">COMPOSITE</div>
 		<div data-testid="composite" class="text-[26px] font-bold tabular-nums" style:font-family="var(--font-mono)">{result.composite.toLocaleString('en-US')}</div>
 	</div>
 </div>
@@ -57,6 +57,8 @@
 <PresetBar {profile} />
 
 <PackBar {profile} />
+
+<div class="mt-6 mb-5 border-t" style:border-color="var(--line)"></div>
 
 <InputsPanel {profile} />
 

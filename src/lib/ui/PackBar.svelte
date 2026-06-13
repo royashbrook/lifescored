@@ -5,7 +5,7 @@
 </script>
 
 <div class="mb-4">
-	<div class="mb-2 text-[10px] tracking-[0.1em] uppercase" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+	<div class="mb-2.5 text-[11px] tracking-[0.1em] uppercase" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		Layers <span class="lowercase tracking-normal">— opt-in, off by default</span>
 	</div>
 	<div class="flex flex-wrap gap-2">
