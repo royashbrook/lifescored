@@ -37,5 +37,5 @@ test('a definition popover opens with a rule link', async ({ page }) => {
 test('page title carries the composite for meaningful sharing', async ({ page }) => {
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
-	await expect(page).toHaveTitle(/life\. scored — [\d,]+/);
+	await expect(page).toHaveTitle(/life\. scored\. [\d,]+/);
 });
