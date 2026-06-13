@@ -17,17 +17,24 @@
 
 	let shareNotice = $state<'ok' | 'bad' | null>(null);
 
-	// Import a shared profile from the incoming #p=1.<payload> hash (runs once), then
+	// While someone is just *looking* at a shared link they haven't touched, this holds the
+	// JSON of those imported answers. The persist effect below refuses to write to localStorage
+	// while the current state still equals this — so opening a friend's link never silently
+	// overwrites the answers you already saved. The moment you change anything, the snapshot
+	// diverges, this guard stops matching, and your edits start saving as your own.
+	let sharedBaseline: string | null = null;
+
+	// Import a shared set of answers from the incoming #p=1.<payload> hash (runs once), then
 	// strip the hash. We deliberately do NOT keep the URL fragment live: a fragment that
-	// silently mirrored income/assets/debt would leak them through the browser's native
-	// share. Sharing is explicit now — see ShareButton. The imported profile is persisted
-	// to localStorage by the effect below, so dropping the hash loses nothing.
+	// silently mirrored income/assets/debt would leak them through the browser's native share.
+	// Sharing is explicit now — see ShareButton.
 	$effect(() => {
 		if (!browser) return;
 		if (!initialHash.startsWith('#p=')) return;
 		decodeProfile(initialHash.slice(3)).then((decoded) => {
 			if (decoded) {
 				profile.replace(decoded);
+				sharedBaseline = JSON.stringify(decoded);
 				shareNotice = 'ok';
 			} else {
 				shareNotice = 'bad';
@@ -36,9 +43,12 @@
 		});
 	});
 
-	// Persist on every change.
+	// Persist on every change — except while viewing an untouched shared link (see above),
+	// so a peek at someone else's answers doesn't clobber your own saved ones.
 	$effect(() => {
-		storeProfile(browser ? localStorage : null, profile.snapshot());
+		const snap = profile.snapshot();
+		if (sharedBaseline !== null && JSON.stringify(snap) === sharedBaseline) return;
+		storeProfile(browser ? localStorage : null, snap);
 	});
 
 	const links = [
@@ -69,8 +79,9 @@
 	</header>
 
 	{#if shareNotice === 'ok'}
-		<button class="mb-2 text-[11px]" style:color="var(--sourced)" onclick={() => (shareNotice = null)}>
-			Loaded a shared profile — it stays on this device. dismiss ×
+		<button class="mb-2 text-left text-[11px]" style:color="var(--sourced)" onclick={() => (shareNotice = null)}>
+			Showing answers from a shared link. Your own saved answers are untouched — change anything here and it
+			becomes yours. dismiss ×
 		</button>
 	{:else if shareNotice === 'bad'}
 		<button class="mb-2 text-[11px]" style:color="var(--spec)" onclick={() => (shareNotice = null)}>
@@ -87,8 +98,10 @@
 		style:color="var(--ink-dim)"
 	>
 		<span>life. scored.</span>
-		<span>· no tracking</span>
-		<a href="https://github.com/royashbrook/lifescored" target="_blank" rel="noreferrer" class="underline" style:color="var(--ink-dim)">· open source ↗</a>
+		<span aria-hidden="true">·</span>
+		<a href="/about#how-it-works" class="underline" style:color="var(--ink-dim)">no tracking</a>
+		<span aria-hidden="true">·</span>
+		<a href="https://github.com/royashbrook/lifescored" target="_blank" rel="noreferrer" class="underline" style:color="var(--ink-dim)">open source</a>
 		<a
 			href="https://github.com/sponsors/royashbrook"
 			target="_blank"
