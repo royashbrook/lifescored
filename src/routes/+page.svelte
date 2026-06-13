@@ -2,10 +2,12 @@
 	import { getContext } from 'svelte';
 	import { computeScore } from '$lib/engine/score';
 	import { RULES, TIERS, type Tier } from '$lib/rulebook';
+	import { activePacks } from '$lib/state/profile.svelte';
 	import type { createProfileState } from '$lib/state/profile.svelte';
 	import Callout from '$lib/ui/Callout.svelte';
 	import InputsPanel from '$lib/ui/InputsPanel.svelte';
 	import Lever from '$lib/ui/Lever.svelte';
+	import PackBar from '$lib/ui/PackBar.svelte';
 	import PresetBar from '$lib/ui/PresetBar.svelte';
 	import NarrativeCard from '$lib/ui/NarrativeCard.svelte';
 	import ScoreRow from '$lib/ui/ScoreRow.svelte';
@@ -17,7 +19,8 @@
 
 	let activeLevers = $state<string[]>([]);
 
-	const baseResult = $derived(computeScore(profile.inputs, profile.overrides));
+	const packs = $derived(activePacks(profile));
+	const baseResult = $derived(computeScore(profile.inputs, profile.overrides, packs));
 
 	// Effective inputs after applying active what-if levers (transforms live on RULES).
 	const effective = $derived(
@@ -26,7 +29,7 @@
 			profile.inputs
 		)
 	);
-	const result = $derived(computeScore(effective, profile.overrides));
+	const result = $derived(computeScore(effective, profile.overrides, packs));
 	const moveDelta = $derived(result.composite - baseResult.composite);
 
 	const tierKeys = Object.keys(TIERS) as Tier[];
@@ -52,6 +55,8 @@
 </div>
 
 <PresetBar {profile} />
+
+<PackBar {profile} />
 
 <InputsPanel {profile} />
 

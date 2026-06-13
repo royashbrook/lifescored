@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { COUNTRIES, FIELD_HELP } from '$lib/rulebook';
+	import { activePacks } from '$lib/state/profile.svelte';
 	import type { createProfileState } from '$lib/state/profile.svelte';
 	import Field from './Field.svelte';
 	import NumInput from './NumInput.svelte';
@@ -8,6 +9,7 @@
 
 	let { profile }: { profile: ReturnType<typeof createProfileState> } = $props();
 	let expanded = $state(false);
+	const packs = $derived(activePacks(profile));
 
 	// bind: helpers — components bind to these proxies, writes route through setInput
 	function field<K extends keyof typeof profile.inputs>(key: K) {
@@ -30,7 +32,9 @@
 		socialConnection: field('socialConnection'), partnered: field('partnered'),
 		volunteers: field('volunteers'), drivingIncidents: field('drivingIncidents'),
 		digitalFootprint: field('digitalFootprint'), criminalRecord: field('criminalRecord'),
-		voterRegistered: field('voterRegistered')
+		voterRegistered: field('voterRegistered'),
+		wash: field('wash'), infrastructure: field('infrastructure'),
+		foodSecurity: field('foodSecurity'), stability: field('stability')
 	};
 </script>
 
@@ -70,11 +74,24 @@
 			<Field label="Partnered" help={FIELD_HELP.partnered}><Toggle bind:value={f.partnered.value} /></Field>
 			<Field label="Volunteers" help={FIELD_HELP.volunteers}><Toggle bind:value={f.volunteers.value} /></Field>
 			<Field label="Driving incidents 3y" help={FIELD_HELP.drivingIncidents}><NumInput bind:value={f.drivingIncidents.value} step={1} prefix="" /></Field>
+			{#if packs.has('speculative')}
 			<Field label="Public footprint" help={FIELD_HELP.digitalFootprint}><SelectInput bind:value={f.digitalFootprint.value} opts={[[0, 'Screens badly'], [1, 'Neutral'], [2, 'Curated']]} /></Field>
+			{/if}
 			<Field label="Housing" help={FIELD_HELP.housing}><SelectInput bind:value={f.housing.value} opts={[['stable', 'Stable'], ['insecure', 'Insecure'], ['unhoused', 'Unhoused']]} /></Field>
 			<Field label="Banking" help={FIELD_HELP.banking}><SelectInput bind:value={f.banking.value} opts={[['banked', 'Banked'], ['underbanked', 'Underbanked'], ['unbanked', 'Unbanked']]} /></Field>
 			<Field label="Criminal record" help={FIELD_HELP.criminalRecord}><Toggle bind:value={f.criminalRecord.value} /></Field>
+			{#if packs.has('speculative')}
 			<Field label="Registered to vote" help={FIELD_HELP.voterRegistered}><Toggle bind:value={f.voterRegistered.value} /></Field>
+			{/if}
+		</div>
+	{/if}
+
+	{#if packs.has('foundations')}
+		<div class="mt-3 grid grid-cols-2 gap-x-4 gap-y-3 border-t pt-3 sm:grid-cols-3" style:border-color="var(--line)">
+			<Field label="Clean water" help={FIELD_HELP.wash}><SelectInput bind:value={f.wash.value} opts={[['safe', 'Safe water + sanitation'], ['basic', 'Basic'], ['none', 'Unsafe / none']]} /></Field>
+			<Field label="Electricity + internet" help={FIELD_HELP.infrastructure}><SelectInput bind:value={f.infrastructure.value} opts={[['both', 'Both'], ['electricity', 'Electricity only'], ['neither', 'Neither']]} /></Field>
+			<Field label="Food security" help={FIELD_HELP.foodSecurity}><SelectInput bind:value={f.foodSecurity.value} opts={[['secure', 'Secure'], ['marginal', 'Marginal'], ['insecure', 'Insecure']]} /></Field>
+			<Field label="Peace + rule of law" help={FIELD_HELP.stability}><SelectInput bind:value={f.stability.value} opts={[['stable', 'Stable'], ['fragile', 'Fragile'], ['conflict', 'Active conflict']]} /></Field>
 		</div>
 	{/if}
 </div>
