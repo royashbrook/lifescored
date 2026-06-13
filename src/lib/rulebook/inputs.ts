@@ -36,7 +36,7 @@ export const DEFAULT_INPUTS: Inputs = {
 	insured: true,
 	bmiBand: 'normal',
 	income: 46000,
-	netWorth: 6000,
+	assets: 6000,
 	debt: 0,
 	latePayments: 0,
 	creditUtil: 12,
@@ -60,14 +60,14 @@ export const DEFAULT_INPUTS: Inputs = {
 	stability: 'stable'
 };
 
-type NumericKey = 'age' | 'exerciseMins' | 'sleepHours' | 'income' | 'netWorth' | 'debt' | 'creditUtil' | 'emergencyMonths' | 'drivingIncidents';
+type NumericKey = 'age' | 'exerciseMins' | 'sleepHours' | 'income' | 'assets' | 'debt' | 'creditUtil' | 'emergencyMonths' | 'drivingIncidents';
 
 export const NUMERIC_CLAMPS: Record<NumericKey, [number, number]> = {
 	age: [16, 100],
 	exerciseMins: [0, 2000],
 	sleepHours: [3, 12],
 	income: [0, 10_000_000_000],
-	netWorth: [-5_000_000, 1_000_000_000_000_000],
+	assets: [0, 1_000_000_000_000_000],
 	debt: [0, 100_000_000],
 	creditUtil: [0, 100],
 	emergencyMonths: [0, 60],
@@ -94,13 +94,25 @@ const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalF
 
 const BOOLEANS = ['parentsDegree', 'insured', 'homeowner', 'partnered', 'volunteers', 'criminalRecord', 'voterRegistered'] as const;
 
-/** v1 stored/shared profiles used `degree: boolean`; map it onto the education ladder. */
+/**
+ * Migrate older stored/shared profiles.
+ * - v1 used `degree: boolean`; map it onto the education ladder.
+ * - pre-split profiles stored `netWorth` (already net of debt). We now store gross
+ *   `assets` and derive net worth = assets − debt, so assets = netWorth + debt
+ *   (floored at 0, since assets can't be negative). This preserves the old net worth.
+ */
 export function migrateLegacyInputs(raw: Record<string, unknown>): Record<string, unknown> {
 	const out = { ...raw };
 	if (!('education' in out) && 'degree' in out) {
 		out.education = out.degree === true ? 'bachelor' : 'hs';
 	}
 	delete out.degree;
+	if (!('assets' in out) && 'netWorth' in out) {
+		const nw = Number(out.netWorth) || 0;
+		const debt = Number(out.debt) || 0;
+		out.assets = Math.max(0, nw + debt);
+	}
+	delete out.netWorth;
 	return out;
 }
 

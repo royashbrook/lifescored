@@ -29,7 +29,7 @@ export interface Inputs {
 	bmiBand: 'under' | 'normal' | 'over' | 'obese';
 	// finance
 	income: number;
-	netWorth: number;
+	assets: number;
 	debt: number;
 	latePayments: 0 | 1 | 2; // none in 24mo / one / multiple
 	creditUtil: number; // percent of available revolving credit used

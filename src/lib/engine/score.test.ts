@@ -60,7 +60,7 @@ describe('computeScore', () => {
 	});
 
 	it('a trillionaire profile survives input clamping end-to-end (uncapped wealth)', () => {
-		const r = computeScore({ ...DEFAULT_INPUTS, age: 54, netWorth: 1e12 });
+		const r = computeScore({ ...DEFAULT_INPUTS, age: 54, assets: 1e12 });
 		const nw = r.perRule.find((p) => p.id === 'networth')!;
 		expect(nw.value).toBeGreaterThan(100);
 		expect(Number.isFinite(r.composite)).toBe(true);

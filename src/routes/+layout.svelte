@@ -5,7 +5,7 @@
 	import { replaceState } from '$app/navigation';
 	import { setContext } from 'svelte';
 	import { createProfileState, loadStoredProfile, storeProfile } from '$lib/state/profile.svelte';
-	import { decodeProfile, encodeProfile } from '$lib/share/codec';
+	import { decodeProfile } from '$lib/share/codec';
 
 	let { children } = $props();
 
@@ -17,8 +17,11 @@
 
 	let shareNotice = $state<'ok' | 'bad' | null>(null);
 
-	// Import a shared profile from the incoming #p=1.<payload> hash (runs once).
-	// We do NOT strip the hash — the live-reflect effect below keeps it current.
+	// Import a shared profile from the incoming #p=1.<payload> hash (runs once), then
+	// strip the hash. We deliberately do NOT keep the URL fragment live: a fragment that
+	// silently mirrored income/assets/debt would leak them through the browser's native
+	// share. Sharing is explicit now — see ShareButton. The imported profile is persisted
+	// to localStorage by the effect below, so dropping the hash loses nothing.
 	$effect(() => {
 		if (!browser) return;
 		if (!initialHash.startsWith('#p=')) return;
@@ -29,22 +32,8 @@
 			} else {
 				shareNotice = 'bad';
 			}
+			replaceState(`${location.pathname}${location.search}`, {});
 		});
-	});
-
-	// Keep the URL fragment live so the browser's native share carries the profile.
-	// Debounced so rapid edits coalesce; the import above wins the startup race because
-	// initialHash was captured before this effect's first write and decode completes
-	// well within the 300ms debounce.
-	$effect(() => {
-		if (!browser) return;
-		const snap = profile.snapshot();
-		const timer = setTimeout(() => {
-			encodeProfile(snap).then((encoded) => {
-				replaceState(`${location.pathname}${location.search}#p=${encoded}`, {});
-			});
-		}, 300);
-		return () => clearTimeout(timer);
 	});
 
 	// Persist on every change.
