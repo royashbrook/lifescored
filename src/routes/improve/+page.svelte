@@ -47,12 +47,13 @@
 		<p>
 			The scores you can move are the <span style:color="var(--moves)">your moves</span> ones — the part that was
 			ever up for grabs. For almost all of them, the honest first answer isn't a product or a subscription. It's
-			free. Below is a plain directory: for each area, the simple truth, then the public resources worth starting
-			with.
+			free. So for each area you'll find two things: the most basic next step, in plain language, that's free to
+			everyone — and then a few public links to the best free offerings we could find for it.
 		</p>
 		<p class="mt-2 text-[12px]" style:color="var(--ink-dim)">
-			Every link here is a free, public resource. They open external sites with their own policies — we don't track
-			you, and we get nothing if you click. No affiliate links, by design.
+			Everything linked is, as far as we can tell, a free and public resource — government sites, nonprofits, open
+			courses. They're external, with their own policies; we don't track you and earn nothing if you click. No
+			affiliate links, by design — just free help where we could find it.
 		</p>
 	</section>
 
