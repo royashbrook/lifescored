@@ -53,3 +53,9 @@ test('the score page links to the guided setup', async ({ page }) => {
 	await page.goto('/');
 	await expect(page.getByRole('link', { name: /walk through it one question at a time/ })).toHaveAttribute('href', '/start');
 });
+
+test('the wizard shows an early privacy reassurance linking to the why page', async ({ page }) => {
+	await page.goto('/start');
+	await expect(page.getByText(/Nothing you enter is collected/)).toBeVisible();
+	await expect(page.getByRole('link', { name: /more on the why page/ })).toHaveAttribute('href', '/about');
+});

@@ -32,6 +32,12 @@
 		<div class="h-full rounded-full transition-all duration-300" style:background="var(--moves)" style:width="{((i + 1) / total) * 100}%"></div>
 	</div>
 
+	<!-- privacy reassurance: a step-through form feels like submitting; remind people it isn't -->
+	<p class="mt-3 text-[11px] leading-relaxed" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+		Nothing you enter is collected, sent, or stored on a server — it stays in your browser. The site is free, for
+		information and perspective. <a href="/about" class="underline" style:color="var(--start)">more on the why page →</a>
+	</p>
+
 	<!-- question -->
 	<h2 class="mt-7 text-[22px] leading-snug" style:font-family="var(--font-display)" style:color="var(--ink)">
 		{step.question}
