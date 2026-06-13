@@ -13,7 +13,7 @@ export const FIELD_HELP: Record<InputKey, FieldHelp> = {
 	neighborhood: { ruleId: 'neighborhood', help: 'The opportunity level of the area you grew up in — the census-tract effect on adult income.' },
 	age: { ruleId: 'life-table', help: 'Your age — an insurer reads it straight off the life table; younger means more runway.' },
 	sex: { ruleId: 'life-table', help: 'Used only for the actuarial life-table baseline; women outlive men by about five years on average.' },
-	smoker: { ruleId: 'smoking', help: 'Your smoking status — the single largest behavioral factor insurers price.' },
+	smoker: { ruleId: 'smoking', help: 'Any nicotine — cigarettes, vaping, cigars, or chew. Insurers price the whole class off a cotinine test.' },
 	exerciseMins: { ruleId: 'exercise', help: 'Minutes of moderate exercise per week; the guideline is 150.' },
 	alcohol: { ruleId: 'alcohol', help: 'Your typical alcohol use — heavy drinking is among the leading preventable causes of death.' },
 	sleepHours: { ruleId: 'sleep', help: 'Hours of sleep per night; 7 to 9 is the guideline band.' },

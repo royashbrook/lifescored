@@ -30,10 +30,10 @@ export const HEALTH_RULES: Rule[] = [
 		domain: 'health',
 		pack: 'core',
 		tier: 'your_moves',
-		label: 'Smoking status',
+		label: 'Nicotine use',
 		controllable: true,
 		defaultWeight: 10,
-		logic: 'The single largest behavioral mortality factor insurers price. Never-smokers score full; former smokers recover most of it; current smokers score zero here.',
+		logic: "Insurers price a tobacco/nicotine class off a cotinine test, not just cigarettes: vaping, cigars, chew, and patches all count. Never-users score full; former recover most of it; current score zero here.",
 		evidence: 'SOURCED',
 		source: {
 			name: 'CDC — Tobacco-Related Mortality',
@@ -45,9 +45,9 @@ export const HEALTH_RULES: Rule[] = [
 		position: (i) => ({ never: 1, former: 0.6, current: 0 })[i.smoker],
 		bounds: [0, 1],
 		weightRationale: 'A ~10-year life-expectancy swing (CDC) — the single largest behavioral mortality factor, weighted equal to the baseline at 1.0×.',
-		describe: (i) => ({ never: 'never smoked — the cheapest points on the board', former: 'former smoker — most of the actuarial penalty fades with years quit', current: 'current smoker — the largest single behavioral penalty in any actuarial table' })[i.smoker],
+		describe: (i) => ({ never: 'never used nicotine — the cheapest points on the board', former: 'former nicotine user — most of the actuarial penalty fades with years off it', current: 'current nicotine user — cigarettes, vaping, or chew; the largest single behavioral penalty in any actuarial table' })[i.smoker],
 		whatIf: {
-			label: 'Quit smoking',
+			label: 'Quit nicotine',
 			applicable: (i) => i.smoker === 'current',
 			transform: (i) => ({ ...i, smoker: 'former' })
 		}
@@ -108,7 +108,7 @@ export const HEALTH_RULES: Rule[] = [
 		tier: 'your_moves',
 		label: 'Sleep duration',
 		controllable: true,
-		defaultWeight: 6,
+		defaultWeight: 3,
 		logic: '7–9 hours scores full; 6 or 10 hours partial; outside that, the short-sleep mortality association bites.',
 		evidence: 'SOURCED',
 		source: {
@@ -123,7 +123,7 @@ export const HEALTH_RULES: Rule[] = [
 			return h >= 7 && h <= 9 ? 1 : h >= 6 && h <= 10 ? 0.6 : 0.2;
 		},
 		bounds: [0, 1],
-		weightRationale: 'The 7–9h association is consistent but partly confounded with everything else on this page — 0.6×.',
+		weightRationale: 'Demoted to 0.3×: no life insurer prices sleep duration, and the 7–9h association is heavily confounded with everything else on this page (exercise, alcohol, BMI). Kept as a small controllable nudge, not a load-bearing rule.',
 		describe: (i) => (i.sleepHours >= 7 && i.sleepHours <= 9 ? `${i.sleepHours}h — inside the guideline band` : `${i.sleepHours}h — outside the 7–9h band the research keeps converging on`)
 	},
 	{
