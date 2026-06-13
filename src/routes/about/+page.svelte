@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { RULES } from '$lib/rulebook';
-	import { BASELINE_WEIGHT } from '$lib/engine/score';
 	const sourced = RULES.filter((r) => r.evidence === 'SOURCED').length;
 	const speculative = RULES.length - sourced;
 </script>
@@ -47,7 +46,8 @@
 			is the measured fact — where the cited system places you on that dimension. The <i>weight</i> is the
 			editorial multiplier — how much our composite says that dimension matters, expressed against a baseline
 			of <b>1.0× = income</b>, the dimension existing systems price most legibly. Every weight states its own
-			justification below, and every one is a slider on the Rulebook page.
+			justification — and is a slider you can change — on the
+			<a href="/rulebook" class="underline" style:color="var(--start)">rulebook</a>.
 		</p>
 		<p class="mt-2">
 			Two principles govern the shape of every rule. <b>Constrained-subtractive:</b> a rule may score negative
@@ -81,28 +81,12 @@
 	</section>
 
 	<section>
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">The weights, justified</h2>
-		<ul class="space-y-1.5 text-[12px]" style:color="var(--ink-dim)">
-			{#each RULES as rule (rule.id)}
-				<li>
-					<span style:color="var(--ink)">{rule.label}</span>
-					<span class="tabular-nums" style:font-family="var(--font-mono)"> ×{(rule.defaultWeight / BASELINE_WEIGHT).toFixed(1)}</span>
-					— {rule.weightRationale}
-				</li>
-			{/each}
-		</ul>
-	</section>
-
-	<section>
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">Sources</h2>
-		<ul class="list-inside list-disc space-y-1 text-[12px]" style:color="var(--ink-dim)">
-			{#each RULES as rule (rule.id)}
-				<li>
-					<span style:color="var(--ink)">{rule.label}</span> —
-					<a href={rule.source.url} target="_blank" rel="noreferrer" class="underline">{rule.source.name}</a>
-					{#if rule.evidence === 'SPECULATIVE'}<span style:color="var(--spec)"> (speculative)</span>{/if}
-				</li>
-			{/each}
-		</ul>
+		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">The receipts</h2>
+		<p>
+			Every rule shows its work — plain-English logic, an evidence tag, the public source behind it, and a weight
+			you can move. Rather than reprint all {RULES.length} of them here, they live where you can actually use them:
+			the <a href="/rulebook" class="underline" style:color="var(--start)">rulebook</a>, with every citation tunable
+			and a full source list at the bottom.
+		</p>
 	</section>
 </div>

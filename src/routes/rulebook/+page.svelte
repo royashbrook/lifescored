@@ -43,3 +43,18 @@
 		/>
 	{/each}
 {/each}
+
+<details class="mt-6 border-t pt-4" style:border-color="var(--line)">
+	<summary class="cursor-pointer text-[12px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+		All sources — the raw citation list ({RULES.length})
+	</summary>
+	<ul class="mt-3 space-y-1 text-[11px] leading-snug" style:color="var(--ink-dim)">
+		{#each RULES as rule (rule.id)}
+			<li>
+				<span style:color="var(--ink)">{rule.label}</span> —
+				<a href={rule.source.url} target="_blank" rel="noreferrer" class="underline" style:color="var(--ink-dim)">{rule.source.name} ↗</a>
+				{#if rule.evidence === 'SPECULATIVE'}<span style:color="var(--spec)"> (speculative)</span>{/if}
+			</li>
+		{/each}
+	</ul>
+</details>
