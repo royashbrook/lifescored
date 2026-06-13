@@ -53,7 +53,11 @@ export const DEFAULT_INPUTS: Inputs = {
 	digitalFootprint: 1,
 	banking: 'banked',
 	criminalRecord: false,
-	voterRegistered: true
+	voterRegistered: true,
+	wash: 'safe',
+	infrastructure: 'both',
+	foodSecurity: 'secure',
+	stability: 'stable'
 };
 
 type NumericKey = 'age' | 'exerciseMins' | 'sleepHours' | 'income' | 'netWorth' | 'debt' | 'creditUtil' | 'emergencyMonths' | 'drivingIncidents';
@@ -79,7 +83,11 @@ const STRING_ENUMS = {
 	employment: ['employed', 'self', 'unemployed', 'student', 'retired'],
 	outlook: ['declining', 'stable', 'growing'],
 	housing: ['unhoused', 'insecure', 'stable'],
-	banking: ['unbanked', 'underbanked', 'banked']
+	banking: ['unbanked', 'underbanked', 'banked'],
+	wash: ['none', 'basic', 'safe'],
+	infrastructure: ['neither', 'electricity', 'both'],
+	foodSecurity: ['insecure', 'marginal', 'secure'],
+	stability: ['conflict', 'fragile', 'stable']
 } as const;
 
 const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalFootprint', 'latePayments'] as const;

@@ -37,5 +37,9 @@ export const FIELD_HELP: Record<InputKey, FieldHelp> = {
 	housing: { ruleId: 'housing-stability', help: 'How stable your housing is — stable, insecure, or unhoused.' },
 	banking: { ruleId: 'banked', help: 'Whether you have a bank account; without one, basic transactions carry check-cashing fees.' },
 	criminalRecord: { ruleId: 'criminal-record', help: 'Whether you have a criminal record — it roughly halves employer callbacks in audit studies.' },
-	voterRegistered: { ruleId: 'voting', help: 'Whether you are registered to vote — it appears in civic data used by campaigns and some screens.' }
+	voterRegistered: { ruleId: 'voting', help: 'Whether you are registered to vote — it appears in civic data used by campaigns and some screens.' },
+	wash: { ruleId: 'water-sanitation', help: "Whether your home has safe drinking water and sanitation — 2.2 billion people don't." },
+	infrastructure: { ruleId: 'utilities', help: 'Whether you have reliable electricity and internet access.' },
+	foodSecurity: { ruleId: 'food-security', help: 'Whether you can reliably afford enough food.' },
+	stability: { ruleId: 'peace-rule-of-law', help: 'Whether you live outside active conflict and under functioning rule of law.' }
 };

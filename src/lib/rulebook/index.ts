@@ -1,6 +1,7 @@
 import { CIVIC_RULES } from './civic';
 import { EDUCATION_RULES } from './education';
 import { FINANCE_RULES } from './finance';
+import { FOUNDATIONS_RULES } from './foundations';
 import { HEALTH_RULES } from './health';
 import { ORIGIN_RULES } from './origin';
 import { SOCIAL_RULES } from './social';
@@ -8,6 +9,7 @@ import type { Domain, Rule, Tier } from './types';
 
 export const RULES: Rule[] = [
 	...ORIGIN_RULES,
+	...FOUNDATIONS_RULES,
 	...HEALTH_RULES,
 	...FINANCE_RULES,
 	...EDUCATION_RULES,

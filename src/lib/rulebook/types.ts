@@ -51,6 +51,11 @@ export interface Inputs {
 	// civic
 	criminalRecord: boolean;
 	voterRegistered: boolean;
+	// foundations
+	wash: 'none' | 'basic' | 'safe';
+	infrastructure: 'neither' | 'electricity' | 'both';
+	foodSecurity: 'insecure' | 'marginal' | 'secure';
+	stability: 'conflict' | 'fragile' | 'stable';
 }
 
 export type InputKey = keyof Inputs;

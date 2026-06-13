@@ -7,22 +7,26 @@ import type { Inputs, Rule } from './types';
 export const SAMPLE_INPUTS: Inputs[] = [
 	DEFAULT_INPUTS,
 	{
+		// Profile 2 (adverse): worst values across all inputs
 		...DEFAULT_INPUTS, country: 'af', familySupport: 0, parentsDegree: false, neighborhood: 0,
 		age: 72, sex: 'f', smoker: 'current', exerciseMins: 0, alcohol: 'heavy', sleepHours: 4,
 		insured: false, bmiBand: 'obese', income: 0, netWorth: -40000, debt: 90000,
 		latePayments: 2, creditUtil: 95, emergencyMonths: 0, homeowner: false, education: 'hs',
 		employment: 'unemployed', outlook: 'declining', housing: 'unhoused', socialConnection: 0,
 		partnered: false, volunteers: false, drivingIncidents: 4, digitalFootprint: 0,
-		banking: 'unbanked', criminalRecord: true, voterRegistered: false
+		banking: 'unbanked', criminalRecord: true, voterRegistered: false,
+		wash: 'none', infrastructure: 'neither', foodSecurity: 'insecure', stability: 'conflict'
 	},
 	{
+		// Profile 3 (favorable): best values across all inputs
 		...DEFAULT_INPUTS, country: 'nl', familySupport: 2, parentsDegree: true, neighborhood: 2,
 		age: 35, sex: 'f', smoker: 'never', exerciseMins: 300, alcohol: 'none', sleepHours: 8,
 		insured: true, bmiBand: 'normal', income: 250000, netWorth: 900000, debt: 0,
 		latePayments: 0, creditUtil: 3, emergencyMonths: 12, homeowner: true, education: 'graduate',
 		employment: 'self', outlook: 'growing', housing: 'stable', socialConnection: 2,
 		partnered: true, volunteers: true, drivingIncidents: 0, digitalFootprint: 2,
-		banking: 'banked', criminalRecord: false, voterRegistered: true
+		banking: 'banked', criminalRecord: false, voterRegistered: true,
+		wash: 'safe', infrastructure: 'both', foodSecurity: 'secure', stability: 'stable'
 	}
 ];
 
@@ -47,7 +51,7 @@ export function expectRuleInvariants(rule: Rule) {
 	expect(rule.weightRationale.length, `${rule.id}: position contract requires weightRationale`).toBeGreaterThan(0);
 	expect(PACKS[rule.pack], `${rule.id} has a valid pack`).toBeDefined();
 	expect(rule.source.url).toMatch(/^https:\/\//);
-	expect(['2026-06-11', '2026-06-12']).toContain(rule.source.accessed);
+	expect(['2026-06-11', '2026-06-12', '2026-06-13']).toContain(rule.source.accessed);
 	if (rule.whatIf) {
 		expect(rule.controllable, `${rule.id}: only controllable rules get levers`).toBe(true);
 	}
