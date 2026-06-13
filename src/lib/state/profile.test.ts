@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { DEFAULT_INPUTS } from '../rulebook';
-import { loadStoredProfile, storeProfile } from './profile.svelte';
+import { activePacks, loadStoredProfile, storeProfile } from './profile.svelte';
 
 function memStorage(): Storage {
 	const m = new Map<string, string>();
@@ -17,16 +17,16 @@ function memStorage(): Storage {
 describe('profile persistence', () => {
 	it('round-trips through storage', () => {
 		const s = memStorage();
-		const profile = { inputs: { ...DEFAULT_INPUTS, age: 44 }, overrides: { bmi: { enabled: false } } };
+		const profile = { inputs: { ...DEFAULT_INPUTS, age: 44 }, overrides: { bmi: { enabled: false } }, packs: {} };
 		storeProfile(s, profile);
 		expect(loadStoredProfile(s)).toEqual(profile);
 	});
 
 	it('returns defaults for missing or corrupt storage', () => {
 		const s = memStorage();
-		expect(loadStoredProfile(s)).toEqual({ inputs: DEFAULT_INPUTS, overrides: {} });
+		expect(loadStoredProfile(s)).toEqual({ inputs: DEFAULT_INPUTS, overrides: {}, packs: {} });
 		s.setItem('lifescore:profile', '{corrupt');
-		expect(loadStoredProfile(s)).toEqual({ inputs: DEFAULT_INPUTS, overrides: {} });
+		expect(loadStoredProfile(s)).toEqual({ inputs: DEFAULT_INPUTS, overrides: {}, packs: {} });
 	});
 
 	it('merges stored inputs over defaults so new fields get default values', () => {
@@ -49,5 +49,19 @@ describe('profile persistence', () => {
 		const p = loadStoredProfile(s);
 		expect(p.overrides.country).toBeUndefined();
 		expect(p.overrides.dti).toEqual({ enabled: false });
+	});
+
+	it('round-trips enabled packs and defaults missing packs to empty', () => {
+		const s = memStorage();
+		s.setItem('lifescore:profile', JSON.stringify({ inputs: {}, overrides: {}, packs: { foundations: true } }));
+		expect(loadStoredProfile(s).packs).toEqual({ foundations: true });
+		const s2 = memStorage();
+		s2.setItem('lifescore:profile', JSON.stringify({ inputs: {}, overrides: {} }));
+		expect(loadStoredProfile(s2).packs).toEqual({});
+	});
+
+	it('activePacks always includes core plus enabled packs', () => {
+		expect([...activePacks({ packs: {} })]).toEqual(['core']);
+		expect(new Set([...activePacks({ packs: { foundations: true, speculative: false } })])).toEqual(new Set(['core', 'foundations']));
 	});
 });

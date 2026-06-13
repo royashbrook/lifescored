@@ -1,10 +1,22 @@
 import type { Overrides } from '../engine/score';
-import { DEFAULT_INPUTS, migrateLegacyInputs } from '../rulebook';
+import { DEFAULT_INPUTS, migrateLegacyInputs, PACKS } from '../rulebook';
 import type { Inputs } from '../rulebook';
 
 export interface Profile {
 	inputs: Inputs;
 	overrides: Overrides;
+	packs: Record<string, boolean>;
+}
+
+export function sanitizePacks(raw: unknown): Record<string, boolean> {
+	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
+	const result: Record<string, boolean> = {};
+	for (const [id, val] of Object.entries(raw as Record<string, unknown>)) {
+		if ((id in PACKS) && typeof val === 'boolean') {
+			result[id] = val;
+		}
+	}
+	return result;
 }
 
 const VERSION = '1';
@@ -49,12 +61,16 @@ export async function decodeProfile(encoded: string): Promise<Profile | null> {
 		const bytes = fromB64url(encoded.slice(dot + 1));
 		const inflated = await pipe(bytes, new DecompressionStream('deflate-raw'));
 		const parsed = JSON.parse(new TextDecoder().decode(inflated));
-		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object' || !parsed.overrides || typeof parsed.overrides !== 'object') return null;
+		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object') return null;
 		const migrated = migrateLegacyInputs(parsed.inputs as Record<string, unknown>);
 		const inputs = Object.fromEntries(
 			(Object.keys(DEFAULT_INPUTS) as (keyof typeof DEFAULT_INPUTS)[]).map((k) => [k, migrated[k] ?? DEFAULT_INPUTS[k]]) // Missing keys fill from defaults — deliberately generous for old links/profiles; do not "fix" to adverse assumptions.
 		) as unknown as Profile['inputs'];
-		return { inputs, overrides: sanitizeOverrides(parsed.overrides) };
+		return {
+			inputs,
+			overrides: sanitizeOverrides((parsed as { overrides?: unknown }).overrides),
+			packs: sanitizePacks((parsed as { packs?: unknown }).packs)
+		};
 	} catch {
 		return null;
 	}

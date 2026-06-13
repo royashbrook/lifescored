@@ -6,7 +6,8 @@ describe('share codec', () => {
 	it('round-trips a profile', async () => {
 		const profile = {
 			inputs: { ...DEFAULT_INPUTS, netWorth: 123456, country: 'br' as const },
-			overrides: { country: { weight: 30 }, dti: { enabled: false } }
+			overrides: { country: { weight: 30 }, dti: { enabled: false } },
+			packs: {}
 		};
 		const encoded = await encodeProfile(profile);
 		expect(encoded).toMatch(/^1\.[A-Za-z0-9_-]+$/); // versioned, url-safe
@@ -15,7 +16,7 @@ describe('share codec', () => {
 	});
 
 	it('returns null for unknown versions, garbage, and empty input', async () => {
-		const good = await encodeProfile({ inputs: DEFAULT_INPUTS, overrides: {} });
+		const good = await encodeProfile({ inputs: DEFAULT_INPUTS, overrides: {}, packs: {} });
 		expect(await decodeProfile('9.' + good.slice(2))).toBeNull();
 		expect(await decodeProfile('1.!!!not-base64!!!')).toBeNull();
 		expect(await decodeProfile('1.AAAA')).toBeNull(); // valid b64, invalid deflate
@@ -39,7 +40,7 @@ describe('share codec', () => {
 	});
 
 	it('produces URLs meaningfully shorter than raw JSON', async () => {
-		const profile = { inputs: DEFAULT_INPUTS, overrides: {} };
+		const profile = { inputs: DEFAULT_INPUTS, overrides: {}, packs: {} };
 		const encoded = await encodeProfile(profile);
 		expect(encoded.length).toBeLessThan(JSON.stringify(profile).length);
 	});
@@ -64,11 +65,27 @@ describe('share codec', () => {
 	it('preserves falsy values that differ from defaults', async () => {
 		const enc = await encodeProfile({
 			inputs: { ...DEFAULT_INPUTS, insured: false, voterRegistered: false, exerciseMins: 0 },
-			overrides: {}
+			overrides: {},
+			packs: {}
 		});
 		const p = (await decodeProfile(enc))!;
 		expect(p.inputs.insured).toBe(false);
 		expect(p.inputs.voterRegistered).toBe(false);
 		expect(p.inputs.exerciseMins).toBe(0);
+	});
+
+	it('round-trips enabled packs', async () => {
+		const enc = await encodeProfile({ inputs: DEFAULT_INPUTS, overrides: {}, packs: { foundations: true } });
+		expect((await decodeProfile(enc))!.packs).toEqual({ foundations: true });
+	});
+
+	it('sanitizes hostile packs — unknown ids and non-booleans dropped', async () => {
+		const enc = await encodeProfile({ inputs: DEFAULT_INPUTS, overrides: {}, packs: { foundations: 'yes', bogus: true, speculative: false } } as never);
+		expect((await decodeProfile(enc))!.packs).toEqual({ speculative: false });
+	});
+
+	it('missing packs default to empty', async () => {
+		const enc = await encodeProfile({ inputs: DEFAULT_INPUTS, overrides: {} } as never);
+		expect((await decodeProfile(enc))!.packs).toEqual({});
 	});
 });
