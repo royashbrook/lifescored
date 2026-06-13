@@ -6,6 +6,7 @@ export const EDUCATION_RULES: Rule[] = [
 	{
 		id: 'education',
 		domain: 'education',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Education ladder',
 		controllable: true,
@@ -38,6 +39,7 @@ export const EDUCATION_RULES: Rule[] = [
 	{
 		id: 'employment',
 		domain: 'education',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Employment status',
 		controllable: true,
@@ -59,6 +61,7 @@ export const EDUCATION_RULES: Rule[] = [
 	{
 		id: 'outlook',
 		domain: 'education',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Occupation outlook',
 		controllable: true,

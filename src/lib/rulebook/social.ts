@@ -6,6 +6,7 @@ export const SOCIAL_RULES: Rule[] = [
 	{
 		id: 'connection',
 		domain: 'social',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Social connection',
 		controllable: true,
@@ -27,6 +28,7 @@ export const SOCIAL_RULES: Rule[] = [
 	{
 		id: 'partnership',
 		domain: 'social',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Partnership status',
 		controllable: true,
@@ -49,6 +51,7 @@ export const SOCIAL_RULES: Rule[] = [
 	{
 		id: 'volunteering',
 		domain: 'social',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Volunteering / community',
 		controllable: true,
@@ -70,6 +73,7 @@ export const SOCIAL_RULES: Rule[] = [
 	{
 		id: 'driving',
 		domain: 'social',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Driving record',
 		controllable: true,
@@ -91,6 +95,7 @@ export const SOCIAL_RULES: Rule[] = [
 	{
 		id: 'digital',
 		domain: 'social',
+		pack: 'speculative',
 		tier: 'your_moves',
 		label: 'Digital footprint',
 		controllable: true,
@@ -112,6 +117,7 @@ export const SOCIAL_RULES: Rule[] = [
 	{
 		id: 'housing-stability',
 		domain: 'social',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Housing stability',
 		controllable: false,

@@ -21,6 +21,7 @@ export const FINANCE_RULES: Rule[] = [
 	{
 		id: 'networth',
 		domain: 'finance',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Net-worth position',
 		controllable: false, // your number now is partly past luck; the levers below move it
@@ -54,6 +55,7 @@ export const FINANCE_RULES: Rule[] = [
 	{
 		id: 'dti',
 		domain: 'finance',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Debt load (DTI, not raw $)',
 		controllable: true,
@@ -87,6 +89,7 @@ export const FINANCE_RULES: Rule[] = [
 	{
 		id: 'payment-history',
 		domain: 'finance',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Payment history',
 		controllable: true,
@@ -108,6 +111,7 @@ export const FINANCE_RULES: Rule[] = [
 	{
 		id: 'utilization',
 		domain: 'finance',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Credit utilization',
 		controllable: true,
@@ -132,6 +136,7 @@ export const FINANCE_RULES: Rule[] = [
 	{
 		id: 'emergency-fund',
 		domain: 'finance',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Emergency fund',
 		controllable: true,
@@ -158,6 +163,7 @@ export const FINANCE_RULES: Rule[] = [
 	{
 		id: 'income',
 		domain: 'finance',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Income vs. median',
 		controllable: true,
@@ -185,6 +191,7 @@ export const FINANCE_RULES: Rule[] = [
 	{
 		id: 'homeownership',
 		domain: 'finance',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Homeownership',
 		controllable: true,
@@ -206,6 +213,7 @@ export const FINANCE_RULES: Rule[] = [
 	{
 		id: 'banked',
 		domain: 'finance',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Banked status',
 		controllable: true,

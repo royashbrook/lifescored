@@ -6,6 +6,7 @@ export const HEALTH_RULES: Rule[] = [
 	{
 		id: 'life-table',
 		domain: 'health',
+		pack: 'core',
 		tier: 'starting_point',
 		label: 'Age & sex vs. the life table',
 		controllable: false,
@@ -27,6 +28,7 @@ export const HEALTH_RULES: Rule[] = [
 	{
 		id: 'smoking',
 		domain: 'health',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Smoking status',
 		controllable: true,
@@ -53,6 +55,7 @@ export const HEALTH_RULES: Rule[] = [
 	{
 		id: 'exercise',
 		domain: 'health',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Physical activity',
 		controllable: true,
@@ -79,6 +82,7 @@ export const HEALTH_RULES: Rule[] = [
 	{
 		id: 'alcohol',
 		domain: 'health',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Alcohol use',
 		controllable: true,
@@ -100,6 +104,7 @@ export const HEALTH_RULES: Rule[] = [
 	{
 		id: 'sleep',
 		domain: 'health',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Sleep duration',
 		controllable: true,
@@ -124,6 +129,7 @@ export const HEALTH_RULES: Rule[] = [
 	{
 		id: 'insurance',
 		domain: 'health',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Health insurance coverage',
 		controllable: true,
@@ -150,6 +156,7 @@ export const HEALTH_RULES: Rule[] = [
 	{
 		id: 'bmi',
 		domain: 'health',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'BMI band',
 		controllable: true,

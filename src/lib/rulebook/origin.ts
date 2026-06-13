@@ -7,6 +7,7 @@ export const ORIGIN_RULES: Rule[] = [
 	{
 		id: 'country',
 		domain: 'origin',
+		pack: 'core',
 		tier: 'starting_point',
 		label: 'Country of residence',
 		controllable: false,
@@ -28,6 +29,7 @@ export const ORIGIN_RULES: Rule[] = [
 	{
 		id: 'generational',
 		domain: 'origin',
+		pack: 'core',
 		tier: 'starting_point',
 		label: 'Generational support',
 		controllable: false,
@@ -49,6 +51,7 @@ export const ORIGIN_RULES: Rule[] = [
 	{
 		id: 'parental-education',
 		domain: 'origin',
+		pack: 'core',
 		tier: 'starting_point',
 		label: 'Parental education',
 		controllable: false,
@@ -70,6 +73,7 @@ export const ORIGIN_RULES: Rule[] = [
 	{
 		id: 'passport',
 		domain: 'origin',
+		pack: 'core',
 		tier: 'starting_point',
 		label: 'Passport strength',
 		controllable: false,
@@ -91,6 +95,7 @@ export const ORIGIN_RULES: Rule[] = [
 	{
 		id: 'neighborhood',
 		domain: 'origin',
+		pack: 'core',
 		tier: 'starting_point',
 		label: 'Neighborhood opportunity',
 		controllable: false,

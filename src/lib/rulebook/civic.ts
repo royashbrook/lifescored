@@ -6,6 +6,7 @@ export const CIVIC_RULES: Rule[] = [
 	{
 		id: 'criminal-record',
 		domain: 'civic',
+		pack: 'core',
 		tier: 'your_moves',
 		label: 'Criminal record',
 		controllable: false,
@@ -28,6 +29,7 @@ export const CIVIC_RULES: Rule[] = [
 	{
 		id: 'voting',
 		domain: 'civic',
+		pack: 'speculative',
 		tier: 'your_moves',
 		label: 'Voter registration',
 		controllable: true,

@@ -1,5 +1,6 @@
 import { expect } from 'vitest';
 import { COUNTRIES, DEFAULT_INPUTS } from './inputs';
+import { PACKS } from './packs';
 import type { Inputs, Rule } from './types';
 
 // A spread of profiles that exercises extremes of every input.
@@ -44,6 +45,7 @@ export function expectRuleInvariants(rule: Rule) {
 	}
 	expect(rule.bounds, `${rule.id}: position requires bounds`).toBeDefined();
 	expect(rule.weightRationale.length, `${rule.id}: position contract requires weightRationale`).toBeGreaterThan(0);
+	expect(PACKS[rule.pack], `${rule.id} has a valid pack`).toBeDefined();
 	expect(rule.source.url).toMatch(/^https:\/\//);
 	expect(['2026-06-11', '2026-06-12']).toContain(rule.source.accessed);
 	if (rule.whatIf) {

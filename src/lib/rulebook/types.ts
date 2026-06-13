@@ -1,6 +1,7 @@
 export type Domain = 'origin' | 'health' | 'finance' | 'education' | 'social' | 'civic';
 export type Tier = 'starting_point' | 'your_moves';
 export type Evidence = 'SOURCED' | 'SPECULATIVE';
+export type PackId = 'core' | 'foundations' | 'underwriting' | 'speculative';
 
 export interface Source {
 	name: string;
@@ -63,6 +64,7 @@ export interface WhatIf {
 export interface Rule {
 	id: string;
 	domain: Domain;
+	pack: PackId;
 	tier: Tier;
 	label: string;
 	controllable: boolean;
