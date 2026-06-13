@@ -47,7 +47,7 @@
 	</p>
 	<div class="text-right">
 		<div class="text-[10px] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">COMPOSITE</div>
-		<div class="text-[26px] font-bold tabular-nums" style:font-family="var(--font-mono)">{result.composite.toLocaleString('en-US')}</div>
+		<div data-testid="composite" class="text-[26px] font-bold tabular-nums" style:font-family="var(--font-mono)">{result.composite.toLocaleString('en-US')}</div>
 	</div>
 </div>
 
