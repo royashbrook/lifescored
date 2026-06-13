@@ -21,9 +21,9 @@ describe('finance rules', () => {
 
 	it('networth: above the age median scores positive, far below scores negative', () => {
 		const r = byId('networth');
-		// v2: position-based (log scale above median, linear below)
-		expect(r.position!({ ...DEFAULT_INPUTS, age: 27, netWorth: 100000 })).toBeGreaterThan(0);
-		expect(r.position!({ ...DEFAULT_INPUTS, age: 27, netWorth: -40000 })).toBeLessThan(0);
+		// v3: net worth derived from assets − debt; position-based (sqrt above median, linear below)
+		expect(r.position!({ ...DEFAULT_INPUTS, age: 27, assets: 100000, debt: 0 })).toBeGreaterThan(0);
+		expect(r.position!({ ...DEFAULT_INPUTS, age: 27, assets: 0, debt: 40000 })).toBeLessThan(0);
 	});
 
 	it('dti: more debt never raises the score; zero debt scores max', () => {
@@ -67,7 +67,8 @@ describe('finance rules', () => {
 describe('power-law wealth (v2.1)', () => {
 	const nw = byId('networth');
 	const inc = byId('income');
-	const at = (netWorth: number, age = 27) => nw.position!({ ...DEFAULT_INPUTS, age, netWorth });
+	// drive net worth through assets (debt 0), so assets value == net worth
+	const at = (netWorth: number, age = 27) => nw.position!({ ...DEFAULT_INPUTS, age, assets: netWorth, debt: 0 });
 
 	it('networth: continuous at the median seam and monotonic', () => {
 		const median = medianNetWorthForAge(27);
@@ -99,9 +100,35 @@ describe('power-law wealth (v2.1)', () => {
 	});
 
 	it('describe states the raw multiple of the median (dominance line)', () => {
-		const d = nw.describe({ ...DEFAULT_INPUTS, age: 54, netWorth: 1e12 });
+		const d = nw.describe({ ...DEFAULT_INPUTS, age: 54, assets: 1e12, debt: 0 });
 		expect(d).toMatch(/4,0\d{2},\d{3}×/); // ~4,045,xxx× of the 247,200 median
 		expect(inc.describe({ ...DEFAULT_INPUTS, income: 600000 })).toContain('10×');
+	});
+});
+
+describe('net worth = assets − debt (v3 split)', () => {
+	const nw = byId('networth');
+
+	it('scores assets minus debt, not assets alone', () => {
+		// 200k assets, 200k debt → 0 net worth → far below median → negative
+		expect(nw.position!({ ...DEFAULT_INPUTS, age: 40, assets: 200000, debt: 200000 })).toBeLessThan(0);
+		// same assets, no debt → above the 40-yr median → positive
+		expect(nw.position!({ ...DEFAULT_INPUTS, age: 40, assets: 200000, debt: 0 })).toBeGreaterThan(0);
+	});
+
+	it('debt can drive net worth negative even with positive assets', () => {
+		const p = nw.position!({ ...DEFAULT_INPUTS, age: 27, assets: 10000, debt: 60000 });
+		expect(p).toBeLessThan(0);
+		expect(p).toBeGreaterThanOrEqual(nw.bounds[0]); // floored, not -Infinity
+	});
+
+	it('describe shows the assets − debt breakdown only when there is debt', () => {
+		expect(nw.describe({ ...DEFAULT_INPUTS, assets: 50000, debt: 20000 })).toContain('assets − ');
+		expect(nw.describe({ ...DEFAULT_INPUTS, assets: 50000, debt: 0 })).not.toContain('assets − ');
+	});
+
+	it('declares assets, debt and age as its inputs', () => {
+		expect(nw.inputs).toEqual(['assets', 'debt', 'age']);
 	});
 });
 

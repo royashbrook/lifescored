@@ -15,8 +15,8 @@ describe('quantizeForNarrative', () => {
 	});
 
 	it('nearby profiles land in the same bucket (cache efficiency)', () => {
-		const a = quantizeForNarrative(computeScore({ ...DEFAULT_INPUTS, netWorth: 6000 }));
-		const b = quantizeForNarrative(computeScore({ ...DEFAULT_INPUTS, netWorth: 6400 }));
+		const a = quantizeForNarrative(computeScore({ ...DEFAULT_INPUTS, assets: 6000 }));
+		const b = quantizeForNarrative(computeScore({ ...DEFAULT_INPUTS, assets: 6400 }));
 		expect(a).toEqual(b);
 	});
 });

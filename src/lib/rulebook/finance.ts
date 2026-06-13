@@ -34,22 +34,25 @@ export const FINANCE_RULES: Rule[] = [
 			url: 'https://www.federalreserve.gov/econres/scfindex.htm',
 			accessed: ACCESSED
 		},
-		inputs: ['netWorth', 'age'],
+		inputs: ['assets', 'debt', 'age'],
 		position: (i) => {
+			const netWorth = i.assets - i.debt;
 			const median = medianNetWorthForAge(i.age);
-			if (i.netWorth < median) return Math.max(-0.5, (i.netWorth - median) / (2 * median));
-			return Math.sqrt(i.netWorth / median) - 1;
+			if (netWorth < median) return Math.max(-0.5, (netWorth - median) / (2 * median));
+			return Math.sqrt(netWorth / median) - 1;
 		},
 		bounds: [-0.5, Infinity],
 		weightRationale: 'Stock beats flow: wealth absorbs shocks income cannot, and SCF gaps between wealth deciles exceed income gaps — 1.6× the baseline, uncapped above because the world does not cap it.',
 		describe: (i) => {
+			const netWorth = i.assets - i.debt;
 			const median = medianNetWorthForAge(i.age);
-			if (i.netWorth >= median) {
-				const m = i.netWorth / median;
-				return `${usd(i.netWorth)} — ${multiple(m)}× your age-band median (${usd(median)}); uncapped, because the world doesn't cap it`;
+			const basis = i.debt > 0 ? ` (${usd(i.assets)} assets − ${usd(i.debt)} debt)` : '';
+			if (netWorth >= median) {
+				const m = netWorth / median;
+				return `${usd(netWorth)} net worth${basis} — ${multiple(m)}× your age-band median (${usd(median)}); uncapped, because the world doesn't cap it`;
 			}
-			const d = i.netWorth - median;
-			return `${usd(i.netWorth)} — ${usd(-d)} below your age-band median (${usd(median)})`;
+			const d = netWorth - median;
+			return `${usd(netWorth)} net worth${basis} — ${usd(-d)} below your age-band median (${usd(median)})`;
 		}
 	},
 	{

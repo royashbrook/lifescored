@@ -5,7 +5,7 @@ import { decodeProfile, encodeProfile } from './codec';
 describe('share codec', () => {
 	it('round-trips a profile', async () => {
 		const profile = {
-			inputs: { ...DEFAULT_INPUTS, netWorth: 123456, country: 'br' as const },
+			inputs: { ...DEFAULT_INPUTS, assets: 123456, country: 'br' as const },
 			overrides: { country: { weight: 30 }, dti: { enabled: false } },
 			packs: {}
 		};
@@ -53,6 +53,21 @@ describe('share codec', () => {
 		// explicit education wins over legacy degree
 		const both = await encodeProfile({ inputs: { degree: false, education: 'graduate' }, overrides: {} } as never);
 		expect((await decodeProfile(both))!.inputs.education).toBe('graduate');
+	});
+
+	it('migrates pre-split profiles: netWorth becomes assets = netWorth + debt (net worth preserved)', async () => {
+		// old profile: $80k net worth, $30k debt → gross assets $110k, derived net worth still $80k
+		const legacy = await encodeProfile({ inputs: { netWorth: 80000, debt: 30000 }, overrides: {} } as never);
+		const p = (await decodeProfile(legacy))!;
+		expect(p.inputs.assets).toBe(110000);
+		expect('netWorth' in p.inputs).toBe(false);
+		expect(p.inputs.assets - p.inputs.debt).toBe(80000);
+		// negative legacy net worth with no debt floors assets at 0 (assets can't be negative)
+		const underwater = await encodeProfile({ inputs: { netWorth: -100000, debt: 0 }, overrides: {} } as never);
+		expect((await decodeProfile(underwater))!.inputs.assets).toBe(0);
+		// explicit assets wins over legacy netWorth
+		const both = await encodeProfile({ inputs: { netWorth: 80000, debt: 0, assets: 5000 }, overrides: {} } as never);
+		expect((await decodeProfile(both))!.inputs.assets).toBe(5000);
 	});
 
 	it('drops unknown input keys entirely', async () => {

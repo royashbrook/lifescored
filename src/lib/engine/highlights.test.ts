@@ -5,7 +5,7 @@ import { topMovers } from './highlights';
 
 describe('topMovers', () => {
 	it('returns the biggest positive contributors and the weakest rows, enabled only', () => {
-		const result = computeScore({ ...DEFAULT_INPUTS, netWorth: -40000, debt: 50000 });
+		const result = computeScore({ ...DEFAULT_INPUTS, assets: 0, debt: 50000 });
 		const { lifting, weakest } = topMovers(result, 3);
 		expect(lifting.length).toBeLessThanOrEqual(3);
 		expect(weakest.length).toBeLessThanOrEqual(3);

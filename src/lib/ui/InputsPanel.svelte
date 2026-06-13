@@ -11,6 +11,10 @@
 	let expanded = $state(false);
 	const packs = $derived(activePacks(profile));
 
+	// Net worth is derived, not entered: assets minus debt. Shown so the calculated number is visible.
+	const netWorth = $derived(profile.inputs.assets - profile.inputs.debt);
+	const fmtNet = (n: number) => (n < 0 ? '−$' : '$') + Math.abs(Math.round(n)).toLocaleString('en-US');
+
 	// bind: helpers — components bind to these proxies, writes route through setInput
 	function field<K extends keyof typeof profile.inputs>(key: K) {
 		return {
@@ -21,7 +25,7 @@
 	const countryOpts = Object.entries(COUNTRIES).map(([k, v]) => [k, v.name]) as [string, string][];
 	const f = {
 		country: field('country'), familySupport: field('familySupport'), age: field('age'),
-		sex: field('sex'), income: field('income'), netWorth: field('netWorth'), debt: field('debt'),
+		sex: field('sex'), income: field('income'), assets: field('assets'), debt: field('debt'),
 		education: field('education'), parentsDegree: field('parentsDegree'), neighborhood: field('neighborhood'),
 		smoker: field('smoker'), exerciseMins: field('exerciseMins'), alcohol: field('alcohol'),
 		sleepHours: field('sleepHours'), insured: field('insured'), bmiBand: field('bmiBand'),
@@ -44,10 +48,15 @@
 		<Field label="Age" help={FIELD_HELP.age}><NumInput bind:value={f.age.value} step={1} prefix="" /></Field>
 		<Field label="Family support" help={FIELD_HELP.familySupport}><SelectInput bind:value={f.familySupport.value} opts={[[0, 'None'], [1, 'Some'], [2, 'Substantial']]} /></Field>
 		<Field label="Income / yr" help={FIELD_HELP.income}><NumInput bind:value={f.income.value} /></Field>
-		<Field label="Net worth" help={FIELD_HELP.netWorth}><NumInput bind:value={f.netWorth.value} /></Field>
+		<Field label="Assets" help={FIELD_HELP.assets}><NumInput bind:value={f.assets.value} /></Field>
 		<Field label="Total debt" help={FIELD_HELP.debt}><NumInput bind:value={f.debt.value} /></Field>
 		<Field label="Education" help={FIELD_HELP.education}><SelectInput bind:value={f.education.value} opts={[['none', 'No diploma'], ['hs', 'High school'], ['some', 'Some college'], ['bachelor', "Bachelor's"], ['graduate', 'Graduate']]} /></Field>
 		<Field label="Smoker" help={FIELD_HELP.smoker}><SelectInput bind:value={f.smoker.value} opts={[['never', 'Never'], ['former', 'Former'], ['current', 'Current']]} /></Field>
+	</div>
+
+	<div class="mt-2.5 text-[11px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+		net worth <span class="tabular-nums" style:color="var(--ink)">{fmtNet(netWorth)}</span>
+		<span> = assets − debt · this is the figure scored against your age-band median</span>
 	</div>
 
 	<button class="mt-3 text-[11px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)" onclick={() => (expanded = !expanded)}>

@@ -28,13 +28,13 @@ export const WIZARD_STEPS: WizardStep[] = [
 	},
 	{ key: 'income', question: 'Roughly, your income per year?', kind: 'number', prefix: '$', step: 1000 },
 	{
-		key: 'netWorth',
-		question: 'Everything you own, minus everything you owe?',
+		key: 'assets',
+		question: 'Roughly, everything you own — savings, home, car, investments?',
 		kind: 'number',
 		prefix: '$',
 		step: 1000
 	},
-	{ key: 'debt', question: 'Total debt you owe?', kind: 'number', prefix: '$', step: 1000 },
+	{ key: 'debt', question: 'And your total debt? (we subtract it to get net worth)', kind: 'number', prefix: '$', step: 1000 },
 	{
 		key: 'education',
 		question: 'Highest level of school you finished?',
