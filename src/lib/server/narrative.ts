@@ -105,7 +105,6 @@ export async function handleNarrative(
 		});
 		if (!res.ok) return { fallback: true };
 		const data = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
-		console.error('GEMINI_DIAG resp', JSON.stringify(data).slice(0, 1500));
 		const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 		if (!text) return { fallback: true };
 		await deps.kv.put(cacheKey, text, { expirationTtl: CACHE_TTL });
