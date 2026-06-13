@@ -92,12 +92,12 @@
 	{@render children()}
 
 	<footer
-		class="mt-10 flex flex-wrap items-center justify-between gap-x-3 gap-y-2 border-t pt-4 text-[11px]"
+		class="mt-10 flex items-center justify-between gap-x-1.5 border-t pt-4 text-[10px] whitespace-nowrap sm:gap-x-2 sm:text-[11px]"
 		style:border-color="var(--line)"
 		style:font-family="var(--font-mono)"
 		style:color="var(--ink-dim)"
 	>
-		<div class="flex items-center gap-x-1.5">
+		<div class="flex items-center gap-x-1 sm:gap-x-1.5">
 			<span>life. scored.</span>
 			<span aria-hidden="true" style:opacity="0.5">·</span>
 			<a href="/about#how-it-works" class="underline" style:color="var(--ink-dim)">no tracking</a>
@@ -108,7 +108,7 @@
 			href="https://github.com/sponsors/royashbrook"
 			target="_blank"
 			rel="noreferrer"
-			class="rounded-full border px-2.5 py-1"
+			class="shrink-0 rounded-full border px-1.5 py-1 sm:px-2.5"
 			style:color="var(--moves)"
 			style:border-color="rgba(217,164,65,0.35)"
 		>sponsor ↗</a>
