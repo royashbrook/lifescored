@@ -55,6 +55,7 @@
 	const links = [
 		['/', 'Score'],
 		['/rulebook', 'Rulebook'],
+		['/improve', 'Improve'],
 		['/about', 'Why']
 	];
 </script>

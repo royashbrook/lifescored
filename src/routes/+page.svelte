@@ -109,6 +109,12 @@
 				<b style:font-family="var(--font-mono)">{moveDelta > 0 ? '+' : ''}{moveDelta}</b> — a delta, not a destiny.
 			</div>
 		{/if}
+		<a
+			href="/improve"
+			class="mt-2 inline-block text-[11px] underline"
+			style:font-family="var(--font-mono)"
+			style:color="var(--ink-dim)"
+		>→ free ways to actually move these (no affiliate links)</a>
 	</div>
 {/if}
 
