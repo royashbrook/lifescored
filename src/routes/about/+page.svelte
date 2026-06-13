@@ -21,14 +21,22 @@
 		</p>
 	</section>
 
-	<section>
+	<section id="left-out" style:scroll-margin-top="1rem">
 		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">What's deliberately left out</h2>
 		<p>
-			Race, religion, and other protected characteristics. Once wealth, debt, neighborhood, and health behaviors
-			are measured directly, a protected-class term adds no information — it only double-counts the real
-			variables, which is exactly why lending law forbids it. We measure the targets, not the proxy. Pure luck —
-			a recession at graduation, an illness, timing — is also excluded: it's real, we can't measure it honestly,
-			so it stays an unscored asterisk instead of becoming a fake number.
+			Some things about you — a few legally protected, others not — change how other people score you, and we
+			put no number on any of them. Not because they don't matter; often they matter enormously. But this kind
+			of scoring is subjective and invisible: if someone reads you as <i>other</i>, they'll quietly mark you
+			down and never tell you how much or why — and if they see themselves in you, you get a just-as-silent
+			bump. The weight is real, it swings wildly from one place and one person to the next, and we won't hand
+			you a single fake number for it — much less dock you for who you are, which is the exact machinery this
+			site exists to expose, not to run. So it stays an unscored asterisk that every single person carries.
+		</p>
+		<p class="mt-2">
+			Pure luck sits under the same asterisk — a recession the year you graduated, an illness, plain timing.
+			Real, unevenly handed out, and impossible to measure honestly, so it stays named rather than turned into
+			a number. What we <i>do</i> score is the systemic weight you can at least see, and the part you can
+			actually move.
 		</p>
 	</section>
 

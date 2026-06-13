@@ -129,14 +129,16 @@
 
 <NarrativeCard {result} />
 
-<div class="mt-6 flex items-center justify-between border-t pt-4" style:border-color="var(--line)">
-	<div class="max-w-[440px] text-[11px] leading-relaxed" style:color="var(--ink-dim)">
-		<b style:color="var(--ink)">Deliberately left out:</b> race and other protected characteristics. Once wealth,
-		debt and neighborhood are measured directly, a race term adds no information — it just double-counts the real
-		variables, which is exactly why lending law forbids it. We measure the targets, not the proxy.
+<div class="mt-6 flex flex-col gap-5 border-t pt-4 sm:flex-row sm:items-start sm:justify-between" style:border-color="var(--line)">
+	<div class="text-[11px] leading-relaxed sm:max-w-[42%]" style:color="var(--ink-dim)">
+		<b style:color="var(--ink)">Deliberately left out:</b> the traits that change how <i>other people</i> score you —
+		race, identity, otherness. Real, but not something we put a number on.
+		<a href="/about#left-out" class="underline" style:color="var(--start)">here's why →</a>
 	</div>
-	<ShareButton
-		profile={profile.snapshot()}
-		composite={result.composite}
-	/>
+	<div class="sm:w-1/2 sm:shrink-0">
+		<ShareButton
+			profile={profile.snapshot()}
+			composite={result.composite}
+		/>
+	</div>
 </div>
