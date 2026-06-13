@@ -19,7 +19,7 @@ const COUNTER_TTL = 60 * 60 * 48;
 const IP_DAILY_LIMIT = 10;
 const GLOBAL_DAILY_BUDGET = 200; // Gemini calls/day — well under free tier
 const GEMINI_URL =
-	'https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent';
+	'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
 const DOMAIN_ORDER = ['origin', 'health', 'finance', 'education', 'social', 'civic'] as const;
 
@@ -94,7 +94,13 @@ export async function handleNarrative(
 			headers: { 'content-type': 'application/json', 'x-goog-api-key': deps.apiKey },
 			body: JSON.stringify({
 				contents: [{ parts: [{ text: buildPrompt(payload) }] }],
-				generationConfig: { temperature: 0.4, maxOutputTokens: 400 }
+				// thinkingBudget 0 disables 2.5-flash's default reasoning pass, which would
+				// otherwise consume the output budget and truncate the narrative to a fragment.
+				generationConfig: {
+					temperature: 0.4,
+					maxOutputTokens: 600,
+					thinkingConfig: { thinkingBudget: 0 }
+				}
 			})
 		});
 		if (!res.ok) return { fallback: true };
