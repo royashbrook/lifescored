@@ -6,6 +6,7 @@
 	import Callout from '$lib/ui/Callout.svelte';
 	import InputsPanel from '$lib/ui/InputsPanel.svelte';
 	import Lever from '$lib/ui/Lever.svelte';
+	import PresetBar from '$lib/ui/PresetBar.svelte';
 	import NarrativeCard from '$lib/ui/NarrativeCard.svelte';
 	import ScoreRow from '$lib/ui/ScoreRow.svelte';
 	import SectionHead from '$lib/ui/SectionHead.svelte';
@@ -49,6 +50,8 @@
 		<div class="text-[26px] font-bold tabular-nums" style:font-family="var(--font-mono)">{result.composite.toLocaleString('en-US')}</div>
 	</div>
 </div>
+
+<PresetBar {profile} />
 
 <InputsPanel {profile} />
 
