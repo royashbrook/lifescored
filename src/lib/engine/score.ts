@@ -52,10 +52,11 @@ export interface ScoreResult {
 
 export const MAX_WEIGHT = 50;
 
-function compositeOf(inputs: Inputs, overrides: Overrides): number {
+function compositeOf(inputs: Inputs, overrides: Overrides, activePacks: Set<string>): number {
 	inputs = clampInputs(inputs);
 	let total = 0;
 	for (const rule of RULES) {
+		if (!activePacks.has(rule.pack)) continue;
 		const o = overrides[rule.id];
 		if (o?.enabled === false) continue;
 		total += pointsFor(rule, inputs, clampWeight(o?.weight ?? rule.defaultWeight));
@@ -66,12 +67,14 @@ function compositeOf(inputs: Inputs, overrides: Overrides): number {
 /** Weights are clamped to [0, 50]; negative overrides become 0 (rule contributes nothing but stays enabled). */
 const clampWeight = (w: number) => Math.max(0, Math.min(MAX_WEIGHT, w));
 
-export function computeScore(rawInputs: Inputs, overrides: Overrides = {}): ScoreResult {
+export function computeScore(rawInputs: Inputs, overrides: Overrides = {}, activePacks: Set<string> = new Set(['core'])): ScoreResult {
 	const inputs = clampInputs(rawInputs);
 	const tierSubtotals: Record<Tier, number> = { starting_point: 0, your_moves: 0 };
 	const domainSubtotals: Record<Domain, number> = { origin: 0, health: 0, finance: 0, education: 0, social: 0, civic: 0 };
 
-	const perRule: RuleScore[] = RULES.map((rule) => {
+	const perRule: RuleScore[] = [];
+	for (const rule of RULES) {
+		if (!activePacks.has(rule.pack)) continue;
 		const o = overrides[rule.id];
 		const enabled = o?.enabled !== false;
 		const max = clampWeight(o?.weight ?? rule.defaultWeight);
@@ -81,21 +84,21 @@ export function computeScore(rawInputs: Inputs, overrides: Overrides = {}): Scor
 			tierSubtotals[rule.tier] += value;
 			domainSubtotals[rule.domain] += value;
 		}
-		return {
+		perRule.push({
 			id: rule.id, label: rule.label, domain: rule.domain, tier: rule.tier,
 			evidence: rule.evidence, controllable: rule.controllable,
 			value, max, enabled, description: rule.describe(inputs), position
-		};
-	});
+		});
+	}
 
 	const composite = tierSubtotals.starting_point + tierSubtotals.your_moves;
 
 	const whatIfs: WhatIfDelta[] = RULES.filter(
-		(r) => r.whatIf && overrides[r.id]?.enabled !== false && r.whatIf.applicable(inputs)
+		(r) => activePacks.has(r.pack) && r.whatIf && overrides[r.id]?.enabled !== false && r.whatIf.applicable(inputs)
 	).map((r) => ({
 		ruleId: r.id,
 		label: r.whatIf!.label,
-		delta: compositeOf(r.whatIf!.transform(inputs), overrides) - composite
+		delta: compositeOf(r.whatIf!.transform(inputs), overrides, activePacks) - composite
 	}));
 
 	return { perRule, tierSubtotals, domainSubtotals, composite, whatIfs };

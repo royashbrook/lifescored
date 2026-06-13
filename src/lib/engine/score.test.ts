@@ -4,9 +4,12 @@ import { BASELINE_WEIGHT, computeScore, pointsFor } from './score';
 import type { Rule } from '../rulebook';
 
 describe('computeScore', () => {
-	it('produces one entry per rule and consistent totals', () => {
+	it('produces one entry per ACTIVE rule and consistent totals', () => {
+		// Default activePacks = core only (29 rules); all 35 rules visible when all packs enabled
 		const r = computeScore(DEFAULT_INPUTS);
-		expect(r.perRule).toHaveLength(RULES.length);
+		expect(r.perRule).toHaveLength(29); // core-only default
+		const rAll = computeScore(DEFAULT_INPUTS, {}, new Set(['core', 'foundations', 'speculative']));
+		expect(rAll.perRule).toHaveLength(RULES.length); // all 35 when all packs active
 		const sum = r.perRule.filter((p) => p.enabled).reduce((a, p) => a + p.value, 0);
 		expect(r.composite).toBe(sum);
 		expect(r.tierSubtotals.starting_point + r.tierSubtotals.your_moves).toBe(r.composite);
@@ -81,6 +84,35 @@ const syntheticRule = {
 	bounds: [-0.5, Infinity] as [number, number],
 	weightRationale: 'test'
 } as unknown as Rule;
+
+describe('active-pack filtering', () => {
+	it('defaults to core only — excludes speculative and foundations rules', () => {
+		const r = computeScore(DEFAULT_INPUTS);
+		const ids = r.perRule.map((p) => p.id);
+		expect(ids).not.toContain('digital');
+		expect(ids).not.toContain('voting');
+		expect(ids).not.toContain('water-sanitation');
+		expect(r.perRule).toHaveLength(29); // 35 total - 2 speculative - 4 foundations
+	});
+	it('enabling foundations adds the 4 foundations rules and raises the composite', () => {
+		const core = computeScore(DEFAULT_INPUTS);
+		const withF = computeScore(DEFAULT_INPUTS, {}, new Set(['core', 'foundations']));
+		expect(withF.perRule.some((p) => p.id === 'water-sanitation')).toBe(true);
+		expect(withF.perRule).toHaveLength(33); // 29 + 4
+		expect(withF.composite).toBeGreaterThan(core.composite); // developed-world defaults lift it
+	});
+	it('enabling speculative adds digital and voting', () => {
+		const withS = computeScore(DEFAULT_INPUTS, {}, new Set(['core', 'speculative']));
+		const ids = withS.perRule.map((p) => p.id);
+		expect(ids).toContain('digital');
+		expect(ids).toContain('voting');
+	});
+	it('per-rule disable still applies within an active pack', () => {
+		const r = computeScore(DEFAULT_INPUTS, { country: { enabled: false } });
+		const country = r.perRule.find((p) => p.id === 'country')!;
+		expect(country.enabled).toBe(false); // present but excluded from totals
+	});
+});
 
 describe('engine formula (position × weight)', () => {
 	it('computes points = round(position × weight), clamped to bounds', () => {
