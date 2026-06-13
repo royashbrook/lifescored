@@ -58,13 +58,25 @@
 		</p>
 	</section>
 
-	<section>
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">Privacy</h2>
+	<section id="how-it-works" style:scroll-margin-top="1rem">
+		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">How this works — and what "no tracking" means</h2>
 		<p>
-			Your inputs never leave your device. Scores compute in your browser; profiles persist in your browser's
-			local storage; share links carry the data in the URL fragment, which is never sent to any server. The one
-			network feature — the AI narrative — sends only rounded subtotals, never your inputs, and falls back to a
-			locally-composed narrative when unavailable. Traffic is measured with Cloudflare Web Analytics — cookieless and aggregate; it cannot see your inputs, which never leave your device anyway.
+			Everything runs in your browser. You type your answers in, the rules compute your score right there on
+			your device, and the numbers are saved only to your browser's own local storage so they're still there
+			next time. Nothing you enter is ever sent to a server — there is no account, no database of users, and no
+			copy of your answers anywhere but your own machine.
+		</p>
+		<p class="mt-2">
+			<b>"No tracking"</b> means exactly that: no cookies that follow you, no advertising or analytics scripts
+			that build a profile of you, nothing sold or shared. We do keep a rough count of how many people visit,
+			using Cloudflare Web Analytics — it's cookieless and aggregate, can't identify you, and never sees your
+			answers (those don't leave your device anyway).
+		</p>
+		<p class="mt-2">
+			Two things do leave your browser, and only because you ask for them. The optional AI narrative sends just
+			your <i>rounded subtotals</i> — never the raw answers — and falls back to a locally-written one if it's
+			unavailable. And if you use “share my exact answers,” those answers travel encoded inside the link you
+			hand out — see the warning there before you send it.
 		</p>
 	</section>
 

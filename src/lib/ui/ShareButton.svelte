@@ -43,9 +43,11 @@
 	}
 
 	function shareScore() {
-		const url = `${location.origin}/`;
+		// Share the score as TEXT only — no `url`. When a url is present, most share targets
+		// surface only the link and drop the text, so the number never travels. The brand
+		// (lifescored.com) rides along inside the text instead, as plain words.
 		if (navigator.share) {
-			navigator.share({ title: 'life. scored.', text: `My life score is ${scoreN}`, url }).then(
+			navigator.share({ title: 'life. scored.', text: scoreText }).then(
 				() => {},
 				(e: DOMException) => {
 					if (e?.name !== 'AbortError') copy(scoreText, 'score-copied');
@@ -94,9 +96,9 @@
 	{#if showData}
 		<div class="flex max-w-[300px] flex-col items-end gap-1.5 text-right">
 			<span class="text-[10px] leading-snug" style:color="var(--spec)">
-				This link carries every answer you entered — income, assets, debt, all of it — encoded in the URL.
-				It still never touches a server, but anyone you send it to can read your full profile. Only share it
-				with someone you'd show these numbers to.
+				This is different from the score. It puts the exact answers you typed — income, assets, debt, all of
+				them — right into the link, encoded. Nothing is sent to a server, but whoever opens the link can read
+				every answer back out of it. Only send it to someone you'd show these numbers to.
 			</span>
 			<button
 				class="rounded-full border px-3 py-1 text-[11px]"
