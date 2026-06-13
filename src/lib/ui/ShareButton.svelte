@@ -1,16 +1,21 @@
 <script lang="ts">
 	import { encodeProfile, type Profile } from '$lib/share/codec';
+	import { renderScoreImage } from '$lib/share/score-image';
 
-	let { profile }: { profile: Profile } = $props();
+	let {
+		profile,
+		composite,
+		startingPoint,
+		yourMoves
+	}: { profile: Profile; composite: number; startingPoint: number; yourMoves: number } = $props();
+
 	let copied = $state(false);
 	let failed = $state(false);
 	let shareUrl = $state('');
+	let imageFile = $state<File | null>(null);
 
-	// Precompute the link whenever the profile changes. The click handler must call
-	// clipboard.writeText synchronously — an `await` between the user's click and the
-	// clipboard call drops transient user activation (Safari/WebKit reject it), which
-	// is why an await-then-copy pattern silently fails. encodeProfile is async (it uses
-	// CompressionStream), so we do it ahead of time, not in the gesture.
+	// Precompute the link so the click handler can call share/clipboard synchronously —
+	// an await between the user's click and the API call drops user activation (Safari rejects it).
 	$effect(() => {
 		const snapshot = profile;
 		let cancelled = false;
@@ -22,21 +27,52 @@
 		};
 	});
 
+	// Precompute the share image when the headline numbers change.
+	$effect(() => {
+		const data = { composite, startingPoint, yourMoves };
+		let cancelled = false;
+		renderScoreImage(data).then((f) => {
+			if (!cancelled) imageFile = f;
+		});
+		return () => {
+			cancelled = true;
+		};
+	});
+
+	function flash(which: 'copied' | 'failed') {
+		copied = which === 'copied';
+		failed = which === 'failed';
+		setTimeout(() => {
+			copied = false;
+			if (which === 'copied') failed = false;
+		}, 2000);
+	}
+
+	function copyFallback() {
+		navigator.clipboard.writeText(shareUrl).then(
+			() => flash('copied'),
+			() => (failed = true)
+		);
+	}
+
 	function share() {
 		if (!shareUrl) return;
-		// Called synchronously in the gesture — no preceding await — so activation holds.
-		navigator.clipboard.writeText(shareUrl).then(
-			() => {
-				copied = true;
-				failed = false;
-				setTimeout(() => (copied = false), 2000);
-			},
-			() => {
-				// Clipboard blocked (older browser, embedded webview, denied permission):
-				// fall back to revealing the link for manual copy.
-				failed = true;
-			}
-		);
+		const text = `My life, scored: ${Math.round(composite).toLocaleString('en-US')}`;
+		const data: ShareData = { title: 'life. scored.', text, url: shareUrl };
+		const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
+		if (imageFile && nav.canShare?.({ files: [imageFile] })) {
+			(data as ShareData & { files: File[] }).files = [imageFile];
+		}
+		if (nav.share) {
+			nav.share(data).then(
+				() => {},
+				(e: DOMException) => {
+					if (e?.name !== 'AbortError') copyFallback();
+				}
+			);
+		} else {
+			copyFallback();
+		}
 	}
 
 	function selectAll(e: Event) {
@@ -52,7 +88,7 @@
 		style:border-color="var(--line)"
 		disabled={!shareUrl}
 		onclick={share}
-	>{copied ? 'link copied ✓' : 'share — inputs travel in the link, not to a server'}</button>
+	>{copied ? 'shared ✓' : 'share — inputs travel in the link, not to a server'}</button>
 
 	{#if failed}
 		<input

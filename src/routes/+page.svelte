@@ -115,5 +115,10 @@
 		debt and neighborhood are measured directly, a race term adds no information — it just double-counts the real
 		variables, which is exactly why lending law forbids it. We measure the targets, not the proxy.
 	</div>
-	<ShareButton profile={profile.snapshot()} />
+	<ShareButton
+		profile={profile.snapshot()}
+		composite={result.composite}
+		startingPoint={result.tierSubtotals.starting_point}
+		yourMoves={result.tierSubtotals.your_moves}
+	/>
 </div>
