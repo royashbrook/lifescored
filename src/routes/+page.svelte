@@ -37,7 +37,7 @@
 </script>
 
 <svelte:head>
-	<title>life. scored. — every weight shown</title>
+	<title>life. scored — {result.composite.toLocaleString('en-US')}</title>
 </svelte:head>
 
 <div class="mt-1 mb-4 flex items-start justify-between gap-4">
@@ -118,7 +118,5 @@
 	<ShareButton
 		profile={profile.snapshot()}
 		composite={result.composite}
-		startingPoint={result.tierSubtotals.starting_point}
-		yourMoves={result.tierSubtotals.your_moves}
 	/>
 </div>

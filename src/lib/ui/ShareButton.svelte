@@ -1,18 +1,14 @@
 <script lang="ts">
 	import { encodeProfile, type Profile } from '$lib/share/codec';
-	import { renderScoreImage } from '$lib/share/score-image';
 
 	let {
 		profile,
-		composite,
-		startingPoint,
-		yourMoves
-	}: { profile: Profile; composite: number; startingPoint: number; yourMoves: number } = $props();
+		composite
+	}: { profile: Profile; composite: number } = $props();
 
 	let copied = $state(false);
 	let failed = $state(false);
 	let shareUrl = $state('');
-	let imageFile = $state<File | null>(null);
 
 	// Precompute the link so the click handler can call share/clipboard synchronously —
 	// an await between the user's click and the API call drops user activation (Safari rejects it).
@@ -21,18 +17,6 @@
 		let cancelled = false;
 		encodeProfile(snapshot).then((encoded) => {
 			if (!cancelled) shareUrl = `${location.origin}/#p=${encoded}`;
-		});
-		return () => {
-			cancelled = true;
-		};
-	});
-
-	// Precompute the share image when the headline numbers change.
-	$effect(() => {
-		const data = { composite, startingPoint, yourMoves };
-		let cancelled = false;
-		renderScoreImage(data).then((f) => {
-			if (!cancelled) imageFile = f;
 		});
 		return () => {
 			cancelled = true;
@@ -59,12 +43,8 @@
 		if (!shareUrl) return;
 		const text = `My life, scored: ${Math.round(composite).toLocaleString('en-US')}`;
 		const data: ShareData = { title: 'life. scored.', text, url: shareUrl };
-		const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
-		if (imageFile && nav.canShare?.({ files: [imageFile] })) {
-			(data as ShareData & { files: File[] }).files = [imageFile];
-		}
-		if (nav.share) {
-			nav.share(data).then(
+		if (navigator.share) {
+			navigator.share(data).then(
 				() => {},
 				(e: DOMException) => {
 					if (e?.name !== 'AbortError') copyFallback();

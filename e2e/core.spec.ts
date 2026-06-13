@@ -33,3 +33,9 @@ test('a definition popover opens with a rule link', async ({ page }) => {
 	await page.getByRole('button', { name: 'What does this mean?' }).first().click();
 	await expect(page.getByRole('link', { name: /read the rule/ })).toBeVisible();
 });
+
+test('page title carries the composite for meaningful sharing', async ({ page }) => {
+	await page.goto('/');
+	await page.waitForLoadState('networkidle');
+	await expect(page).toHaveTitle(/life\. scored — [\d,]+/);
+});

@@ -23,3 +23,17 @@ test('share copies a link that round-trips the profile', async ({ page }) => {
 	await expect(freshPage.getByText('Loaded a shared profile')).toBeVisible({ timeout: 5000 });
 	await expect(freshPage.locator('label', { hasText: 'Net worth' }).locator('input')).toHaveValue('424242');
 });
+
+test('the live URL fragment round-trips via the browser address bar', async ({ page, context }) => {
+	await page.goto('/');
+	await page.waitForLoadState('networkidle');
+	const nw = page.locator('label', { hasText: 'Net worth' }).locator('input');
+	await nw.fill('515151');
+	await page.waitForTimeout(700); // 300ms debounce + encode + margin
+	const href = page.url();
+	expect(href).toContain('#p=1.');
+	const recipient = await context.newPage();
+	await recipient.goto(href);
+	await expect(recipient.getByText('Loaded a shared profile')).toBeVisible();
+	await expect(recipient.locator('label', { hasText: 'Net worth' }).locator('input')).toHaveValue('515151');
+});

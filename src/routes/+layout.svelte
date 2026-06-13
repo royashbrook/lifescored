@@ -5,29 +5,46 @@
 	import { replaceState } from '$app/navigation';
 	import { setContext } from 'svelte';
 	import { createProfileState, loadStoredProfile, storeProfile } from '$lib/state/profile.svelte';
-	import { decodeProfile } from '$lib/share/codec';
+	import { decodeProfile, encodeProfile } from '$lib/share/codec';
 
 	let { children } = $props();
+
+	// Capture the incoming hash synchronously, BEFORE any effect can overwrite it.
+	const initialHash = browser ? location.hash : '';
 
 	const profile = createProfileState(loadStoredProfile(browser ? localStorage : null));
 	setContext('profile', profile);
 
 	let shareNotice = $state<'ok' | 'bad' | null>(null);
 
-	// Imported share links: #p=1.<payload>
+	// Import a shared profile from the incoming #p=1.<payload> hash (runs once).
+	// We do NOT strip the hash — the live-reflect effect below keeps it current.
 	$effect(() => {
 		if (!browser) return;
-		const hash = location.hash;
-		if (!hash.startsWith('#p=')) return;
-		decodeProfile(hash.slice(3)).then((decoded) => {
+		if (!initialHash.startsWith('#p=')) return;
+		decodeProfile(initialHash.slice(3)).then((decoded) => {
 			if (decoded) {
 				profile.replace(decoded);
 				shareNotice = 'ok';
 			} else {
 				shareNotice = 'bad';
 			}
-			replaceState(location.pathname, {});
 		});
+	});
+
+	// Keep the URL fragment live so the browser's native share carries the profile.
+	// Debounced so rapid edits coalesce; the import above wins the startup race because
+	// initialHash was captured before this effect's first write and decode completes
+	// well within the 300ms debounce.
+	$effect(() => {
+		if (!browser) return;
+		const snap = profile.snapshot();
+		const timer = setTimeout(() => {
+			encodeProfile(snap).then((encoded) => {
+				replaceState(`${location.pathname}${location.search}#p=${encoded}`, {});
+			});
+		}, 300);
+		return () => clearTimeout(timer);
 	});
 
 	// Persist on every change.
