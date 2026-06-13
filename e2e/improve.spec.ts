@@ -6,11 +6,15 @@ test('/improve loads with the no-affiliate promise and a known resource', async 
 	await expect(page.getByRole('link', { name: /CareerOneStop/ })).toBeVisible();
 });
 
-test('the support card links to the repo (not /sponsors)', async ({ page }) => {
+test('the support card offers GitHub Sponsors and the repo', async ({ page }) => {
 	await page.goto('/improve');
-	const repoLink = page.getByRole('link', { name: /the repo/ });
-	await expect(repoLink).toBeVisible();
-	await expect(repoLink).toHaveAttribute('href', /github\.com\/royashbrook\/lifescored/);
+	const sponsor = page.getByRole('link', { name: /sponsor on GitHub/ });
+	await expect(sponsor).toBeVisible();
+	await expect(sponsor).toHaveAttribute('href', 'https://github.com/sponsors/royashbrook');
+	await expect(page.getByRole('link', { name: /star the repo/ })).toHaveAttribute(
+		'href',
+		/github\.com\/royashbrook\/lifescored/
+	);
 });
 
 test('nav has an Improve link that routes to /improve', async ({ page }) => {
