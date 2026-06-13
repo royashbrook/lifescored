@@ -65,6 +65,10 @@ Add a rule, and the UI, weight editor, share
 codec, and about-page source list pick it up automatically. `npm test` enforces
 the invariants (bounds, integer scores, citation present).
 
+## Contributing
+
+Every commit must reference a GitHub issue number, e.g. `feat: add presets (#2)` or `refs #5`. A `commit-msg` hook enforces this automatically — it is installed via `core.hooksPath` pointing to `.githooks/`, which activates on `npm install` (the `prepare` script runs `git config core.hooksPath .githooks`). Merge commits and reverts are exempt. To find or open an issue: `gh issue list` / `gh issue create`.
+
 ## License
 
 MIT — see LICENSE.

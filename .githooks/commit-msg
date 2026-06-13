@@ -1,0 +1,23 @@
+#!/bin/sh
+# Require every commit to reference an issue, e.g. "(#12)" or "refs #12".
+# Merge and revert commits are exempt.
+msg_file="$1"
+first_line=$(head -n 1 "$msg_file")
+
+case "$first_line" in
+	Merge\ *|Revert\ *|fixup!\ *|squash!\ *) exit 0 ;;
+esac
+
+if grep -qE '#[0-9]+' "$msg_file"; then
+	exit 0
+fi
+
+echo "" >&2
+echo "  ✗ Commit rejected: no issue reference found." >&2
+echo "" >&2
+echo "  Every commit must reference an issue, e.g.:" >&2
+echo "      git commit -m \"feat: add presets (#2)\"" >&2
+echo "" >&2
+echo "  Find or open one:  gh issue list   /   gh issue create" >&2
+echo "" >&2
+exit 1
