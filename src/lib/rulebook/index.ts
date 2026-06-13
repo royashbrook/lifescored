@@ -37,5 +37,6 @@ export const DOMAINS: Record<Domain, { label: string; blurb: string }> = {
 	civic: { label: 'Civic / legal', blurb: 'how institutional ledgers read you' }
 };
 
+export * from './help';
 export * from './inputs';
 export * from './types';
