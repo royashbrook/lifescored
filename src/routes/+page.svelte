@@ -37,7 +37,7 @@
 </script>
 
 <svelte:head>
-	<title>life. scored — {result.composite.toLocaleString('en-US')}</title>
+	<title>life. scored. {result.composite.toLocaleString('en-US')}</title>
 </svelte:head>
 
 <div class="mt-1 mb-4 flex items-start justify-between gap-4">
