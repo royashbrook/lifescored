@@ -97,13 +97,20 @@ export async function handleNarrative(
 				generationConfig: { temperature: 0.4, maxOutputTokens: 400 }
 			})
 		});
-		if (!res.ok) return { fallback: true };
+		if (!res.ok) {
+			console.error('GEMINI_DIAG status', res.status, (await res.text()).slice(0, 300));
+			return { fallback: true };
+		}
 		const data = (await res.json()) as { candidates?: { content?: { parts?: { text?: string }[] } }[] };
 		const text = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-		if (!text) return { fallback: true };
+		if (!text) {
+			console.error('GEMINI_DIAG no-text', JSON.stringify(data).slice(0, 400));
+			return { fallback: true };
+		}
 		await deps.kv.put(cacheKey, text, { expirationTtl: CACHE_TTL });
 		return { text };
-	} catch {
+	} catch (e) {
+		console.error('GEMINI_DIAG throw', String(e));
 		return { fallback: true };
 	}
 }
