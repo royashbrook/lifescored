@@ -10,6 +10,7 @@ export interface ImproveArea {
 	group: string;
 	simple: string;
 	free: Resource[];
+	ruleIds: string[];
 }
 
 export const IMPROVE: ImproveArea[] = [
@@ -31,7 +32,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.who.int/news-room/fact-sheets/detail/physical-activity',
 				note: 'The global guideline, with the why behind the numbers.'
 			}
-		]
+		],
+		ruleIds: ['exercise']
 	},
 	{
 		id: 'nicotine',
@@ -50,7 +52,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.cdc.gov/tobacco/about/index.html',
 				note: 'How to quit and where the free help is.'
 			}
-		]
+		],
+		ruleIds: ['smoking']
 	},
 	{
 		id: 'alcohol',
@@ -69,7 +72,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.samhsa.gov/find-help/helplines/national-helpline',
 				note: 'Free, confidential, 24/7: 1-800-662-HELP.'
 			}
-		]
+		],
+		ruleIds: ['alcohol']
 	},
 	{
 		id: 'sleep',
@@ -83,14 +87,15 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.cdc.gov/sleep/about/index.html',
 				note: 'How much sleep you need and habits that help you get it.'
 			}
-		]
+		],
+		ruleIds: ['sleep']
 	},
 	{
 		id: 'health-coverage',
 		label: 'Health coverage',
 		group: 'Health & habits',
 		simple:
-			'You may qualify for free or subsidized coverage — most people who assume they can’t afford it actually can.',
+			"You may qualify for free or subsidized coverage — most people who assume they can't afford it actually can.",
 		free: [
 			{
 				name: 'HealthCare.gov',
@@ -102,7 +107,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.medicaid.gov/',
 				note: 'Free or low-cost coverage if your income qualifies.'
 			}
-		]
+		],
+		ruleIds: ['insurance']
 	},
 
 	// ── Money ─────────────────────────────────────────────────────────────────
@@ -122,7 +128,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.mymoney.gov/',
 				note: 'The federal hub for the basics of managing money.'
 			}
-		]
+		],
+		ruleIds: ['emergency-fund']
 	},
 	{
 		id: 'debt',
@@ -140,7 +147,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.consumerfinance.gov/consumer-tools/debt-collection/',
 				note: 'Your rights and free tools for dealing with debt.'
 			}
-		]
+		],
+		ruleIds: ['dti']
 	},
 	{
 		id: 'credit',
@@ -159,7 +167,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.consumerfinance.gov/consumer-tools/credit-reports-and-scores/',
 				note: 'How scoring works and how to fix errors for free.'
 			}
-		]
+		],
+		ruleIds: ['payment-history', 'utilization']
 	},
 	{
 		id: 'banking',
@@ -178,7 +187,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://joinbankon.org/',
 				note: 'Certified low-cost accounts with no overdraft surprises.'
 			}
-		]
+		],
+		ruleIds: ['banked']
 	},
 
 	// ── Work & learning ─────────────────────────────────────────────────────
@@ -199,7 +209,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://studentaid.gov/',
 				note: 'Grants and aid before you take on any debt.'
 			}
-		]
+		],
+		ruleIds: ['education']
 	},
 	{
 		id: 'employment',
@@ -217,7 +228,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.careeronestop.org/LocalHelp/local-help.aspx',
 				note: 'Free in-person help near you, paid for by your taxes.'
 			}
-		]
+		],
+		ruleIds: ['employment', 'outlook']
 	},
 	{
 		id: 'volunteering',
@@ -236,7 +248,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://americorps.gov/',
 				note: 'Service positions, some with a stipend or education award.'
 			}
-		]
+		],
+		ruleIds: ['volunteering']
 	},
 
 	// ── Stability & safety net ──────────────────────────────────────────────
@@ -257,14 +270,15 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://988lifeline.org/',
 				note: 'Call or text 988 any time — free and confidential.'
 			}
-		]
+		],
+		ruleIds: ['connection']
 	},
 	{
 		id: 'housing',
 		label: 'Housing',
 		group: 'Stability & safety net',
 		simple:
-			'If housing is shaky, you have rights and there’s free help — legal aid, rental assistance, and a hotline that knows your local options.',
+			"If housing is shaky, you have rights and there's free help — legal aid, rental assistance, and a hotline that knows your local options.",
 		free: [
 			{
 				name: '211',
@@ -281,14 +295,15 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.hud.gov/findshelter',
 				note: 'Search nearby shelter, housing, and health services.'
 			}
-		]
+		],
+		ruleIds: ['housing-stability']
 	},
 	{
 		id: 'food',
 		label: 'Food',
 		group: 'Stability & safety net',
 		simple:
-			'Nobody should ration food. SNAP and food banks exist for exactly this — no shame in using what’s there.',
+			"Nobody should ration food. SNAP and food banks exist for exactly this — no shame in using what's there.",
 		free: [
 			{
 				name: 'SNAP Eligibility',
@@ -305,7 +320,8 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.211.org/',
 				note: 'Local pantries and meal programs.'
 			}
-		]
+		],
+		ruleIds: []
 	},
 	{
 		id: 'criminal-record',
@@ -324,6 +340,7 @@ export const IMPROVE: ImproveArea[] = [
 				url: 'https://www.lsc.gov/about-lsc/what-legal-aid/i-need-legal-help',
 				note: 'Free legal help, including expungement questions.'
 			}
-		]
+		],
+		ruleIds: ['criminal-record']
 	}
 ];

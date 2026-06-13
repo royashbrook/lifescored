@@ -6,11 +6,11 @@ test('/improve loads with the no-affiliate promise and a known resource', async 
 	await expect(page.getByRole('link', { name: /CareerOneStop/ })).toBeVisible();
 });
 
-test('the GitHub Sponsors support link points at github.com/sponsors', async ({ page }) => {
+test('the support card links to the repo (not /sponsors)', async ({ page }) => {
 	await page.goto('/improve');
-	const sponsor = page.getByRole('link', { name: /GitHub Sponsors/ });
-	await expect(sponsor).toBeVisible();
-	await expect(sponsor).toHaveAttribute('href', /github\.com\/sponsors/);
+	const repoLink = page.getByRole('link', { name: /the repo/ });
+	await expect(repoLink).toBeVisible();
+	await expect(repoLink).toHaveAttribute('href', /github\.com\/royashbrook\/lifescored/);
 });
 
 test('nav has an Improve link that routes to /improve', async ({ page }) => {
@@ -18,5 +18,10 @@ test('nav has an Improve link that routes to /improve', async ({ page }) => {
 	await page.waitForLoadState('networkidle');
 	await page.getByRole('link', { name: 'Improve' }).click();
 	await expect(page).toHaveURL(/\/improve/);
-	await expect(page.getByRole('link', { name: /Khan Academy/ })).toBeVisible();
+	await expect(page.getByRole('link', { name: /Khan Academy/ }).first()).toBeVisible();
+});
+
+test('"Start here" heading is present with the default profile', async ({ page }) => {
+	await page.goto('/improve');
+	await expect(page.getByRole('heading', { name: /Start here/i })).toBeVisible();
 });
