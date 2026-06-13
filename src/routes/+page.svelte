@@ -10,6 +10,7 @@
 	import ScoreRow from '$lib/ui/ScoreRow.svelte';
 	import SectionHead from '$lib/ui/SectionHead.svelte';
 	import ShareButton from '$lib/ui/ShareButton.svelte';
+	import TopMovers from '$lib/ui/TopMovers.svelte';
 
 	const profile = getContext<ReturnType<typeof createProfileState>>('profile');
 
@@ -50,6 +51,8 @@
 </div>
 
 <InputsPanel {profile} />
+
+<TopMovers {result} />
 
 {#each tierKeys as tierKey (tierKey)}
 	<div class="mt-3">
