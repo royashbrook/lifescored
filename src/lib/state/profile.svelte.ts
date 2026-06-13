@@ -38,6 +38,9 @@ export function createProfileState(initial: Profile) {
 		setInput<K extends keyof Profile['inputs']>(key: K, value: Profile['inputs'][K]) {
 			inputs = { ...inputs, [key]: value };
 		},
+		setInputs(next: Profile['inputs']) {
+			inputs = { ...next };
+		},
 		setOverride(ruleId: string, patch: { weight?: number; enabled?: boolean }) {
 			overrides = { ...overrides, [ruleId]: { ...overrides[ruleId], ...patch } };
 		},
