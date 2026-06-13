@@ -54,6 +54,13 @@
 	</div>
 </div>
 
+<a
+	href="/start"
+	class="mb-3 inline-block text-[11px] underline"
+	style:font-family="var(--font-mono)"
+	style:color="var(--ink-dim)"
+>new here? walk through it one question at a time →</a>
+
 <PresetBar {profile} />
 
 <PackBar {profile} />
