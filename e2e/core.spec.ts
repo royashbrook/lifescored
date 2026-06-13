@@ -39,3 +39,14 @@ test('page title carries the composite for meaningful sharing', async ({ page })
 	await page.waitForLoadState('networkidle');
 	await expect(page).toHaveTitle(/life\. scored\. [\d,]+/);
 });
+
+test('the site footer carries a Sponsor link cross-site', async ({ page }) => {
+	await page.goto('/');
+	const footer = page.locator('footer');
+	await expect(footer).toBeVisible();
+	const sponsor = footer.getByRole('link', { name: /sponsor/i });
+	await expect(sponsor).toHaveAttribute('href', 'https://github.com/sponsors/royashbrook');
+	// present on another page too (it's in the layout)
+	await page.goto('/about');
+	await expect(page.locator('footer').getByRole('link', { name: /sponsor/i })).toBeVisible();
+});

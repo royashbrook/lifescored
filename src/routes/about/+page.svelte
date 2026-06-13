@@ -69,6 +69,18 @@
 	</section>
 
 	<section>
+		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">Keeping it free</h2>
+		<p>
+			There are no ads, no affiliate links, no data sales, and no paywall — and there's no plan to add the first
+			three. The whole point falls apart the moment the thing scoring you has something to sell you. Hosting is
+			nearly free, the code is open source, and if a paid course or service is genuinely what would move one of
+			your scores, the <a href="/improve" class="underline" style:color="var(--start)">improve page</a> points you
+			at the free options first. If it's useful to you and you'd like to help it stay free and independent, you can
+			<a href="https://github.com/sponsors/royashbrook" target="_blank" rel="noreferrer" class="underline" style:color="var(--moves)">sponsor it on GitHub</a> — entirely optional, and nothing about the app changes either way.
+		</p>
+	</section>
+
+	<section>
 		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">The weights, justified</h2>
 		<ul class="space-y-1.5 text-[12px]" style:color="var(--ink-dim)">
 			{#each RULES as rule (rule.id)}

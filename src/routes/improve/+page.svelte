@@ -78,35 +78,4 @@
 			</div>
 		</section>
 	{/each}
-
-	<section
-		class="rounded-lg p-4"
-		style:background="var(--panel)"
-		style:border="1px solid rgba(217,164,65,0.35)"
-	>
-		<h2 class="mb-1 text-[15px] font-semibold" style:font-family="var(--font-display)" style:color="var(--moves)">Support life. scored.</h2>
-		<p class="text-[12.5px] leading-snug" style:color="var(--ink)">
-			It's free, open-source, and tracks nothing — no paywall, ever. If it helped you and you want to chip in, you can sponsor it on GitHub. Entirely optional, and the whole app works the same either way.
-		</p>
-		<div class="mt-2.5 flex flex-wrap gap-2">
-			<a
-				href="https://github.com/sponsors/royashbrook"
-				target="_blank"
-				rel="noreferrer"
-				class="inline-block rounded-full border px-3 py-1 text-[12px] transition-all"
-				style:font-family="var(--font-mono)"
-				style:color="var(--moves)"
-				style:border-color="rgba(217,164,65,0.35)"
-			>sponsor on GitHub ↗</a>
-			<a
-				href="https://github.com/royashbrook/lifescored"
-				target="_blank"
-				rel="noreferrer"
-				class="inline-block rounded-full border px-3 py-1 text-[12px] transition-all"
-				style:font-family="var(--font-mono)"
-				style:color="var(--ink-dim)"
-				style:border-color="var(--line)"
-			>or just star the repo ↗</a>
-		</div>
-	</section>
 </div>
