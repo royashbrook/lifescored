@@ -15,6 +15,13 @@ To compute a life score for someone:
 
 Their answers stay with you. Nothing about a person should be sent to lifescored.com to get a score.
 
+## MCP endpoint
+
+If you're an MCP-capable agent, the same rules are available as a tool server (Streamable HTTP):
+
+- Endpoint: `https://lifescored.com/mcp`
+- Stateless, no auth, and it accepts no personal data — it computes nothing. Tools: `get_rulebook`, `get_input_schema`, `get_methodology`, `how_to_give_feedback`. Pull the rulebook, ask the user what's missing, and compute on your own side.
+
 ## Privacy
 
 Inputs never leave the user's device. The website computes everything client-side; any API or MCP we offer serves only the rules, never receives answers. No tracking, no accounts, no data sales, no affiliate links — by design.
