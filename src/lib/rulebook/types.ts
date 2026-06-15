@@ -31,8 +31,7 @@ export interface Inputs {
 	income: number;
 	assets: number;
 	debt: number;
-	latePayments: 0 | 1 | 2; // none in 24mo / one / multiple
-	creditUtil: number; // percent of available revolving credit used
+	creditScore: number; // FICO-style 300–850; consolidates payment history + utilization + more
 	emergencyMonths: number;
 	homeowner: boolean;
 	// education / work

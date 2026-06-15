@@ -8,11 +8,11 @@ describe('inputs', () => {
 	});
 
 	it('clamps out-of-range numerics to their bounds', () => {
-		const wild = { ...DEFAULT_INPUTS, age: 900, debt: -5, creditUtil: 400 };
+		const wild = { ...DEFAULT_INPUTS, age: 900, debt: -5, creditScore: 9000 };
 		const c = clampInputs(wild);
 		expect(c.age).toBe(NUMERIC_CLAMPS.age[1]);
 		expect(c.debt).toBe(0);
-		expect(c.creditUtil).toBe(100);
+		expect(c.creditScore).toBe(850); // clamped to FICO ceiling
 	});
 
 	it('every country has a name, income tier, base fraction and henley band', () => {
@@ -34,7 +34,7 @@ describe('inputs', () => {
 		const hostile = {
 			...DEFAULT_INPUTS,
 			smoker: 'yes', sex: 'attack', bmiBand: 7, employment: null,
-			familySupport: 99, neighborhood: -3, latePayments: 1.7,
+			familySupport: 99, neighborhood: -3, socialConnection: 1.7,
 			education: 'phd', insured: 0
 		} as unknown as typeof DEFAULT_INPUTS;
 		const c = clampInputs(hostile);
@@ -44,7 +44,7 @@ describe('inputs', () => {
 		expect(c.employment).toBe(DEFAULT_INPUTS.employment);
 		expect(c.familySupport).toBe(2);
 		expect(c.neighborhood).toBe(0);
-		expect(c.latePayments).toBe(2);
+		expect(c.socialConnection).toBe(2); // ordinal rounds and clamps to 0–2
 		expect(c.education).toBe(DEFAULT_INPUTS.education); // invalid enum falls back to default
 		expect(c.insured).toBe(false);
 	});

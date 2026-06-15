@@ -6,7 +6,7 @@ const byId = (id: string) => FINANCE_RULES.find((r) => r.id === id)!;
 
 describe('finance rules', () => {
 	it('satisfy universal invariants', () => {
-		expect(FINANCE_RULES).toHaveLength(8);
+		expect(FINANCE_RULES).toHaveLength(7);
 		for (const r of FINANCE_RULES) {
 			expectRuleInvariants(r);
 			expect(r.domain).toBe('finance');
@@ -47,12 +47,16 @@ describe('finance rules', () => {
 		expect(v).toBe(-w);
 	});
 
-	it('utilization: lower is better, very high goes negative', () => {
-		const r = byId('utilization');
-		const w = r.defaultWeight;
-		const s = (u: number) => Math.round(r.position!({ ...DEFAULT_INPUTS, creditUtil: u }) * w) || 0;
-		expect(s(5)).toBeGreaterThan(s(40));
-		expect(s(95)).toBeLessThan(0);
+	it('credit score: higher scores better, subprime floors at zero, top-tier saturates', () => {
+		const r = byId('credit-score');
+		const p = (creditScore: number) => r.position!({ ...DEFAULT_INPUTS, creditScore });
+		expect(p(800)).toBeGreaterThan(p(680));
+		expect(p(680)).toBeGreaterThan(p(600));
+		expect(p(540)).toBe(0); // subprime floor
+		expect(p(760)).toBe(1); // best-rate plateau
+		expect(p(850)).toBe(1); // no extra credit above the plateau
+		expect(r.inputs).toEqual(['creditScore']);
+		expect(r.caveat).toBeTruthy(); // thin-file caveat shown
 	});
 
 	it('emergency fund saturates at 3 months and has a lever', () => {
