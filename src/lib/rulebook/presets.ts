@@ -10,14 +10,31 @@ export interface Preset {
 /** Illustrative starting points. Numbers are rough, not census-exact — a place to begin, then tune. */
 export const PRESETS: Preset[] = [
 	{
-		id: 'typical-us',
-		label: 'Typical American',
+		// Median single American, not the mean: some college (no degree), overweight, thin savings,
+		// carrying debt. The average looks far rosier because a few rich households drag it up.
+		id: 'single-us',
+		label: 'Single American',
 		inputs: {
 			...DEFAULT_INPUTS,
-			country: 'us', age: 38, familySupport: 1, parentsDegree: false, neighborhood: 1, sex: 'm',
+			country: 'us', age: 35, familySupport: 1, parentsDegree: false, neighborhood: 1, sex: 'f',
 			smoker: 'never', exerciseMins: 60, alcohol: 'moderate', sleepHours: 7, insured: true, bmiBand: 'over',
-			income: 80000, assets: 110000, debt: 30000, latePayments: 0, creditUtil: 30, emergencyMonths: 1, homeowner: true,
-			education: 'hs', employment: 'employed', outlook: 'stable',
+			income: 45000, assets: 30000, debt: 25000, latePayments: 0, creditUtil: 35, emergencyMonths: 1, homeowner: false,
+			education: 'some', employment: 'employed', outlook: 'stable',
+			socialConnection: 1, partnered: false, children: 0, volunteers: false, drivingIncidents: 0, digitalFootprint: 1,
+			housing: 'stable', banking: 'banked', criminalRecord: false, voterRegistered: true
+		}
+	},
+	{
+		// Median married-with-kids household: ~median household income across four, a mortgage,
+		// median-ish net worth for the age band. Again median, not the skew-inflated average.
+		id: 'family-us',
+		label: 'Married, 2 kids',
+		inputs: {
+			...DEFAULT_INPUTS,
+			country: 'us', age: 40, familySupport: 1, parentsDegree: false, neighborhood: 1, sex: 'm',
+			smoker: 'never', exerciseMins: 60, alcohol: 'moderate', sleepHours: 7, insured: true, bmiBand: 'over',
+			income: 80000, assets: 250000, debt: 120000, latePayments: 0, creditUtil: 30, emergencyMonths: 1, homeowner: true,
+			education: 'some', employment: 'employed', outlook: 'stable',
 			socialConnection: 1, partnered: true, children: 2, volunteers: false, drivingIncidents: 0, digitalFootprint: 1,
 			housing: 'stable', banking: 'banked', criminalRecord: false, voterRegistered: true
 		}
