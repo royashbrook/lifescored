@@ -8,11 +8,24 @@ const all = [...EDUCATION_RULES, ...SOCIAL_RULES, ...CIVIC_RULES];
 const byId = (id: string) => all.find((r) => r.id === id)!;
 
 describe('education / social / civic rules', () => {
-	it('satisfy universal invariants and counts (3 + 6 + 2)', () => {
+	it('satisfy universal invariants and counts (3 + 7 + 2)', () => {
 		expect(EDUCATION_RULES).toHaveLength(3);
-		expect(SOCIAL_RULES).toHaveLength(6);
+		expect(SOCIAL_RULES).toHaveLength(7);
 		expect(CIVIC_RULES).toHaveLength(2);
 		for (const r of all) expectRuleInvariants(r);
+	});
+
+	it('parenthood: childless sits at a neutral half, kids add a saturating credit, never below the floor', () => {
+		const r = byId('parenthood');
+		const p = (children: number) => r.position!({ ...DEFAULT_INPUTS, children });
+		expect(p(0)).toBe(0.5); // neutral, not a deficit
+		expect(p(1)).toBeGreaterThan(p(0));
+		expect(p(2)).toBeGreaterThan(p(1));
+		expect(p(3)).toBe(1); // saturates
+		expect(p(8)).toBe(1); // capped, never above 1
+		expect(r.controllable).toBe(false); // no "have a kid" lever
+		expect(r.caveat).toBeTruthy(); // selection caveat shown
+		expect(r.inputs).toEqual(['children']);
 	});
 
 	it('social connection is monotonic (Holt-Lunstad)', () => {
