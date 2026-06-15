@@ -1,4 +1,4 @@
-import { usd, type Rule } from './types';
+import { usd, type Inputs, type Rule } from './types';
 
 const ACCESSED = '2026-06-11';
 
@@ -7,7 +7,15 @@ function multiple(m: number): string {
 	return m < 10 ? m.toFixed(1) : Math.round(m).toLocaleString('en-US');
 }
 const DTI_BENCHMARK = 0.43; // CFPB Qualified Mortgage affordability line
-const MEDIAN_INCOME = 60000; // ≈ BLS median full-time earnings, annualized
+
+// Household income, sized to the people it supports.
+export const MEDIAN_HOUSEHOLD_INCOME = 80610; // US Census, 2023 median household income
+const AVG_HOUSEHOLD_SIZE = 2.5; // US Census, average US household size
+/** OECD/Census square-root equivalence: income for N people compares to income/√N for one. */
+export const householdSize = (i: Inputs): number => 1 + (i.partnered ? 1 : 0) + i.children;
+const equivIncome = (i: Inputs): number => i.income / Math.sqrt(householdSize(i));
+/** The median household, equivalized the same way — the bar a 1-person household clears at "median". */
+export const EQUIV_MEDIAN_INCOME = MEDIAN_HOUSEHOLD_INCOME / Math.sqrt(AVG_HOUSEHOLD_SIZE); // ≈ $50,983
 
 // Fed SCF 2022: median household net worth by age band. [ageBelow, median]
 const NW_MEDIANS: [number, number][] = [
@@ -168,27 +176,34 @@ export const FINANCE_RULES: Rule[] = [
 		domain: 'finance',
 		pack: 'core',
 		tier: 'your_moves',
-		label: 'Income vs. median',
+		label: 'Income vs. median (household)',
 		controllable: true,
 		defaultWeight: 10,
-		logic: 'Annual income against the US full-time median: half marks at the median, then points grow as the square root of your income multiple, uncapped — see the net-worth rule for why.',
+		logic: "Household income, sized to the people it supports by the OECD square-root scale, against the median US household. Half marks at the size-adjusted median; above it, points grow as the square root of your multiple, uncapped — see the net-worth rule for why. More dependents on the same income lower the per-person figure — exactly how the poverty thresholds and lenders treat a household, not a verdict on having a family.",
 		evidence: 'SOURCED',
 		source: {
-			name: 'BLS — Usual Weekly Earnings of Wage and Salary Workers',
-			finding: 'Median usual weekly earnings of full-time workers, annualized, run near $60,000.',
-			url: 'https://www.bls.gov/news.release/wkyeng.toc.htm',
-			accessed: ACCESSED
+			name: 'US Census Bureau — Income in the United States (median household income)',
+			finding: 'Median US household income runs about $80,600 (2023) at an average household size near 2.5; comparing households of different sizes requires an equivalence adjustment.',
+			url: 'https://www.census.gov/library/publications/2024/demo/p60-282.html',
+			accessed: '2026-06-14'
 		},
-		inputs: ['income'],
-		position: (i) => (i.income <= MEDIAN_INCOME ? i.income / (2 * MEDIAN_INCOME) : 0.5 + (Math.sqrt(i.income / MEDIAN_INCOME) - 1)),
+		inputs: ['income', 'partnered', 'children'],
+		position: (i) => {
+			const adj = equivIncome(i);
+			return adj <= EQUIV_MEDIAN_INCOME ? adj / (2 * EQUIV_MEDIAN_INCOME) : 0.5 + (Math.sqrt(adj / EQUIV_MEDIAN_INCOME) - 1);
+		},
 		bounds: [0, Infinity],
-		weightRationale: 'THE BASELINE (1.0×). Income is the dimension every other system prices most legibly; every other weight in this book is a stated deviation from this one.',
+		weightRationale: 'THE BASELINE (1.0×). Income is the dimension every other system prices most legibly; every other weight in this book is a stated deviation from this one. Sized to the household so a paycheck stretched across more people counts for less — the way the poverty line already does.',
 		describe: (i) => {
-			if (i.income > MEDIAN_INCOME) {
-				const m = i.income / MEDIAN_INCOME;
-				return `${usd(i.income)}/yr — ${multiple(m)}× the ~${usd(MEDIAN_INCOME)} full-time median`;
+			const size = householdSize(i);
+			const adj = equivIncome(i);
+			const per = size === 1 ? '' : ` across ${size} (≈ ${usd(adj)} per adult-equivalent)`;
+			const median = `~${usd(EQUIV_MEDIAN_INCOME)} size-adjusted median`;
+			if (adj > EQUIV_MEDIAN_INCOME) {
+				const m = adj / EQUIV_MEDIAN_INCOME;
+				return `${usd(i.income)} household income${per} — ${multiple(m)}× the ${median}`;
 			}
-			return `${usd(i.income)}/yr vs. the ~${usd(MEDIAN_INCOME)} full-time median`;
+			return `${usd(i.income)} household income${per} vs. the ${median}`;
 		}
 	},
 	{

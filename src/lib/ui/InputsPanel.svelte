@@ -33,7 +33,7 @@
 		emergencyMonths: field('emergencyMonths'), homeowner: field('homeowner'),
 		employment: field('employment'), outlook: field('outlook'),
 		housing: field('housing'), banking: field('banking'),
-		socialConnection: field('socialConnection'), partnered: field('partnered'),
+		socialConnection: field('socialConnection'), partnered: field('partnered'), children: field('children'),
 		volunteers: field('volunteers'), drivingIncidents: field('drivingIncidents'),
 		digitalFootprint: field('digitalFootprint'), criminalRecord: field('criminalRecord'),
 		voterRegistered: field('voterRegistered'),
@@ -47,11 +47,17 @@
 		<Field label="Country" help={FIELD_HELP.country}><SelectInput bind:value={f.country.value} opts={countryOpts} /></Field>
 		<Field label="Age" help={FIELD_HELP.age}><NumInput bind:value={f.age.value} step={1} prefix="" /></Field>
 		<Field label="Family support" help={FIELD_HELP.familySupport}><SelectInput bind:value={f.familySupport.value} opts={[[0, 'None'], [1, 'Some'], [2, 'Substantial']]} /></Field>
-		<Field label="Income / yr" help={FIELD_HELP.income}><NumInput bind:value={f.income.value} /></Field>
-		<Field label="Assets" help={FIELD_HELP.assets}><NumInput bind:value={f.assets.value} /></Field>
-		<Field label="Total debt" help={FIELD_HELP.debt}><NumInput bind:value={f.debt.value} /></Field>
+		<Field label="Partner / spouse" help={FIELD_HELP.partnered}><Toggle bind:value={f.partnered.value} /></Field>
+		<Field label="Household income" help={FIELD_HELP.income}><NumInput bind:value={f.income.value} /></Field>
+		<Field label="Household assets" help={FIELD_HELP.assets}><NumInput bind:value={f.assets.value} /></Field>
+		<Field label="Household debt" help={FIELD_HELP.debt}><NumInput bind:value={f.debt.value} /></Field>
+		<Field label="Children / dependents" help={FIELD_HELP.children}><NumInput bind:value={f.children.value} step={1} prefix="" /></Field>
 		<Field label="Education" help={FIELD_HELP.education}><SelectInput bind:value={f.education.value} opts={[['none', 'No diploma'], ['hs', 'High school'], ['some', 'Some college'], ['bachelor', "Bachelor's"], ['graduate', 'Graduate']]} /></Field>
 		<Field label="Smoker" help={FIELD_HELP.smoker}><SelectInput bind:value={f.smoker.value} opts={[['never', 'Never'], ['former', 'Former'], ['current', 'Current']]} /></Field>
+	</div>
+
+	<div class="mt-2.5 text-[11px] leading-snug" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+		Income, assets &amp; debt are <span style:color="var(--ink)">household totals</span> — you and your partner combined. Income is then sized to your household (partner + children).
 	</div>
 
 	<div class="mt-2.5 text-[11px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
@@ -80,7 +86,6 @@
 			<Field label="Employment" help={FIELD_HELP.employment}><SelectInput bind:value={f.employment.value} opts={[['employed', 'Employed'], ['self', 'Self-employed'], ['student', 'Student'], ['retired', 'Retired'], ['unemployed', 'Unemployed']]} /></Field>
 			<Field label="Field outlook" help={FIELD_HELP.outlook}><SelectInput bind:value={f.outlook.value} opts={[['declining', 'Declining'], ['stable', 'Stable'], ['growing', 'Growing']]} /></Field>
 			<Field label="See close people" help={FIELD_HELP.socialConnection}><SelectInput bind:value={f.socialConnection.value} opts={[[0, 'Rarely'], [1, 'Sometimes'], [2, 'Regularly']]} /></Field>
-			<Field label="Partnered" help={FIELD_HELP.partnered}><Toggle bind:value={f.partnered.value} /></Field>
 			<Field label="Volunteers" help={FIELD_HELP.volunteers}><Toggle bind:value={f.volunteers.value} /></Field>
 			<Field label="Driving incidents 3y" help={FIELD_HELP.drivingIncidents}><NumInput bind:value={f.drivingIncidents.value} step={1} prefix="" /></Field>
 			{#if packs.has('speculative')}

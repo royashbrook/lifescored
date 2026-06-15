@@ -5,7 +5,7 @@ export interface WizardStep {
 	question: string;
 	kind: 'options' | 'number';
 	// for 'options': value+label pairs (value must match the Inputs type for that key)
-	options?: { value: string | number; label: string }[];
+	options?: { value: string | number | boolean; label: string }[];
 	// for 'number':
 	prefix?: string;
 	step?: number;
@@ -26,15 +26,25 @@ export const WIZARD_STEPS: WizardStep[] = [
 			{ value: 2, label: 'Substantial' }
 		]
 	},
-	{ key: 'income', question: 'Roughly, your income per year?', kind: 'number', prefix: '$', step: 1000 },
+	{
+		key: 'partnered',
+		question: 'Do you have a spouse or partner?',
+		kind: 'options',
+		options: [
+			{ value: true, label: 'Yes' },
+			{ value: false, label: 'No' }
+		]
+	},
+	{ key: 'income', question: "Your household's income per year? (you and your partner combined)", kind: 'number', prefix: '$', step: 1000 },
 	{
 		key: 'assets',
-		question: 'Roughly, everything you own — savings, home, car, investments?',
+		question: "Everything your household owns — savings, home, car, investments?",
 		kind: 'number',
 		prefix: '$',
 		step: 1000
 	},
-	{ key: 'debt', question: 'And your total debt? (we subtract it to get net worth)', kind: 'number', prefix: '$', step: 1000 },
+	{ key: 'debt', question: "And your household's total debt? (we subtract it to get net worth)", kind: 'number', prefix: '$', step: 1000 },
+	{ key: 'children', question: 'How many children or dependents does that income support?', kind: 'number', step: 1 },
 	{
 		key: 'education',
 		question: 'Highest level of school you finished?',

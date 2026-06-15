@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FINANCE_RULES, medianNetWorthForAge } from './finance';
+import { FINANCE_RULES, medianNetWorthForAge, EQUIV_MEDIAN_INCOME, householdSize } from './finance';
 import { DEFAULT_INPUTS, expectRuleInvariants } from './rule-test-utils';
 
 const byId = (id: string) => FINANCE_RULES.find((r) => r.id === id)!;
@@ -90,19 +90,44 @@ describe('power-law wealth (v2.1)', () => {
 		expect(v).toBeGreaterThan(30000);
 	});
 
-	it('income: 0.5 at median, sqrt above, floor 0, monotonic', () => {
-		const p = (income: number) => inc.position!({ ...DEFAULT_INPUTS, income });
-		expect(p(60000)).toBeCloseTo(0.5, 5);
-		expect(p(240000)).toBeCloseTo(1.5, 5);  // 0.5 + sqrt(4) - 1 = 1.5
+	it('income: half marks at the size-adjusted median for a 1-person household, sqrt above, floor 0', () => {
+		const p = (income: number) => inc.position!({ ...DEFAULT_INPUTS, income, partnered: false, children: 0 });
+		expect(p(EQUIV_MEDIAN_INCOME)).toBeCloseTo(0.5, 5);
+		expect(p(EQUIV_MEDIAN_INCOME * 4)).toBeCloseTo(1.5, 5);  // 0.5 + sqrt(4) - 1 = 1.5
 		expect(p(0)).toBe(0);
-		expect(p(30000)).toBeCloseTo(0.25, 5);
+		expect(p(EQUIV_MEDIAN_INCOME / 2)).toBeCloseTo(0.25, 5);
 		expect(p(6_000_000)).toBeGreaterThan(p(600000));
 	});
 
 	it('describe states the raw multiple of the median (dominance line)', () => {
 		const d = nw.describe({ ...DEFAULT_INPUTS, age: 54, assets: 1e12, debt: 0 });
 		expect(d).toMatch(/4,0\d{2},\d{3}×/); // ~4,045,xxx× of the 247,200 median
-		expect(inc.describe({ ...DEFAULT_INPUTS, income: 600000 })).toContain('10×');
+		expect(inc.describe({ ...DEFAULT_INPUTS, income: 600000, partnered: false, children: 0 })).toContain('×'); // a multiple of the size-adjusted median
+	});
+});
+
+describe('income adequacy (household-sized, v3.1)', () => {
+	const inc = byId('income');
+
+	it('household size = self + partner + children', () => {
+		expect(householdSize({ ...DEFAULT_INPUTS, partnered: false, children: 0 })).toBe(1);
+		expect(householdSize({ ...DEFAULT_INPUTS, partnered: true, children: 0 })).toBe(2);
+		expect(householdSize({ ...DEFAULT_INPUTS, partnered: true, children: 3 })).toBe(5);
+	});
+
+	it('the same income scores lower as dependents (partner or kids) are added', () => {
+		const base = { ...DEFAULT_INPUTS, income: 100000, partnered: false, children: 0 };
+		expect(inc.position!({ ...base, children: 3 })).toBeLessThan(inc.position!(base));
+		expect(inc.position!({ ...base, partnered: true })).toBeLessThan(inc.position!(base));
+	});
+
+	it('a high earner with kids still clears the median; a thin income with the same kids does not', () => {
+		expect(inc.position!({ ...DEFAULT_INPUTS, income: 250000, partnered: true, children: 3 })).toBeGreaterThan(0.5);
+		expect(inc.position!({ ...DEFAULT_INPUTS, income: 30000, partnered: true, children: 3 })).toBeLessThan(0.5);
+	});
+
+	it('declares income, partnered and children as its inputs', () => {
+		expect(inc.inputs).toEqual(['income', 'partnered', 'children']);
 	});
 });
 
