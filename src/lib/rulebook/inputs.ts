@@ -48,6 +48,7 @@ export const DEFAULT_INPUTS: Inputs = {
 	housing: 'stable',
 	socialConnection: 1,
 	partnered: false,
+	children: 0,
 	volunteers: false,
 	drivingIncidents: 0,
 	digitalFootprint: 1,
@@ -60,7 +61,7 @@ export const DEFAULT_INPUTS: Inputs = {
 	stability: 'stable'
 };
 
-type NumericKey = 'age' | 'exerciseMins' | 'sleepHours' | 'income' | 'assets' | 'debt' | 'creditUtil' | 'emergencyMonths' | 'drivingIncidents';
+type NumericKey = 'age' | 'exerciseMins' | 'sleepHours' | 'income' | 'assets' | 'debt' | 'creditUtil' | 'emergencyMonths' | 'drivingIncidents' | 'children';
 
 export const NUMERIC_CLAMPS: Record<NumericKey, [number, number]> = {
 	age: [16, 100],
@@ -71,7 +72,8 @@ export const NUMERIC_CLAMPS: Record<NumericKey, [number, number]> = {
 	debt: [0, 100_000_000],
 	creditUtil: [0, 100],
 	emergencyMonths: [0, 60],
-	drivingIncidents: [0, 10]
+	drivingIncidents: [0, 10],
+	children: [0, 12]
 };
 
 const STRING_ENUMS = {

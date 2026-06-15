@@ -43,6 +43,7 @@ export interface Inputs {
 	housing: 'unhoused' | 'insecure' | 'stable';
 	socialConnection: 0 | 1 | 2; // rarely / sometimes / regularly see people you're close to
 	partnered: boolean;
+	children: number; // dependents the household income supports; sizes the income rule
 	volunteers: boolean;
 	drivingIncidents: number; // at-fault accidents + moving violations, last 3y
 	digitalFootprint: 0 | 1 | 2; // risky / neutral / curated public footprint

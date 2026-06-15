@@ -14,7 +14,7 @@
 	const step = $derived(WIZARD_STEPS[i]);
 	const result = $derived(computeScore(profile.inputs, profile.overrides, activePacks(profile)));
 
-	function set(value: string | number) {
+	function set(value: string | number | boolean) {
 		profile.setInput(step.key, value as Inputs[typeof step.key]);
 	}
 </script>
