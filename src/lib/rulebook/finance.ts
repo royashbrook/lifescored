@@ -17,13 +17,26 @@ const equivIncome = (i: Inputs): number => i.income / Math.sqrt(householdSize(i)
 /** The median household, equivalized the same way — the bar a 1-person household clears at "median". */
 export const EQUIV_MEDIAN_INCOME = MEDIAN_HOUSEHOLD_INCOME / Math.sqrt(AVG_HOUSEHOLD_SIZE); // ≈ $50,983
 
-// Fed SCF 2022: median household net worth by age band. [ageBelow, median]
-const NW_MEDIANS: [number, number][] = [
-	[35, 39000], [45, 135600], [55, 247200], [65, 364500], [75, 409900], [Infinity, 335600]
+// Fed SCF 2022 median household net worth, anchored at each age band's midpoint [age, median].
+// We interpolate continuously between anchors rather than stepping, so the benchmark rises
+// smoothly with age — a single birthday shouldn't crater your score at a band edge.
+const NW_ANCHORS: [number, number][] = [
+	[30, 39000], [40, 135600], [50, 247200], [60, 364500], [70, 409900], [80, 335600]
 ];
 
-export const medianNetWorthForAge = (age: number): number =>
-	NW_MEDIANS.find(([below]) => age < below)![1];
+export const medianNetWorthForAge = (age: number): number => {
+	const a = NW_ANCHORS;
+	if (age <= a[0][0]) return a[0][1];
+	if (age >= a[a.length - 1][0]) return a[a.length - 1][1];
+	for (let i = 1; i < a.length; i++) {
+		if (age <= a[i][0]) {
+			const [x0, y0] = a[i - 1];
+			const [x1, y1] = a[i];
+			return y0 + ((age - x0) / (x1 - x0)) * (y1 - y0);
+		}
+	}
+	return a[a.length - 1][1];
+};
 
 export const FINANCE_RULES: Rule[] = [
 	{
