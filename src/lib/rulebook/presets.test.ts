@@ -3,9 +3,9 @@ import { clampInputs, DEFAULT_INPUTS } from './inputs';
 import { PRESETS } from './presets';
 
 describe('PRESETS', () => {
-	it('has the five named scenarios with unique ids and labels', () => {
-		expect(PRESETS.map((p) => p.id)).toEqual(['typical-us', 'global-median', 'born-ahead', 'started-behind', 'blank']);
-		expect(new Set(PRESETS.map((p) => p.label)).size).toBe(5);
+	it('has the six named scenarios with unique ids and labels', () => {
+		expect(PRESETS.map((p) => p.id)).toEqual(['single-us', 'family-us', 'global-median', 'born-ahead', 'started-behind', 'blank']);
+		expect(new Set(PRESETS.map((p) => p.label)).size).toBe(6);
 	});
 
 	it('every preset is a complete, valid Inputs object (survives clamping unchanged)', () => {
