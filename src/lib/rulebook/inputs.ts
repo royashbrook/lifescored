@@ -75,7 +75,7 @@ export const NUMERIC_CLAMPS: Record<NumericKey, [number, number]> = {
 	children: [0, 12]
 };
 
-const STRING_ENUMS = {
+export const STRING_ENUMS = {
 	sex: ['f', 'm'],
 	smoker: ['never', 'former', 'current'],
 	alcohol: ['none', 'moderate', 'heavy'],
@@ -91,9 +91,9 @@ const STRING_ENUMS = {
 	stability: ['conflict', 'fragile', 'stable']
 } as const;
 
-const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalFootprint'] as const;
+export const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalFootprint'] as const;
 
-const BOOLEANS = ['parentsDegree', 'insured', 'homeowner', 'partnered', 'volunteers', 'criminalRecord', 'voterRegistered'] as const;
+export const BOOLEANS = ['parentsDegree', 'insured', 'homeowner', 'partnered', 'volunteers', 'criminalRecord', 'voterRegistered'] as const;
 
 /**
  * Migrate older stored/shared profiles.

@@ -1,0 +1,34 @@
+# life. scored.
+
+> A transparency tool that exposes how real-world systems — credit bureaus, actuarial life tables, lenders, and audit-study research — already turn a person into a number. It rebuilds those scores in the open: every rule cited to public data or flagged as a guess, every weight shown and editable. The goal is transparency, not judgment.
+
+## How to use this as a skill
+
+life. scored. is "just math with personal information." You do not need to send anything to our servers to use it — and you shouldn't. The complete rulebook and the exact formulas are published as machine-readable data:
+
+- [Rulebook + math (rules.json)](https://lifescored.com/rules.json): every rule's weight, bounds, evidence, citation, and formula; the input schema (what to ask the user); and the engine constants (medians, the household-income equivalence, the net-worth age curve, the credit-score mapping).
+
+To compute a life score for someone:
+1. Read `inputs` in rules.json. Ask the user only for fields you don't already know — anything missing falls back to its `default`.
+2. For each rule, compute its `position` per the formulas in `engine` / `constants`, then `points = round(clamp(position, bounds[0], bounds[1]) × weight)`.
+3. Sum points over enabled rules (the `core` pack is always on; other packs are opt-in) for the composite — but the breakdown is the point, not the total.
+
+Their answers stay with you. Nothing about a person should be sent to lifescored.com to get a score.
+
+## Privacy
+
+Inputs never leave the user's device. The website computes everything client-side; any API or MCP we offer serves only the rules, never receives answers. No tracking, no accounts, no data sales, no affiliate links — by design.
+
+## How it works
+
+- [Why this exists / methodology](https://lifescored.com/about): what's measured, what's deliberately left out (protected characteristics, luck), and how the scoring works.
+- [The rulebook](https://lifescored.com/rulebook): every rule with its plain-English logic, evidence tag, public source, and a tunable weight.
+- [Free ways to improve a score](https://lifescored.com/improve): the most basic free next step per area, plus public resources — no affiliate links.
+
+## Contributing / feedback
+
+The weights are editorial and the rules are arguable — that's the design. Improvements from many people are aggregated in the open.
+
+- [Open an issue](https://github.com/royashbrook/lifescored/issues): name the rule id and what you'd change (weight, source, bounds, or a new rule), with a public citation if you have one.
+- [Contributing guide](https://github.com/royashbrook/lifescored/blob/main/CONTRIBUTING.md)
+- [Source code](https://github.com/royashbrook/lifescored)

@@ -20,7 +20,7 @@ export const EQUIV_MEDIAN_INCOME = MEDIAN_HOUSEHOLD_INCOME / Math.sqrt(AVG_HOUSE
 // Fed SCF 2022 median household net worth, anchored at each age band's midpoint [age, median].
 // We interpolate continuously between anchors rather than stepping, so the benchmark rises
 // smoothly with age — a single birthday shouldn't crater your score at a band edge.
-const NW_ANCHORS: [number, number][] = [
+export const NW_ANCHORS: [number, number][] = [
 	[30, 39000], [40, 135600], [50, 247200], [60, 364500], [70, 409900], [80, 335600]
 ];
 
