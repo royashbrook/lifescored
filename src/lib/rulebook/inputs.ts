@@ -38,8 +38,7 @@ export const DEFAULT_INPUTS: Inputs = {
 	income: 46000,
 	assets: 6000,
 	debt: 0,
-	latePayments: 0,
-	creditUtil: 12,
+	creditScore: 720,
 	emergencyMonths: 1,
 	homeowner: false,
 	education: 'hs',
@@ -61,7 +60,7 @@ export const DEFAULT_INPUTS: Inputs = {
 	stability: 'stable'
 };
 
-type NumericKey = 'age' | 'exerciseMins' | 'sleepHours' | 'income' | 'assets' | 'debt' | 'creditUtil' | 'emergencyMonths' | 'drivingIncidents' | 'children';
+type NumericKey = 'age' | 'exerciseMins' | 'sleepHours' | 'income' | 'assets' | 'debt' | 'creditScore' | 'emergencyMonths' | 'drivingIncidents' | 'children';
 
 export const NUMERIC_CLAMPS: Record<NumericKey, [number, number]> = {
 	age: [16, 100],
@@ -70,7 +69,7 @@ export const NUMERIC_CLAMPS: Record<NumericKey, [number, number]> = {
 	income: [0, 10_000_000_000],
 	assets: [0, 1_000_000_000_000_000],
 	debt: [0, 100_000_000],
-	creditUtil: [0, 100],
+	creditScore: [300, 850],
 	emergencyMonths: [0, 60],
 	drivingIncidents: [0, 10],
 	children: [0, 12]
@@ -92,7 +91,7 @@ const STRING_ENUMS = {
 	stability: ['conflict', 'fragile', 'stable']
 } as const;
 
-const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalFootprint', 'latePayments'] as const;
+const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'digitalFootprint'] as const;
 
 const BOOLEANS = ['parentsDegree', 'insured', 'homeowner', 'partnered', 'volunteers', 'criminalRecord', 'voterRegistered'] as const;
 
@@ -115,6 +114,18 @@ export function migrateLegacyInputs(raw: Record<string, unknown>): Record<string
 		out.assets = Math.max(0, nw + debt);
 	}
 	delete out.netWorth;
+	// Credit score replaced the two FICO-component inputs. Estimate a score from the old
+	// payment-history + utilization so existing profiles keep a sensible creditworthiness.
+	if (!('creditScore' in out) && ('latePayments' in out || 'creditUtil' in out)) {
+		let s = 740;
+		const lp = Number(out.latePayments) || 0;
+		s -= lp >= 2 ? 120 : lp === 1 ? 60 : 0;
+		const u = Number(out.creditUtil);
+		if (Number.isFinite(u)) s -= u > 80 ? 110 : u > 50 ? 70 : u > 30 ? 40 : u > 10 ? 10 : 0;
+		out.creditScore = Math.max(300, Math.min(850, s));
+	}
+	delete out.latePayments;
+	delete out.creditUtil;
 	return out;
 }
 

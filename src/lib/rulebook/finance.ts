@@ -1,4 +1,4 @@
-import { usd, type Inputs, type Rule } from './types';
+import { clamp, usd, type Inputs, type Rule } from './types';
 
 const ACCESSED = '2026-06-11';
 
@@ -111,51 +111,37 @@ export const FINANCE_RULES: Rule[] = [
 		}
 	},
 	{
-		id: 'payment-history',
+		id: 'credit-score',
 		domain: 'finance',
 		pack: 'core',
 		tier: 'your_moves',
-		label: 'Payment history',
+		label: 'Credit score',
 		controllable: true,
-		defaultWeight: 12,
-		logic: "The single heaviest input in FICO's published model (35%). One late payment costs most of it; multiple zero it out.",
+		defaultWeight: 14,
+		logic: "The number lenders actually pull — the single most legible 'life score' there is. Scored against what a score band costs you in the real world: below ~580 you're subprime (denied, or charged the most), and the best rates plateau around 760, so points saturate there. This one rule stands in for payment history and utilization (its two biggest factors) plus credit age, mix, and inquiries.",
 		evidence: 'SOURCED',
 		source: {
-			name: "myFICO — What's in my FICO Scores?",
-			finding: 'Payment history accounts for about 35% of a FICO score — the largest single component.',
-			url: 'https://www.myfico.com/credit-education/whats-in-your-credit-score',
-			accessed: ACCESSED
+			name: 'myFICO — Loan Savings Calculator',
+			finding: 'On a 30-year mortgage, a borrower in the 760+ band pays roughly $87,000 less interest than one in the 620–639 band — the score directly sets the price of credit, and access to it.',
+			url: 'https://www.myfico.com/credit-education/calculators/loan-savings-calculator',
+			accessed: '2026-06-15'
 		},
-		inputs: ['latePayments'],
-		position: (i) => [1, 0.4, 0][i.latePayments],
+		caveat: 'Credit scoring penalizes thin files — the young, immigrants, and the credit-invisible — and measures debt behavior, not character or capability. It is on here because it gates housing, loans, and deposits, not because it is fair.',
+		inputs: ['creditScore'],
+		// Subprime floor at 580, best-rate plateau at 760 (myFICO bands); linear between, clamped.
+		position: (i) => clamp((i.creditScore - 580) / (760 - 580), 0, 1),
 		bounds: [0, 1],
-		weightRationale: '35% of FICO — the heaviest input in the most consequential consumer score — 1.2×.',
-		describe: (i) => ['clean 24 months — the heaviest FICO input, fully banked', 'one recent late payment — FICO forgives slowly', 'multiple recent lates — the heaviest FICO input, zeroed'][i.latePayments]
-	},
-	{
-		id: 'utilization',
-		domain: 'finance',
-		pack: 'core',
-		tier: 'your_moves',
-		label: 'Credit utilization',
-		controllable: true,
-		defaultWeight: 10,
-		logic: 'Share of available revolving credit in use — 30% of FICO. Under ~10% is ideal; over 30% starts costing; near-maxed goes negative.',
-		evidence: 'SOURCED',
-		source: {
-			name: 'myFICO / Experian — credit utilization guidance',
-			finding: 'Amounts owed are ~30% of a FICO score; commonly cited guidance keeps utilization below 30%, with top scorers in single digits.',
-			url: 'https://www.experian.com/blogs/ask-experian/credit-education/score-basics/credit-utilization-rate/',
-			accessed: ACCESSED
-		},
-		inputs: ['creditUtil'],
-		position: (i) => {
-			const u = i.creditUtil;
-			return u <= 9 ? 1 : u <= 30 ? 0.8 : u <= 50 ? 0.4 : u <= 80 ? 0.1 : -0.3;
-		},
-		bounds: [-0.3, 1],
-		weightRationale: '30% of FICO, just behind payment history — 1.0×. Mildly subtractive at near-maxed because the bureaus genuinely reprice that downward.',
-		describe: (i) => `${i.creditUtil}% of available revolving credit in use — bureaus reprice this monthly`
+		weightRationale: 'A major legible gate — it sets the price of a mortgage, a car, a deposit, sometimes a job. Weighted 1.4×, and it consolidates what were two separate FICO-component rules (payment history + utilization).',
+		describe: (i) => {
+			const s = i.creditScore;
+			const band =
+				s >= 800 ? "exceptional — the best rates on offer"
+				: s >= 740 ? "very good — at or near the best rates"
+				: s >= 670 ? "good — close to prime, but not the cheapest credit"
+				: s >= 580 ? "fair — approved, but you pay a premium for it"
+				: "subprime — denied, or charged the most for credit";
+			return `${s} — ${band}`;
+		}
 	},
 	{
 		id: 'emergency-fund',

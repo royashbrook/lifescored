@@ -5,11 +5,11 @@ import type { Rule } from '../rulebook';
 
 describe('computeScore', () => {
 	it('produces one entry per ACTIVE rule and consistent totals', () => {
-		// Default activePacks = core only (30 rules); all 36 rules visible when all packs enabled
+		// Default activePacks = core only (29 rules); all 35 rules visible when all packs enabled
 		const r = computeScore(DEFAULT_INPUTS);
-		expect(r.perRule).toHaveLength(30); // core-only default
+		expect(r.perRule).toHaveLength(29); // core-only default
 		const rAll = computeScore(DEFAULT_INPUTS, {}, new Set(['core', 'foundations', 'speculative']));
-		expect(rAll.perRule).toHaveLength(RULES.length); // all 36 when all packs active
+		expect(rAll.perRule).toHaveLength(RULES.length); // all 35 when all packs active
 		const sum = r.perRule.filter((p) => p.enabled).reduce((a, p) => a + p.value, 0);
 		expect(r.composite).toBe(sum);
 		expect(r.tierSubtotals.starting_point + r.tierSubtotals.your_moves).toBe(r.composite);
@@ -35,7 +35,7 @@ describe('computeScore', () => {
 	});
 
 	it('clamps raw inputs before scoring', () => {
-		const r = computeScore({ ...DEFAULT_INPUTS, age: 9999, creditUtil: -50 });
+		const r = computeScore({ ...DEFAULT_INPUTS, age: 9999, creditScore: -50 });
 		expect(r.perRule.every((p) => Number.isFinite(p.value))).toBe(true);
 	});
 
@@ -92,13 +92,13 @@ describe('active-pack filtering', () => {
 		expect(ids).not.toContain('digital');
 		expect(ids).not.toContain('voting');
 		expect(ids).not.toContain('water-sanitation');
-		expect(r.perRule).toHaveLength(30); // 36 total - 2 speculative - 4 foundations
+		expect(r.perRule).toHaveLength(29); // 35 total - 2 speculative - 4 foundations
 	});
 	it('enabling foundations adds the 4 foundations rules and raises the composite', () => {
 		const core = computeScore(DEFAULT_INPUTS);
 		const withF = computeScore(DEFAULT_INPUTS, {}, new Set(['core', 'foundations']));
 		expect(withF.perRule.some((p) => p.id === 'water-sanitation')).toBe(true);
-		expect(withF.perRule).toHaveLength(34); // 30 + 4
+		expect(withF.perRule).toHaveLength(33); // 29 + 4
 		expect(withF.composite).toBeGreaterThan(core.composite); // developed-world defaults lift it
 	});
 	it('enabling speculative adds digital and voting', () => {

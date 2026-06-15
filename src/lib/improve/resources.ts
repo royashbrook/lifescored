@@ -168,7 +168,7 @@ export const IMPROVE: ImproveArea[] = [
 				note: 'How scoring works and how to fix errors for free.'
 			}
 		],
-		ruleIds: ['payment-history', 'utilization']
+		ruleIds: ['credit-score']
 	},
 	{
 		id: 'banking',

@@ -29,7 +29,7 @@
 		education: field('education'), parentsDegree: field('parentsDegree'), neighborhood: field('neighborhood'),
 		smoker: field('smoker'), exerciseMins: field('exerciseMins'), alcohol: field('alcohol'),
 		sleepHours: field('sleepHours'), insured: field('insured'), bmiBand: field('bmiBand'),
-		latePayments: field('latePayments'), creditUtil: field('creditUtil'),
+		creditScore: field('creditScore'),
 		emergencyMonths: field('emergencyMonths'), homeowner: field('homeowner'),
 		employment: field('employment'), outlook: field('outlook'),
 		housing: field('housing'), banking: field('banking'),
@@ -51,6 +51,7 @@
 		<Field label="Household income" help={FIELD_HELP.income}><NumInput bind:value={f.income.value} /></Field>
 		<Field label="Household assets" help={FIELD_HELP.assets}><NumInput bind:value={f.assets.value} /></Field>
 		<Field label="Household debt" help={FIELD_HELP.debt}><NumInput bind:value={f.debt.value} /></Field>
+		<Field label="Credit score" help={FIELD_HELP.creditScore}><NumInput bind:value={f.creditScore.value} step={10} prefix="" /></Field>
 		<Field label="Children / dependents" help={FIELD_HELP.children}><NumInput bind:value={f.children.value} step={1} prefix="" /></Field>
 		<Field label="Education" help={FIELD_HELP.education}><SelectInput bind:value={f.education.value} opts={[['none', 'No diploma'], ['hs', 'High school'], ['some', 'Some college'], ['bachelor', "Bachelor's"], ['graduate', 'Graduate']]} /></Field>
 		<Field label="Smoker" help={FIELD_HELP.smoker}><SelectInput bind:value={f.smoker.value} opts={[['never', 'Never'], ['former', 'Former'], ['current', 'Current']]} /></Field>
@@ -66,7 +67,7 @@
 	</div>
 
 	<button class="mt-3 text-[11px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)" onclick={() => (expanded = !expanded)}>
-		{expanded ? '− less detail' : '+ add detail (23 more inputs — each one feeds a cited rule)'}
+		{expanded ? '− less detail' : '+ add detail (more inputs — each one feeds a cited rule)'}
 	</button>
 
 	{#if expanded}
@@ -79,8 +80,6 @@
 			<Field label="Sleep hrs/night" help={FIELD_HELP.sleepHours}><NumInput bind:value={f.sleepHours.value} step={1} prefix="" /></Field>
 			<Field label="Health insured" help={FIELD_HELP.insured}><Toggle bind:value={f.insured.value} /></Field>
 			<Field label="BMI band" help={FIELD_HELP.bmiBand}><SelectInput bind:value={f.bmiBand.value} opts={[['under', 'Underweight'], ['normal', 'Normal'], ['over', 'Overweight'], ['obese', 'Obese']]} /></Field>
-			<Field label="Late payments 24mo" help={FIELD_HELP.latePayments}><SelectInput bind:value={f.latePayments.value} opts={[[0, 'None'], [1, 'One'], [2, 'Multiple']]} /></Field>
-			<Field label="Credit util %" help={FIELD_HELP.creditUtil}><NumInput bind:value={f.creditUtil.value} step={5} prefix="" suffix="%" /></Field>
 			<Field label="Emergency fund (months)" help={FIELD_HELP.emergencyMonths}><NumInput bind:value={f.emergencyMonths.value} step={1} prefix="" /></Field>
 			<Field label="Homeowner" help={FIELD_HELP.homeowner}><Toggle bind:value={f.homeowner.value} /></Field>
 			<Field label="Employment" help={FIELD_HELP.employment}><SelectInput bind:value={f.employment.value} opts={[['employed', 'Employed'], ['self', 'Self-employed'], ['student', 'Student'], ['retired', 'Retired'], ['unemployed', 'Unemployed']]} /></Field>
