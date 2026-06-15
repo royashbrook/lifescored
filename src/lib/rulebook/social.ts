@@ -49,6 +49,32 @@ export const SOCIAL_RULES: Rule[] = [
 		describe: (i) => (i.partnered ? 'partnered — pooled risk, pooled rent' : 'single — half credit, and the caveat on this rule matters')
 	},
 	{
+		id: 'parenthood',
+		domain: 'social',
+		pack: 'core',
+		tier: 'your_moves',
+		label: 'Children',
+		controllable: false, // you don't have a child to move a score
+		defaultWeight: 6,
+		logic: 'Parents show modestly lower mortality in old age — a Swedish registry cohort of ~1.4M people tracked from 60 found roughly a 2-year (men) / 1.5-year (women) life-expectancy edge that widens with age, consistent with adult children providing late-life support. Scored as a mild positive that saturates by two or three kids; childless sits at a neutral half, not a deficit. The financial cost of children is counted separately, in the income rule.',
+		evidence: 'SOURCED',
+		caveat: "Heavy selection: healthier, more stable people are likelier to both have children and to live longer, and the day-to-day wellbeing research is mixed. Childlessness is not a deficit — this scores a measured association, not a verdict on your family.",
+		source: {
+			name: 'Modig et al. — Payback time? Influence of having children on mortality in old age (J Epidemiol Community Health, 2017)',
+			finding: 'Tracking ~1.4 million Swedes from age 60, parents had lower old-age mortality than the childless — about a 2-year (men) / 1.5-year (women) life-expectancy gap at 60 that widened with age, consistent with late-life support from adult children.',
+			url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC5484032/',
+			accessed: '2026-06-14'
+		},
+		inputs: ['children'],
+		position: (i) => Math.min(1, 0.5 + i.children * 0.18),
+		bounds: [0.5, 1],
+		weightRationale: 'The old-age-mortality association is real but small and selection-confounded (see caveat) — 0.6×, matched to partnership, the other family-ties rule.',
+		describe: (i) =>
+			i.children === 0
+				? 'no children — the modest old-age-support and longevity edge the data links to parenthood is not in play (heavy selection caveats apply)'
+				: `${i.children} child${i.children === 1 ? '' : 'ren'} — parents show modestly lower old-age mortality and more late-life support; the cost side is counted in income`
+	},
+	{
 		id: 'volunteering',
 		domain: 'social',
 		pack: 'core',

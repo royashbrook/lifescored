@@ -31,7 +31,7 @@ export const FIELD_HELP: Record<InputKey, FieldHelp> = {
 	outlook: { ruleId: 'outlook', help: 'Whether your field is projected to grow or shrink over the next decade.' },
 	socialConnection: { ruleId: 'connection', help: "How often you see people you're close to — isolation rivals smoking in the mortality data." },
 	partnered: { ruleId: 'partnership', help: 'Whether you have a spouse or partner — partnered people show better longevity and pooled finances, though selection is at play. Also counts toward your household size for the income rule.' },
-	children: { ruleId: 'income', help: "How many children (or other dependents) your household income supports. We don't judge it — we just size your income to your household, the way the poverty line does: the same income stretches less far across more people." },
+	children: { ruleId: 'parenthood', help: "How many children (or dependents) you have. Two effects, both shown: it sizes your household income (the same income stretches less far across more people), and it earns a small, cited credit for the lower old-age mortality the data links to parenthood. We don't judge family size — we show the cost and the benefit." },
 	volunteers: { ruleId: 'volunteering', help: 'Whether you volunteer in your community regularly.' },
 	drivingIncidents: { ruleId: 'driving', help: 'At-fault accidents and moving violations in the last 3 years — priced by every auto insurer.' },
 	digitalFootprint: { ruleId: 'digital', help: 'How your public online presence reads to an employer or landlord screening you.' },
