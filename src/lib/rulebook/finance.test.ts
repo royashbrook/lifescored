@@ -14,9 +14,12 @@ describe('finance rules', () => {
 		}
 	});
 
-	it('net worth medians are age-banded and increasing toward retirement', () => {
-		expect(medianNetWorthForAge(27)).toBe(39000);
+	it('net worth median rises continuously with age — no band-edge cliff', () => {
+		expect(medianNetWorthForAge(27)).toBe(39000); // clamped at the youngest anchor
 		expect(medianNetWorthForAge(50)).toBeGreaterThan(medianNetWorthForAge(30));
+		// the old step model jumped ~$96k at 35; interpolation keeps each year's change small
+		expect(Math.abs(medianNetWorthForAge(35) - medianNetWorthForAge(34))).toBeLessThan(15000);
+		expect(medianNetWorthForAge(90)).toBe(335600); // clamped at the oldest anchor
 	});
 
 	it('networth: above the age median scores positive, far below scores negative', () => {
@@ -86,7 +89,7 @@ describe('power-law wealth (v2.1)', () => {
 	});
 
 	it('networth: a trillionaire visibly dominates (the uncapped principle)', () => {
-		const v = Math.round(Math.max(-0.5, at(1e12, 54)) * nw.defaultWeight);
+		const v = Math.round(Math.max(-0.5, at(1e12, 50)) * nw.defaultWeight);
 		expect(v).toBeGreaterThan(30000);
 	});
 
@@ -100,8 +103,8 @@ describe('power-law wealth (v2.1)', () => {
 	});
 
 	it('describe states the raw multiple of the median (dominance line)', () => {
-		const d = nw.describe({ ...DEFAULT_INPUTS, age: 54, assets: 1e12, debt: 0 });
-		expect(d).toMatch(/4,0\d{2},\d{3}×/); // ~4,045,xxx× of the 247,200 median
+		const d = nw.describe({ ...DEFAULT_INPUTS, age: 50, assets: 1e12, debt: 0 });
+		expect(d).toMatch(/4,0\d{2},\d{3}×/); // ~4,045,xxx× of the 247,200 median (age-50 anchor)
 		expect(inc.describe({ ...DEFAULT_INPUTS, income: 600000, partnered: false, children: 0 })).toContain('×'); // a multiple of the size-adjusted median
 	});
 });
