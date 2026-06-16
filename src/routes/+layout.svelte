@@ -92,17 +92,19 @@
 	{@render children()}
 
 	<footer
-		class="mt-10 flex items-center justify-between gap-x-1.5 border-t pt-4 text-[10px] whitespace-nowrap sm:gap-x-2 sm:text-[11px]"
+		class="mt-10 flex items-center justify-between gap-x-1.5 border-t pt-4 text-[10px] sm:gap-x-2 sm:text-[11px]"
 		style:border-color="var(--line)"
 		style:font-family="var(--font-mono)"
 		style:color="var(--ink-dim)"
 	>
-		<div class="flex items-center gap-x-1 sm:gap-x-1.5">
+		<div class="flex flex-wrap items-center gap-x-1 gap-y-1 sm:gap-x-1.5">
 			<span>life. scored.</span>
 			<span aria-hidden="true" style:opacity="0.5">·</span>
 			<a href="/about#how-it-works" class="underline" style:color="var(--ink-dim)">no tracking</a>
 			<span aria-hidden="true" style:opacity="0.5">·</span>
 			<a href="https://github.com/royashbrook/lifescored" target="_blank" rel="noreferrer" class="underline" style:color="var(--ink-dim)">open source</a>
+			<span aria-hidden="true" style:opacity="0.5">·</span>
+			<a href="/agents" class="underline" style:color="var(--ink-dim)">use with AI</a>
 		</div>
 		<a
 			href="https://github.com/sponsors/royashbrook"
