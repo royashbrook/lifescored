@@ -16,7 +16,7 @@
 <button
 	type="button"
 	onclick={copy}
-	class="shrink-0 rounded-full border px-2.5 py-1 text-[12px] transition-colors"
+	class="shrink-0 rounded-full border px-2.5 py-1 text-[0.75rem] transition-colors"
 	style:font-family="var(--font-mono)"
 	style:color={copied ? 'var(--sourced)' : 'var(--ink-dim)'}
 	style:border-color="var(--line)"

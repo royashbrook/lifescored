@@ -21,28 +21,28 @@
 
 <svelte:head><title>get started · life. scored.</title></svelte:head>
 
-<div class="mx-auto mt-2 max-w-[460px]">
-	<div class="flex items-center justify-between text-[12px] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+<div class="mx-auto mt-2 max-w-[28.75rem]">
+	<div class="flex items-center justify-between text-[0.75rem] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		<span>GUIDED SETUP</span>
 		<span class="tabular-nums">{i + 1} / {total}</span>
 	</div>
 
 	<!-- progress bar -->
-	<div class="mt-2 h-[3px] w-full overflow-hidden rounded-full" style:background="rgba(255,255,255,0.08)">
+	<div class="mt-2 h-[0.1875rem] w-full overflow-hidden rounded-full" style:background="rgba(255,255,255,0.08)">
 		<div class="h-full rounded-full transition-all duration-300" style:background="var(--moves)" style:width="{((i + 1) / total) * 100}%"></div>
 	</div>
 
 	<!-- privacy reassurance: a step-through form feels like submitting; remind people it isn't -->
-	<p class="mt-3 text-[12px] leading-relaxed" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+	<p class="mt-3 text-[0.75rem] leading-relaxed" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		Nothing you enter is collected, sent, or stored on a server — it stays in your browser. The site is free, for
 		information and perspective. <a href="/about" class="underline" style:color="var(--start)">more on the why page →</a>
 	</p>
 
 	<!-- question -->
-	<h2 class="mt-7 text-[22px] leading-snug" style:font-family="var(--font-display)" style:color="var(--ink)">
+	<h2 class="mt-7 text-[1.375rem] leading-snug" style:font-family="var(--font-display)" style:color="var(--ink)">
 		{step.question}
 	</h2>
-	<p class="mt-1.5 text-[15px] leading-relaxed" style:color="var(--ink-dim)">
+	<p class="mt-1.5 text-[0.9375rem] leading-relaxed" style:color="var(--ink-dim)">
 		{FIELD_HELP[step.key].help}
 	</p>
 
@@ -54,7 +54,7 @@
 					{@const active = profile.inputs[step.key] === opt.value}
 					<button
 						type="button"
-						class="w-full rounded-lg border px-4 py-[13px] text-left text-[15px] transition-all"
+						class="w-full rounded-lg border px-4 py-[0.8125rem] text-left text-[0.9375rem] transition-all"
 						style:font-family="var(--font-body)"
 						style:background={active ? 'rgba(217,164,65,0.12)' : 'transparent'}
 						style:color={active ? 'var(--moves)' : 'var(--ink)'}
@@ -65,13 +65,13 @@
 			</div>
 		{:else}
 			<div class="flex items-baseline gap-1 border-b pb-2" style:border-color="var(--line)">
-				{#if step.prefix}<span class="text-[24px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">{step.prefix}</span>{/if}
+				{#if step.prefix}<span class="text-[1.5rem]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">{step.prefix}</span>{/if}
 				<input
 					type="number"
 					step={step.step ?? 1}
 					value={profile.inputs[step.key]}
 					oninput={(e) => set(Number(e.currentTarget.value) || 0)}
-					class="w-full bg-transparent text-[24px] tabular-nums outline-none"
+					class="w-full bg-transparent text-[1.5rem] tabular-nums outline-none"
 					style:font-family="var(--font-mono)"
 					style:color="var(--ink)"
 				/>
@@ -80,14 +80,14 @@
 	</div>
 
 	<!-- footer -->
-	<div class="mt-8 flex items-center justify-between text-[13px]" style:font-family="var(--font-mono)">
+	<div class="mt-8 flex items-center justify-between text-[0.8125rem]" style:font-family="var(--font-mono)">
 		{#if i > 0}
 			<button type="button" class="transition-colors" style:color="var(--ink-dim)" onclick={() => (i -= 1)}>‹ back</button>
 		{:else}
 			<span></span>
 		{/if}
 
-		<span class="text-[12px]" style:color="var(--ink-dim)">
+		<span class="text-[0.75rem]" style:color="var(--ink-dim)">
 			score so far · <span class="tabular-nums" style:color="var(--ink)">{result.composite.toLocaleString('en-US')}</span>
 		</span>
 
@@ -102,7 +102,7 @@
 	<div class="mt-10 text-center">
 		<button
 			type="button"
-			class="text-[12px] underline"
+			class="text-[0.75rem] underline"
 			style:font-family="var(--font-mono)"
 			style:color="var(--ink-dim)"
 			onclick={() => goto('/')}

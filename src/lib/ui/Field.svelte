@@ -6,7 +6,7 @@
 </script>
 
 <label class="flex flex-col gap-1">
-	<span class="flex items-center gap-1.5 text-[12px] tracking-[0.1em] uppercase" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+	<span class="flex items-center gap-1.5 text-[0.75rem] tracking-[0.1em] uppercase" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		{label}
 		{#if help}<FieldHelpPopover entry={help} />{/if}
 	</span>

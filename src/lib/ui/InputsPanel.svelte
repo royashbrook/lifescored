@@ -57,16 +57,16 @@
 		<Field label="Smoker" help={FIELD_HELP.smoker}><SelectInput bind:value={f.smoker.value} opts={[['never', 'Never'], ['former', 'Former'], ['current', 'Current']]} /></Field>
 	</div>
 
-	<div class="mt-2.5 text-[12px] leading-snug" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+	<div class="mt-2.5 text-[0.75rem] leading-snug" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		Income, assets &amp; debt are <span style:color="var(--ink)">household totals</span> — you and your partner combined. Income is then sized to your household (partner + children).
 	</div>
 
-	<div class="mt-2.5 text-[12px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+	<div class="mt-2.5 text-[0.75rem]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		net worth <span class="tabular-nums" style:color="var(--ink)">{fmtNet(netWorth)}</span>
 		<span> = assets − debt · this is the figure scored against your age-band median</span>
 	</div>
 
-	<button class="mt-3 text-[12px]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)" onclick={() => (expanded = !expanded)}>
+	<button class="mt-3 text-[0.75rem]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)" onclick={() => (expanded = !expanded)}>
 		{expanded ? '− less detail' : '+ add detail (more inputs — each one feeds a cited rule)'}
 	</button>
 
