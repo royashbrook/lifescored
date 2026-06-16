@@ -4,7 +4,7 @@
 
 <button
 	type="button"
-	class="text-left text-[13px]"
+	class="text-left text-[14px]"
 	style:color={value ? 'var(--moves)' : 'var(--ink-dim)'}
 	onclick={() => (value = !value)}
 >{value ? onLabel : offLabel} ▸</button>

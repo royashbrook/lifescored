@@ -44,19 +44,19 @@
 </svelte:head>
 
 <div class="mt-2 mb-6 flex items-start justify-between gap-5">
-	<p class="max-w-[540px] text-[13px] leading-relaxed" style:color="var(--ink-dim)">
+	<p class="max-w-[540px] text-[14px] leading-relaxed" style:color="var(--ink-dim)">
 		Not a verdict on your worth — a look at how existing systems would position you, every weight shown.
 		The composite below is the least useful number here; the breakdown is the point.
 	</p>
 	<div class="text-right">
-		<div class="text-[11px] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">COMPOSITE</div>
+		<div class="text-[12px] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">COMPOSITE</div>
 		<div data-testid="composite" class="text-[26px] font-bold tabular-nums" style:font-family="var(--font-mono)">{result.composite.toLocaleString('en-US')}</div>
 	</div>
 </div>
 
 <a
 	href="/start"
-	class="mb-3 inline-block text-[11px] underline"
+	class="mb-3 inline-block text-[12px] underline"
 	style:font-family="var(--font-mono)"
 	style:color="var(--ink-dim)"
 >new here? walk through it one question at a time →</a>
@@ -83,7 +83,7 @@
 			<ScoreRow {row} accent={TIERS[tierKey].accent} />
 		{/each}
 		{#if tierKey === 'starting_point'}
-			<div class="py-3 text-[11px] italic" style:color="var(--ink-dim)">
+			<div class="py-3 text-[12px] italic" style:color="var(--ink-dim)">
 				Timing &amp; luck (a recession at graduation, a boom, an illness) live here too — and we can't
 				measure them, so they stay an unscored asterisk rather than a fake number.
 			</div>
@@ -99,7 +99,7 @@
 
 {#if baseResult.whatIfs.length > 0}
 	<div class="mt-5">
-		<div class="mb-2 text-[11px] tracking-[0.12em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+		<div class="mb-2 text-[12px] tracking-[0.12em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 			WHAT-IF · CONTROLLABLE LEVERS ONLY
 		</div>
 		<div class="flex flex-wrap gap-2">
@@ -113,14 +113,14 @@
 			{/each}
 		</div>
 		{#if moveDelta !== 0}
-			<div class="mt-2 text-[12.5px]" style:color="var(--moves)">
+			<div class="mt-2 text-[13px]" style:color="var(--moves)">
 				These moves shift the part you control by
 				<b style:font-family="var(--font-mono)">{moveDelta > 0 ? '+' : ''}{moveDelta}</b> — a delta, not a destiny.
 			</div>
 		{/if}
 		<a
 			href="/improve"
-			class="mt-2 inline-block text-[11px] underline"
+			class="mt-2 inline-block text-[12px] underline"
 			style:font-family="var(--font-mono)"
 			style:color="var(--ink-dim)"
 		>→ free ways to actually move these (no affiliate links)</a>
@@ -130,7 +130,7 @@
 <NarrativeCard {result} />
 
 <div class="mt-6 flex flex-col gap-5 border-t pt-4 sm:flex-row sm:items-start sm:justify-between" style:border-color="var(--line)">
-	<div class="text-[11px] leading-relaxed sm:max-w-[42%]" style:color="var(--ink-dim)">
+	<div class="text-[12px] leading-relaxed sm:max-w-[42%]" style:color="var(--ink-dim)">
 		<b style:color="var(--ink)">Deliberately left out:</b> the traits that change how <i>other people</i> score you —
 		race, identity, otherness. Real, but not something we put a number on.
 		<a href="/about#left-out" class="underline" style:color="var(--start)">here's why →</a>
