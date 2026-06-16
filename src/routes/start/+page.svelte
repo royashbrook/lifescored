@@ -21,7 +21,7 @@
 
 <svelte:head><title>get started · life. scored.</title></svelte:head>
 
-<div class="mx-auto mt-2 max-w-[28.75rem]">
+<div class="mt-2">
 	<div class="flex items-center justify-between text-[0.75rem] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		<span>GUIDED SETUP</span>
 		<span class="tabular-nums">{i + 1} / {total}</span>

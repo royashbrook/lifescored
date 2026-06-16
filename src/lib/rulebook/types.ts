@@ -10,7 +10,10 @@ export interface Source {
 	accessed: string;
 }
 
-export type CountryCode = 'us' | 'nl' | 'de' | 'jp' | 'br' | 'mx' | 'in' | 'ng' | 'af';
+export type CountryCode =
+	| 'us' | 'nl' | 'de' | 'jp' | 'br' | 'mx' | 'in' | 'ng' | 'af'
+	// income-tier fallbacks for any country not named above (the rule scores by tier anyway)
+	| 'other-high' | 'other-um' | 'other-lm' | 'other-low';
 
 export interface Inputs {
 	// origin

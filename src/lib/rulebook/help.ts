@@ -7,7 +7,7 @@ export interface FieldHelp {
 
 /** One plain-language sentence per input, plus the rule it feeds (for the source link). */
 export const FIELD_HELP: Record<InputKey, FieldHelp> = {
-	country: { ruleId: 'country', help: 'Where you live now — sets a baseline from its World Bank income tier.' },
+	country: { ruleId: 'country', help: "Where you live now — sets a baseline from its World Bank income tier. Not listed? Pick the matching income tier under “Other.”" },
 	familySupport: { ruleId: 'generational', help: "Money you could fall back on in a crisis — a parent who'd cover a month's rent, a loan you wouldn't have to beg for. Not your income; the cushion behind it." },
 	parentsDegree: { ruleId: 'parental-education', help: 'Whether a parent holds a college degree — first-generation students face measurably steeper odds.' },
 	neighborhood: { ruleId: 'neighborhood', help: 'The opportunity level of the area you grew up in — the census-tract effect on adult income.' },
