@@ -41,7 +41,7 @@
 	</div>
 {/snippet}
 
-<div class="mt-2 max-w-[38.75rem] space-y-5 text-[0.9375rem] leading-relaxed" style:color="var(--ink)">
+<div class="mt-2 space-y-5 text-[0.9375rem] leading-relaxed" style:color="var(--ink)">
 	<section>
 		<h2 class="mb-1 text-[1.0625rem] font-semibold" style:font-family="var(--font-display)">Free ways to actually move these</h2>
 		<p>

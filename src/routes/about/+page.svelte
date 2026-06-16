@@ -8,7 +8,7 @@
 	<title>why · life. scored.</title>
 </svelte:head>
 
-<div class="mt-2 max-w-[38.75rem] space-y-5 text-[0.9375rem] leading-relaxed" style:color="var(--ink)">
+<div class="mt-2 space-y-5 text-[0.9375rem] leading-relaxed" style:color="var(--ink)">
 	<section>
 		<h2 class="mb-1 text-[1.0625rem] font-semibold" style:font-family="var(--font-display)">Why this exists</h2>
 		<p>
