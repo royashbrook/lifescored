@@ -10,7 +10,7 @@ test('the wizard loads with header, progress, and the first question', async ({ 
 test('answering and clicking next advances the progress', async ({ page }) => {
 	await page.goto('/start');
 	await page.waitForLoadState('networkidle');
-	await page.getByRole('button', { name: 'United States' }).click();
+	await page.locator('select').selectOption('us');
 	await page.getByRole('button', { name: 'next ›' }).click();
 	await expect(page.getByText('2 / 10')).toBeVisible();
 	await expect(page.getByRole('heading', { name: 'How old are you?' })).toBeVisible();

@@ -3,28 +3,83 @@ import { clamp, type CountryCode, type Inputs } from './types';
 export interface CountryMeta {
 	name: string;
 	tier: 'high' | 'upper-middle' | 'lower-middle' | 'low';
-	baseFrac: number; // fraction of the country rule's weight
 	henleyBand: 0 | 1 | 2; // weak / mid / strong passport
 	note: string;
 }
 
-// baseFrac is editorial within each World Bank income tier; the tier itself is sourced.
+// Country base is set purely by World Bank income tier (no per-country editorial tuning):
+// every high-income country gets the same base; the rule's only other signal is passport strength.
+export const TIER_BASE: Record<CountryMeta['tier'], number> = {
+	high: 0.82,
+	'upper-middle': 0.45,
+	'lower-middle': 0.28,
+	low: 0.15
+};
+
 export const COUNTRIES: Record<CountryCode, CountryMeta> = {
-	us: { name: 'United States', tier: 'high', baseFrac: 0.75, henleyBand: 2, note: 'high-income economy, weaker safety net' },
-	nl: { name: 'Netherlands', tier: 'high', baseFrac: 0.92, henleyBand: 2, note: 'high-income economy, strong safety net' },
-	de: { name: 'Germany', tier: 'high', baseFrac: 0.9, henleyBand: 2, note: 'high-income economy, strong safety net' },
-	jp: { name: 'Japan', tier: 'high', baseFrac: 0.85, henleyBand: 2, note: 'high-income economy, aging demographics' },
-	br: { name: 'Brazil', tier: 'upper-middle', baseFrac: 0.45, henleyBand: 1, note: 'upper-middle-income, high inequality' },
-	mx: { name: 'Mexico', tier: 'upper-middle', baseFrac: 0.45, henleyBand: 1, note: 'upper-middle-income economy' },
-	in: { name: 'India', tier: 'lower-middle', baseFrac: 0.3, henleyBand: 0, note: 'lower-middle-income, fast-growing' },
-	ng: { name: 'Nigeria', tier: 'lower-middle', baseFrac: 0.25, henleyBand: 0, note: 'lower-middle-income, young population' },
-	af: { name: 'Afghanistan', tier: 'low', baseFrac: 0.15, henleyBand: 0, note: 'low-income, conflict-affected' },
-	// Income-tier fallbacks: pick the closest tier if your country isn't listed — the rule
-	// scores by World Bank tier + passport strength, so these are the honest "everyone else".
-	'other-high': { name: 'Other — high-income country', tier: 'high', baseFrac: 0.82, henleyBand: 2, note: 'high-income economy (income-tier estimate)' },
-	'other-um': { name: 'Other — upper-middle-income', tier: 'upper-middle', baseFrac: 0.45, henleyBand: 1, note: 'upper-middle-income economy (income-tier estimate)' },
-	'other-lm': { name: 'Other — lower-middle-income', tier: 'lower-middle', baseFrac: 0.28, henleyBand: 0, note: 'lower-middle-income economy (income-tier estimate)' },
-	'other-low': { name: 'Other — low-income country', tier: 'low', baseFrac: 0.15, henleyBand: 0, note: 'low-income economy (income-tier estimate)' }
+	af: { name: 'Afghanistan', tier: 'low', henleyBand: 0, note: 'low-income, conflict-affected' },
+	ar: { name: 'Argentina', tier: 'upper-middle', henleyBand: 2, note: 'upper-middle-income' },
+	au: { name: 'Australia', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	at: { name: 'Austria', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	bd: { name: 'Bangladesh', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income' },
+	be: { name: 'Belgium', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	br: { name: 'Brazil', tier: 'upper-middle', henleyBand: 2, note: 'upper-middle-income, high inequality' },
+	ca: { name: 'Canada', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	cl: { name: 'Chile', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	cn: { name: 'China', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income' },
+	co: { name: 'Colombia', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income' },
+	cz: { name: 'Czechia', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	dk: { name: 'Denmark', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	eg: { name: 'Egypt', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income' },
+	ee: { name: 'Estonia', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	et: { name: 'Ethiopia', tier: 'low', henleyBand: 0, note: 'low-income' },
+	fi: { name: 'Finland', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	fr: { name: 'France', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	de: { name: 'Germany', tier: 'high', henleyBand: 2, note: 'high-income economy, strong safety net' },
+	gh: { name: 'Ghana', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income' },
+	gr: { name: 'Greece', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	hu: { name: 'Hungary', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	in: { name: 'India', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income, fast-growing' },
+	id: { name: 'Indonesia', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income' },
+	ie: { name: 'Ireland', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	il: { name: 'Israel', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	it: { name: 'Italy', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	jp: { name: 'Japan', tier: 'high', henleyBand: 2, note: 'high-income economy, aging demographics' },
+	kz: { name: 'Kazakhstan', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income' },
+	ke: { name: 'Kenya', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income' },
+	lv: { name: 'Latvia', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	my: { name: 'Malaysia', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income' },
+	mx: { name: 'Mexico', tier: 'upper-middle', henleyBand: 2, note: 'upper-middle-income' },
+	ma: { name: 'Morocco', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income' },
+	nl: { name: 'Netherlands', tier: 'high', henleyBand: 2, note: 'high-income economy, strong safety net' },
+	nz: { name: 'New Zealand', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	ng: { name: 'Nigeria', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income, young population' },
+	no: { name: 'Norway', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	pk: { name: 'Pakistan', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income' },
+	ph: { name: 'Philippines', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income' },
+	pl: { name: 'Poland', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	pt: { name: 'Portugal', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	ro: { name: 'Romania', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	ru: { name: 'Russia', tier: 'high', henleyBand: 1, note: 'high-income economy' },
+	sa: { name: 'Saudi Arabia', tier: 'high', henleyBand: 1, note: 'high-income economy' },
+	sg: { name: 'Singapore', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	za: { name: 'South Africa', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income, high inequality' },
+	kr: { name: 'South Korea', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	es: { name: 'Spain', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	se: { name: 'Sweden', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	ch: { name: 'Switzerland', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	th: { name: 'Thailand', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income' },
+	tr: { name: 'Türkiye', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income' },
+	ug: { name: 'Uganda', tier: 'low', henleyBand: 0, note: 'low-income' },
+	ua: { name: 'Ukraine', tier: 'upper-middle', henleyBand: 2, note: 'upper-middle-income' },
+	ae: { name: 'United Arab Emirates', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	gb: { name: 'United Kingdom', tier: 'high', henleyBand: 2, note: 'high-income economy' },
+	us: { name: 'United States', tier: 'high', henleyBand: 2, note: 'high-income economy, weaker safety net' },
+	vn: { name: 'Vietnam', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income' },
+	'other-high': { name: 'Other — high-income country', tier: 'high', henleyBand: 2, note: 'high-income economy (income-tier estimate)' },
+	'other-um': { name: 'Other — upper-middle-income', tier: 'upper-middle', henleyBand: 1, note: 'upper-middle-income economy (income-tier estimate)' },
+	'other-lm': { name: 'Other — lower-middle-income', tier: 'lower-middle', henleyBand: 0, note: 'lower-middle-income economy (income-tier estimate)' },
+	'other-low': { name: 'Other — low-income country', tier: 'low', henleyBand: 0, note: 'low-income economy (income-tier estimate)' }
 };
 
 // The spike's "son" scenario, extended across all domains.

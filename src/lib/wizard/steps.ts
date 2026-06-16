@@ -3,8 +3,8 @@ import { COUNTRIES, type Inputs } from '$lib/rulebook';
 export interface WizardStep {
 	key: keyof Inputs;
 	question: string;
-	kind: 'options' | 'number';
-	// for 'options': value+label pairs (value must match the Inputs type for that key)
+	kind: 'options' | 'number' | 'select';
+	// for 'options' (buttons) and 'select' (dropdown): value+label pairs
 	options?: { value: string | number | boolean; label: string }[];
 	// for 'number':
 	prefix?: string;
@@ -14,7 +14,7 @@ export interface WizardStep {
 const COUNTRY_OPTIONS = Object.entries(COUNTRIES).map(([value, v]) => ({ value, label: v.name }));
 
 export const WIZARD_STEPS: WizardStep[] = [
-	{ key: 'country', question: 'Where do you live?', kind: 'options', options: COUNTRY_OPTIONS },
+	{ key: 'country', question: 'Where do you live?', kind: 'select', options: COUNTRY_OPTIONS },
 	{ key: 'age', question: 'How old are you?', kind: 'number', step: 1 },
 	{
 		key: 'familySupport',

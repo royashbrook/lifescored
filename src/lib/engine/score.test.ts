@@ -22,11 +22,11 @@ describe('computeScore', () => {
 		const doubled = computeScore(DEFAULT_INPUTS, { country: { weight: 48 } });
 		const baseCountry = base.perRule.find((p) => p.id === 'country')!;
 		const dblCountry = doubled.perRule.find((p) => p.id === 'country')!;
-		// exact doubling holds for this rule because 0.75×24 and 0.75×48 are both integers; not a general guarantee under rounding
-		expect(dblCountry.value).toBe(baseCountry.value * 2);
+		// doubling the weight scales the rule's points up (≈2×, not exact under rounding)
 		expect(dblCountry.max).toBe(48);
-		expect(doubled.tierSubtotals.starting_point).toBe(base.tierSubtotals.starting_point + baseCountry.value);
-		expect(doubled.domainSubtotals.origin).toBe(base.domainSubtotals.origin + baseCountry.value);
+		expect(dblCountry.value).toBeGreaterThan(baseCountry.value);
+		expect(doubled.tierSubtotals.starting_point).toBe(base.tierSubtotals.starting_point - baseCountry.value + dblCountry.value);
+		expect(doubled.domainSubtotals.origin).toBe(base.domainSubtotals.origin - baseCountry.value + dblCountry.value);
 
 		const disabled = computeScore(DEFAULT_INPUTS, { country: { enabled: false } });
 		const row = disabled.perRule.find((p) => p.id === 'country')!;
