@@ -1,4 +1,4 @@
-import { COUNTRIES } from './inputs';
+import { COUNTRIES, TIER_BASE } from './inputs';
 import type { Rule } from './types';
 
 const ACCESSED = '2026-06-11';
@@ -21,7 +21,7 @@ export const ORIGIN_RULES: Rule[] = [
 			accessed: ACCESSED
 		},
 		inputs: ['country'],
-		position: (i) => COUNTRIES[i.country].baseFrac,
+		position: (i) => TIER_BASE[COUNTRIES[i.country].tier],
 		bounds: [0, 1],
 		weightRationale: 'The largest single predictor of lifetime outcomes is where you live — World Bank income tiers span a ~60× range in GNI per capita, dwarfing every behavioral lever in this book. 2.4× the baseline is, if anything, conservative.',
 		describe: (i) => COUNTRIES[i.country].note

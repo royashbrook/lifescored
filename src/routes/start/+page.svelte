@@ -63,6 +63,20 @@
 					>{opt.label}</button>
 				{/each}
 			</div>
+		{:else if step.kind === 'select'}
+			<div class="border-b pb-2" style:border-color="var(--line)">
+				<select
+					value={profile.inputs[step.key]}
+					onchange={(e) => set(e.currentTarget.value)}
+					class="w-full bg-transparent text-[1.375rem] outline-none"
+					style:font-family="var(--font-body)"
+					style:color="var(--ink)"
+				>
+					{#each step.options ?? [] as opt (opt.value)}
+						<option value={opt.value} style:background="var(--panel)">{opt.label}</option>
+					{/each}
+				</select>
+			</div>
 		{:else}
 			<div class="flex items-baseline gap-1 border-b pb-2" style:border-color="var(--line)">
 				{#if step.prefix}<span class="text-[1.5rem]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">{step.prefix}</span>{/if}

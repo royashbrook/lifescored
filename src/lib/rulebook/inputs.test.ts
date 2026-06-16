@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { clampInputs, COUNTRIES, DEFAULT_INPUTS, NUMERIC_CLAMPS } from './inputs';
+import { clampInputs, COUNTRIES, DEFAULT_INPUTS, NUMERIC_CLAMPS, TIER_BASE } from './inputs';
 import type { CountryCode } from './types';
 
 describe('inputs', () => {
@@ -15,13 +15,13 @@ describe('inputs', () => {
 		expect(c.creditScore).toBe(850); // clamped to FICO ceiling
 	});
 
-	it('every country has a name, income tier, base fraction and henley band', () => {
+	it('every country has a name, a valid income tier, and a henley band; base is set by tier', () => {
 		for (const c of Object.values(COUNTRIES)) {
 			expect(c.name.length).toBeGreaterThan(0);
-			expect(c.baseFrac).toBeGreaterThanOrEqual(0);
-			expect(c.baseFrac).toBeLessThanOrEqual(1);
 			expect([0, 1, 2]).toContain(c.henleyBand);
 			expect(['high', 'upper-middle', 'lower-middle', 'low']).toContain(c.tier);
+			expect(TIER_BASE[c.tier]).toBeGreaterThan(0);
+			expect(TIER_BASE[c.tier]).toBeLessThanOrEqual(1);
 		}
 	});
 
