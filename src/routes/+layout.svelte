@@ -68,7 +68,7 @@
 			{#each links as [href, label] (href)}
 				<a
 					{href}
-					class="rounded-full border px-3 py-1 text-[12px] transition-all"
+					class="rounded-full border px-3 py-1 text-[13px] transition-all"
 					style:font-family="var(--font-mono)"
 					style:background={page.url.pathname === href ? 'rgba(255,255,255,0.08)' : 'transparent'}
 					style:color={page.url.pathname === href ? 'var(--ink)' : 'var(--ink-dim)'}
@@ -79,12 +79,12 @@
 	</header>
 
 	{#if shareNotice === 'ok'}
-		<button class="mb-2 text-left text-[11px]" style:color="var(--sourced)" onclick={() => (shareNotice = null)}>
+		<button class="mb-2 text-left text-[12px]" style:color="var(--sourced)" onclick={() => (shareNotice = null)}>
 			Showing answers from a shared link. Your own saved answers are untouched — change anything here and it
 			becomes yours. dismiss ×
 		</button>
 	{:else if shareNotice === 'bad'}
-		<button class="mb-2 text-[11px]" style:color="var(--spec)" onclick={() => (shareNotice = null)}>
+		<button class="mb-2 text-[12px]" style:color="var(--spec)" onclick={() => (shareNotice = null)}>
 			Couldn't read that share link — your existing data is untouched. dismiss ×
 		</button>
 	{/if}
@@ -92,7 +92,7 @@
 	{@render children()}
 
 	<footer
-		class="mt-10 flex items-center justify-between gap-x-1.5 border-t pt-4 text-[10px] sm:gap-x-2 sm:text-[11px]"
+		class="mt-10 flex items-center justify-between gap-x-1.5 border-t pt-4 text-[11px] sm:gap-x-2 sm:text-[12px]"
 		style:border-color="var(--line)"
 		style:font-family="var(--font-mono)"
 		style:color="var(--ink-dim)"

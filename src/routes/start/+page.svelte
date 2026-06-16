@@ -22,7 +22,7 @@
 <svelte:head><title>get started · life. scored.</title></svelte:head>
 
 <div class="mx-auto mt-2 max-w-[460px]">
-	<div class="flex items-center justify-between text-[11px] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+	<div class="flex items-center justify-between text-[12px] tracking-[0.14em]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		<span>GUIDED SETUP</span>
 		<span class="tabular-nums">{i + 1} / {total}</span>
 	</div>
@@ -33,7 +33,7 @@
 	</div>
 
 	<!-- privacy reassurance: a step-through form feels like submitting; remind people it isn't -->
-	<p class="mt-3 text-[11px] leading-relaxed" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
+	<p class="mt-3 text-[12px] leading-relaxed" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">
 		Nothing you enter is collected, sent, or stored on a server — it stays in your browser. The site is free, for
 		information and perspective. <a href="/about" class="underline" style:color="var(--start)">more on the why page →</a>
 	</p>
@@ -42,7 +42,7 @@
 	<h2 class="mt-7 text-[22px] leading-snug" style:font-family="var(--font-display)" style:color="var(--ink)">
 		{step.question}
 	</h2>
-	<p class="mt-1.5 text-[14px] leading-relaxed" style:color="var(--ink-dim)">
+	<p class="mt-1.5 text-[15px] leading-relaxed" style:color="var(--ink-dim)">
 		{FIELD_HELP[step.key].help}
 	</p>
 
@@ -80,14 +80,14 @@
 	</div>
 
 	<!-- footer -->
-	<div class="mt-8 flex items-center justify-between text-[12px]" style:font-family="var(--font-mono)">
+	<div class="mt-8 flex items-center justify-between text-[13px]" style:font-family="var(--font-mono)">
 		{#if i > 0}
 			<button type="button" class="transition-colors" style:color="var(--ink-dim)" onclick={() => (i -= 1)}>‹ back</button>
 		{:else}
 			<span></span>
 		{/if}
 
-		<span class="text-[11px]" style:color="var(--ink-dim)">
+		<span class="text-[12px]" style:color="var(--ink-dim)">
 			score so far · <span class="tabular-nums" style:color="var(--ink)">{result.composite.toLocaleString('en-US')}</span>
 		</span>
 
@@ -102,7 +102,7 @@
 	<div class="mt-10 text-center">
 		<button
 			type="button"
-			class="text-[11px] underline"
+			class="text-[12px] underline"
 			style:font-family="var(--font-mono)"
 			style:color="var(--ink-dim)"
 			onclick={() => goto('/')}

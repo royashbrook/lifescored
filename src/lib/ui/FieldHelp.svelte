@@ -30,7 +30,7 @@
 
 <button
 	type="button"
-	class="inline-flex h-[15px] w-[15px] items-center justify-center rounded-full border text-[9px]"
+	class="inline-flex h-[15px] w-[15px] items-center justify-center rounded-full border text-[10px]"
 	style:font-family="var(--font-mono)"
 	style:color={open ? 'var(--start)' : 'var(--ink-dim)'}
 	style:border-color={open ? 'var(--start)' : 'rgba(255,255,255,0.25)'}
@@ -55,12 +55,12 @@
 		style:border="1px solid rgba(124,147,184,0.4)"
 	>
 		<div class="mb-1 flex items-center justify-between gap-2">
-			<span class="text-[13px] font-semibold" style:font-family="var(--font-display)" style:color="var(--ink)">{rule?.label}</span>
+			<span class="text-[14px] font-semibold" style:font-family="var(--font-display)" style:color="var(--ink)">{rule?.label}</span>
 			{#if rule}<Tag kind={rule.evidence} />{/if}
 		</div>
-		<div class="text-[12px] leading-snug" style:color="var(--ink)">{entry.help}</div>
+		<div class="text-[13px] leading-snug" style:color="var(--ink)">{entry.help}</div>
 		{#if rule}
-			<div class="mt-2 pl-2 text-[10.5px] leading-snug" style:border-left="2px solid var(--start)" style:color="var(--ink-dim)">
+			<div class="mt-2 pl-2 text-[11px] leading-snug" style:border-left="2px solid var(--start)" style:color="var(--ink-dim)">
 				{rule.source.name}. <a href="/rulebook" class="underline" style:color="var(--start)">read the rule ↗</a>
 			</div>
 		{/if}

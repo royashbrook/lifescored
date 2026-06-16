@@ -8,9 +8,9 @@
 	<title>why · life. scored.</title>
 </svelte:head>
 
-<div class="mt-2 max-w-[620px] space-y-5 text-[13.5px] leading-relaxed" style:color="var(--ink)">
+<div class="mt-2 max-w-[620px] space-y-5 text-[15px] leading-relaxed" style:color="var(--ink)">
 	<section>
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">Why this exists</h2>
+		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">Why this exists</h2>
 		<p>
 			You are already a number. Several, actually: a credit score, an actuarial row, a debt-to-income ratio, a
 			callback probability. Those numbers run your life and you never get to see the weights. This app rebuilds
@@ -22,7 +22,7 @@
 	</section>
 
 	<section id="left-out" style:scroll-margin-top="1rem">
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">What's deliberately left out</h2>
+		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">What's deliberately left out</h2>
 		<p>
 			Some things about you — a few legally protected, others not — change how other people score you, and we
 			put no number on any of them. Not because they don't matter; often they matter enormously. But this kind
@@ -41,7 +41,7 @@
 	</section>
 
 	<section>
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">How the scoring works</h2>
+		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">How the scoring works</h2>
 		<p>
 			Every rule is declarative: a plain-English statement, an evidence tag, a citation, and a pure function from
 			your inputs to points. Rules are split between <span style:color="var(--start)">your starting point</span>
@@ -67,7 +67,7 @@
 	</section>
 
 	<section id="how-it-works" style:scroll-margin-top="1rem">
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">How this works — and what "no tracking" means</h2>
+		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">How this works — and what "no tracking" means</h2>
 		<p>
 			Everything runs in your browser. You type your answers in, the rules compute your score right there on
 			your device, and the numbers are saved only to your browser's own local storage so they're still there
@@ -89,7 +89,7 @@
 	</section>
 
 	<section>
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">Keeping it free</h2>
+		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">Keeping it free</h2>
 		<p>
 			There are no ads, no affiliate links, no data sales, and no paywall — and there's no plan to add the first
 			three. The whole point falls apart the moment the thing scoring you has something to sell you. Hosting is
@@ -101,7 +101,7 @@
 	</section>
 
 	<section>
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">The receipts</h2>
+		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">The receipts</h2>
 		<p>
 			Every rule shows its work — plain-English logic, an evidence tag, the public source behind it, and a weight
 			you can move. Rather than reprint all {RULES.length} of them here, they live where you can actually use them:

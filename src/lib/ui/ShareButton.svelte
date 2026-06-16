@@ -79,7 +79,7 @@
 
 <div class="flex flex-col items-end gap-1.5">
 	<button
-		class="rounded-full border px-3 py-1 text-[11px]"
+		class="rounded-full border px-3 py-1 text-[12px]"
 		style:font-family="var(--font-mono)"
 		style:color={flashState === 'score-copied' ? 'var(--sourced)' : 'var(--ink-dim)'}
 		style:border-color="var(--line)"
@@ -87,7 +87,7 @@
 	>{flashState === 'score-copied' ? 'copied ✓ — just the number' : 'share my score'}</button>
 
 	<button
-		class="text-[10px] underline"
+		class="text-[11px] underline"
 		style:font-family="var(--font-mono)"
 		style:color="var(--ink-dim)"
 		onclick={() => (showData = !showData)}
@@ -95,13 +95,13 @@
 
 	{#if showData}
 		<div class="flex max-w-[300px] flex-col items-end gap-1.5 text-right">
-			<span class="text-[10px] leading-snug" style:color="var(--spec)">
+			<span class="text-[11px] leading-snug" style:color="var(--spec)">
 				This is different from the score. It puts the exact answers you typed — income, assets, debt, all of
 				them — right into the link, encoded. Nothing is sent to a server, but whoever opens the link can read
 				every answer back out of it. Only send it to someone you'd show these numbers to.
 			</span>
 			<button
-				class="rounded-full border px-3 py-1 text-[11px]"
+				class="rounded-full border px-3 py-1 text-[12px]"
 				style:font-family="var(--font-mono)"
 				style:color={flashState === 'data-copied' ? 'var(--sourced)' : 'var(--moves)'}
 				style:border-color="var(--line)"
@@ -117,13 +117,13 @@
 			value={failedText}
 			onfocus={selectAll}
 			onclick={selectAll}
-			class="w-full max-w-[420px] rounded border px-2 py-1 text-[10px]"
+			class="w-full max-w-[420px] rounded border px-2 py-1 text-[11px]"
 			style:font-family="var(--font-mono)"
 			style:background="var(--panel)"
 			style:color="var(--ink)"
 			style:border-color="var(--line)"
 			aria-label="Copy this text"
 		/>
-		<span class="text-[10px]" style:color="var(--spec)">couldn't reach the clipboard — copy the text above</span>
+		<span class="text-[11px]" style:color="var(--spec)">couldn't reach the clipboard — copy the text above</span>
 	{/if}
 </div>

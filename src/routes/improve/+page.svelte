@@ -28,11 +28,11 @@
 
 {#snippet areaCard(area: ImproveArea)}
 	<div class="rounded-lg p-3.5" style:background="var(--panel)" style:border="1px solid var(--line)">
-		<div class="mb-1 text-[14px] font-semibold" style:font-family="var(--font-display)" style:color="var(--ink)">{area.label}</div>
-		<div class="mb-2.5 text-[12.5px] leading-snug" style:color="var(--ink-dim)">{area.simple}</div>
+		<div class="mb-1 text-[15px] font-semibold" style:font-family="var(--font-display)" style:color="var(--ink)">{area.label}</div>
+		<div class="mb-2.5 text-[13px] leading-snug" style:color="var(--ink-dim)">{area.simple}</div>
 		<ul class="space-y-1.5 pl-2.5" style:border-left="2px solid var(--sourced)">
 			{#each area.free as r (r.url)}
-				<li class="text-[11px] leading-snug">
+				<li class="text-[12px] leading-snug">
 					<a href={r.url} target="_blank" rel="noreferrer" class="underline" style:color="var(--sourced)">{r.name} ↗</a>
 					<span style:color="var(--ink-dim)"> — {r.note}</span>
 				</li>
@@ -41,16 +41,16 @@
 	</div>
 {/snippet}
 
-<div class="mt-2 max-w-[620px] space-y-5 text-[13.5px] leading-relaxed" style:color="var(--ink)">
+<div class="mt-2 max-w-[620px] space-y-5 text-[15px] leading-relaxed" style:color="var(--ink)">
 	<section>
-		<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">Free ways to actually move these</h2>
+		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">Free ways to actually move these</h2>
 		<p>
 			The scores you can move are the <span style:color="var(--moves)">your moves</span> ones — the part that was
 			ever up for grabs. For almost all of them, the honest first answer isn't a product or a subscription. It's
 			free. So for each area you'll find two things: the most basic next step, in plain language, that's free to
 			everyone — and then a few public links to the best free offerings we could find for it.
 		</p>
-		<p class="mt-2 text-[12px]" style:color="var(--ink-dim)">
+		<p class="mt-2 text-[13px]" style:color="var(--ink-dim)">
 			Everything linked is, as far as we can tell, a free and public resource — government sites, nonprofits, open
 			courses. They're external, with their own policies; we don't track you and earn nothing if you click. No
 			affiliate links, by design — just free help where we could find it.
@@ -59,8 +59,8 @@
 
 	{#if startHere.length > 0}
 		<section>
-			<h2 class="mb-1 text-[16px] font-semibold" style:font-family="var(--font-display)">Start here — based on your score</h2>
-			<p class="mb-2.5 text-[12.5px]" style:color="var(--ink-dim)">Your lowest controllable scores right now — the cheapest places to move the number.</p>
+			<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">Start here — based on your score</h2>
+			<p class="mb-2.5 text-[13px]" style:color="var(--ink-dim)">Your lowest controllable scores right now — the cheapest places to move the number.</p>
 			<div class="space-y-2.5">
 				{#each startHere as area (area.id)}
 					{@render areaCard(area)}
@@ -71,7 +71,7 @@
 
 	{#each groups as group (group.name)}
 		<section>
-			<h2 class="mb-2 text-[16px] font-semibold" style:font-family="var(--font-display)">{group.name}</h2>
+			<h2 class="mb-2 text-[17px] font-semibold" style:font-family="var(--font-display)">{group.name}</h2>
 			<div class="space-y-2.5">
 				{#each group.areas as area (area.id)}
 					{@render areaCard(area)}
