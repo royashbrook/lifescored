@@ -18,7 +18,13 @@ export const COUNTRIES: Record<CountryCode, CountryMeta> = {
 	mx: { name: 'Mexico', tier: 'upper-middle', baseFrac: 0.45, henleyBand: 1, note: 'upper-middle-income economy' },
 	in: { name: 'India', tier: 'lower-middle', baseFrac: 0.3, henleyBand: 0, note: 'lower-middle-income, fast-growing' },
 	ng: { name: 'Nigeria', tier: 'lower-middle', baseFrac: 0.25, henleyBand: 0, note: 'lower-middle-income, young population' },
-	af: { name: 'Afghanistan', tier: 'low', baseFrac: 0.15, henleyBand: 0, note: 'low-income, conflict-affected' }
+	af: { name: 'Afghanistan', tier: 'low', baseFrac: 0.15, henleyBand: 0, note: 'low-income, conflict-affected' },
+	// Income-tier fallbacks: pick the closest tier if your country isn't listed — the rule
+	// scores by World Bank tier + passport strength, so these are the honest "everyone else".
+	'other-high': { name: 'Other — high-income country', tier: 'high', baseFrac: 0.82, henleyBand: 2, note: 'high-income economy (income-tier estimate)' },
+	'other-um': { name: 'Other — upper-middle-income', tier: 'upper-middle', baseFrac: 0.45, henleyBand: 1, note: 'upper-middle-income economy (income-tier estimate)' },
+	'other-lm': { name: 'Other — lower-middle-income', tier: 'lower-middle', baseFrac: 0.28, henleyBand: 0, note: 'lower-middle-income economy (income-tier estimate)' },
+	'other-low': { name: 'Other — low-income country', tier: 'low', baseFrac: 0.15, henleyBand: 0, note: 'low-income economy (income-tier estimate)' }
 };
 
 // The spike's "son" scenario, extended across all domains.
