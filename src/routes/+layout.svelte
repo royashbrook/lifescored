@@ -59,16 +59,16 @@
 	];
 </script>
 
-<div class="mx-auto w-full max-w-[760px] px-5 pt-7 pb-10">
+<div class="mx-auto w-full max-w-[47.5rem] px-5 pt-7 pb-10">
 	<header class="mb-1 flex flex-wrap items-end justify-between gap-2">
-		<h1 class="text-[30px] leading-none font-semibold tracking-[-0.01em]" style:font-family="var(--font-display)">
+		<h1 class="text-[1.875rem] leading-none font-semibold tracking-[-0.01em]" style:font-family="var(--font-display)">
 			life. scored.
 </h1>
 		<nav class="flex gap-1">
 			{#each links as [href, label] (href)}
 				<a
 					{href}
-					class="rounded-full border px-3 py-1 text-[13px] transition-all"
+					class="rounded-full border px-3 py-1 text-[0.8125rem] transition-all"
 					style:font-family="var(--font-mono)"
 					style:background={page.url.pathname === href ? 'rgba(255,255,255,0.08)' : 'transparent'}
 					style:color={page.url.pathname === href ? 'var(--ink)' : 'var(--ink-dim)'}
@@ -79,12 +79,12 @@
 	</header>
 
 	{#if shareNotice === 'ok'}
-		<button class="mb-2 text-left text-[12px]" style:color="var(--sourced)" onclick={() => (shareNotice = null)}>
+		<button class="mb-2 text-left text-[0.75rem]" style:color="var(--sourced)" onclick={() => (shareNotice = null)}>
 			Showing answers from a shared link. Your own saved answers are untouched — change anything here and it
 			becomes yours. dismiss ×
 		</button>
 	{:else if shareNotice === 'bad'}
-		<button class="mb-2 text-[12px]" style:color="var(--spec)" onclick={() => (shareNotice = null)}>
+		<button class="mb-2 text-[0.75rem]" style:color="var(--spec)" onclick={() => (shareNotice = null)}>
 			Couldn't read that share link — your existing data is untouched. dismiss ×
 		</button>
 	{/if}
@@ -92,7 +92,7 @@
 	{@render children()}
 
 	<footer
-		class="mt-10 flex items-center justify-between gap-x-1.5 border-t pt-4 text-[11px] sm:gap-x-2 sm:text-[12px]"
+		class="mt-10 flex items-center justify-between gap-x-1.5 border-t pt-4 text-[0.6875rem] sm:gap-x-2 sm:text-[0.75rem]"
 		style:border-color="var(--line)"
 		style:font-family="var(--font-mono)"
 		style:color="var(--ink-dim)"

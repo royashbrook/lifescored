@@ -24,34 +24,34 @@
 <div class="mb-2 rounded-lg p-3.5" style:background="var(--panel)" style:border="1px solid var(--line)" style:opacity={enabled ? 1 : 0.55}>
 	<div class="mb-1.5 flex items-center justify-between gap-2">
 		<div class="flex flex-wrap items-center gap-2">
-			<span class="text-[15px] font-semibold" style:font-family="var(--font-display)" style:color="var(--ink)">{rule.label}</span>
+			<span class="text-[0.9375rem] font-semibold" style:font-family="var(--font-display)" style:color="var(--ink)">{rule.label}</span>
 			<Tag kind={rule.evidence} />
 			{#if rule.controllable}
-				<span class="rounded-sm border px-1.5 py-0.5 text-[10px]" style:font-family="var(--font-mono)" style:color="var(--moves)" style:border-color="rgba(217,164,65,0.35)">CONTROLLABLE</span>
+				<span class="rounded-sm border px-1.5 py-0.5 text-[0.625rem]" style:font-family="var(--font-mono)" style:color="var(--moves)" style:border-color="rgba(217,164,65,0.35)">CONTROLLABLE</span>
 			{/if}
 			{#if modified}
-				<span class="text-[10px]" style:font-family="var(--font-mono)" style:color="var(--spec)">EDITED BY YOU</span>
+				<span class="text-[0.625rem]" style:font-family="var(--font-mono)" style:color="var(--spec)">EDITED BY YOU</span>
 			{/if}
 		</div>
-		<span class="shrink-0 text-[12px] tabular-nums" style:font-family="var(--font-mono)" style:color={accent}>
+		<span class="shrink-0 text-[0.75rem] tabular-nums" style:font-family="var(--font-mono)" style:color={accent}>
 			×{(weight / BASELINE_WEIGHT).toFixed(1)} · {lo} to +{hi}
 		</span>
 	</div>
 
-	<div class="mb-2 text-[13px] leading-snug" style:color="var(--ink)">{rule.logic}</div>
+	<div class="mb-2 text-[0.8125rem] leading-snug" style:color="var(--ink)">{rule.logic}</div>
 
 	{#if rule.caveat}
-		<div class="mb-2 text-[12px] leading-snug italic" style:color="var(--spec)">Caveat: {rule.caveat}</div>
+		<div class="mb-2 text-[0.75rem] leading-snug italic" style:color="var(--spec)">Caveat: {rule.caveat}</div>
 	{/if}
 
-	<div class="mb-3 pl-2.5 text-[12px] leading-snug" style:border-left="2px solid {accent}" style:color="var(--ink-dim)">
+	<div class="mb-3 pl-2.5 text-[0.75rem] leading-snug" style:border-left="2px solid {accent}" style:color="var(--ink-dim)">
 		<span style:color="var(--ink)">{rule.source.name}.</span>
 		{rule.source.finding}
 		<a href={rule.source.url} target="_blank" rel="noreferrer" style:color={accent} class="underline">source ↗</a>
 		<span class="ml-1">(accessed {rule.source.accessed})</span>
 	</div>
 
-	<div class="mb-3 text-[12px] leading-snug" style:color="var(--ink-dim)">
+	<div class="mb-3 text-[0.75rem] leading-snug" style:color="var(--ink-dim)">
 		<span style:color="var(--ink)">Why this weight:</span> {rule.weightRationale}
 	</div>
 
@@ -65,9 +65,9 @@
 			class="h-1 w-40 accent-[var(--moves)]"
 			oninput={(e) => onOverride({ weight: Number(e.currentTarget.value) })}
 		/>
-		<span class="text-[11px] tabular-nums" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">weight {weight} (×{(weight / BASELINE_WEIGHT).toFixed(1)})</span>
+		<span class="text-[0.6875rem] tabular-nums" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">weight {weight} (×{(weight / BASELINE_WEIGHT).toFixed(1)})</span>
 		<button
-			class="ml-auto text-[11px]"
+			class="ml-auto text-[0.6875rem]"
 			style:font-family="var(--font-mono)"
 			style:color={enabled ? 'var(--ink-dim)' : 'var(--spec)'}
 			onclick={() => onOverride({ enabled: !enabled })}

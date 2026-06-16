@@ -4,7 +4,7 @@
 
 <button
 	type="button"
-	class="rounded-full border px-3 py-1.5 text-[13px] transition-all"
+	class="rounded-full border px-3 py-1.5 text-[0.8125rem] transition-all"
 	style:font-family="var(--font-mono)"
 	style:background={active ? 'rgba(217,164,65,0.16)' : 'transparent'}
 	style:color={active ? 'var(--moves)' : 'var(--ink-dim)'}

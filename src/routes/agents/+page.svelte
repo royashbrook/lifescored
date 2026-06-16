@@ -18,9 +18,9 @@
 	<title>use with AI · life. scored.</title>
 </svelte:head>
 
-<div class="mt-2 space-y-5 text-[15px] leading-relaxed" style:color="var(--ink)">
+<div class="mt-2 space-y-5 text-[0.9375rem] leading-relaxed" style:color="var(--ink)">
 	<section>
-		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">Use this with an AI</h2>
+		<h2 class="mb-1 text-[1.0625rem] font-semibold" style:font-family="var(--font-display)">Use this with an AI</h2>
 		<p>
 			life. scored. is just math over public rules — so any AI or agent can run it for you.
 			Point your assistant at the resources below: it reads the rulebook, asks you for whatever it
@@ -30,40 +30,40 @@
 	</section>
 
 	<section>
-		<h2 class="mb-2 text-[17px] font-semibold" style:font-family="var(--font-display)">Easiest: paste this prompt</h2>
-		<p class="mb-2.5 text-[13px]" style:color="var(--ink-dim)">
+		<h2 class="mb-2 text-[1.0625rem] font-semibold" style:font-family="var(--font-display)">Easiest: paste this prompt</h2>
+		<p class="mb-2.5 text-[0.8125rem]" style:color="var(--ink-dim)">
 			Drop this into any assistant that can fetch a URL (Claude, ChatGPT with browsing, Claude Code, …):
 		</p>
 		<div class="rounded-lg p-3.5" style:background="var(--panel)" style:border="1px solid var(--line)">
-			<p class="text-[13px] leading-relaxed" style:color="var(--ink-dim)">{PROMPT}</p>
+			<p class="text-[0.8125rem] leading-relaxed" style:color="var(--ink-dim)">{PROMPT}</p>
 			<div class="mt-3"><CopyButton text={PROMPT} label="copy the prompt" /></div>
 		</div>
 	</section>
 
 	<section>
-		<h2 class="mb-2 text-[17px] font-semibold" style:font-family="var(--font-display)">Or connect it directly</h2>
+		<h2 class="mb-2 text-[1.0625rem] font-semibold" style:font-family="var(--font-display)">Or connect it directly</h2>
 		<div class="space-y-2.5">
 			{#each links as l (l.url)}
 				<div class="rounded-lg p-3.5" style:background="var(--panel)" style:border="1px solid var(--line)">
 					<div class="flex items-center justify-between gap-3">
 						<div class="min-w-0">
-							<div class="text-[14px] font-semibold" style:color="var(--ink)">{l.label}</div>
-							<a href={l.url} class="text-[12px] break-all underline" style:font-family="var(--font-mono)" style:color="var(--start)">{l.url}</a>
+							<div class="text-[0.875rem] font-semibold" style:color="var(--ink)">{l.label}</div>
+							<a href={l.url} class="text-[0.75rem] break-all underline" style:font-family="var(--font-mono)" style:color="var(--start)">{l.url}</a>
 						</div>
 						<CopyButton text={l.url} label="copy URL" />
 					</div>
-					<div class="mt-2 text-[13px] leading-snug" style:color="var(--ink-dim)">{l.note}</div>
+					<div class="mt-2 text-[0.8125rem] leading-snug" style:color="var(--ink-dim)">{l.note}</div>
 				</div>
 			{/each}
 		</div>
-		<p class="mt-2.5 text-[13px]" style:color="var(--ink-dim)">
+		<p class="mt-2.5 text-[0.8125rem]" style:color="var(--ink-dim)">
 			MCP-capable agents can add the endpoint as a tool server (e.g. <span style:font-family="var(--font-mono)">claude mcp add --transport http lifescored {MCP_URL}</span>),
 			or test it with <span style:font-family="var(--font-mono)">npx @modelcontextprotocol/inspector</span>.
 		</p>
 	</section>
 
 	<section>
-		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">Privacy</h2>
+		<h2 class="mb-1 text-[1.0625rem] font-semibold" style:font-family="var(--font-display)">Privacy</h2>
 		<p>
 			Nothing about a person should ever be sent to lifescored.com to get a score, and nothing is.
 			The MCP server computes nothing and accepts no personal data — its tools only hand back the
@@ -72,7 +72,7 @@
 	</section>
 
 	<section>
-		<h2 class="mb-1 text-[17px] font-semibold" style:font-family="var(--font-display)">Make it better</h2>
+		<h2 class="mb-1 text-[1.0625rem] font-semibold" style:font-family="var(--font-display)">Make it better</h2>
 		<p>
 			The weights are editorial and the rules are arguable — that's the design. If your agent (or you)
 			thinks a weight is off, a source is stale, or a rule is missing, that feedback is welcome and

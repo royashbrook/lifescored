@@ -18,6 +18,16 @@
 	--font-mono: 'JetBrains Mono Variable', monospace;
 }
 
+/*
+ * All sizes are rem-based, so the whole UI (type, spacing, column width) scales from this
+ * one root font-size. It stays at 16px on phones/tablets and grows on larger screens so a
+ * big monitor isn't a tiny island in a sea of whitespace — bakes in what you'd otherwise do
+ * by zooming. Floor 16px keeps mobile exactly as designed; cap keeps huge displays sane.
+ */
+html {
+	font-size: clamp(16px, 0.6vw + 12px, 24px);
+}
+
 body {
 	background: var(--bg);
 	color: var(--ink);
