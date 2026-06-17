@@ -1,16 +1,22 @@
 <script lang="ts">
 	import { encodeProfile, type Profile } from '$lib/share/codec';
+	import { renderScoreCard } from '$lib/share/scorecard';
+	import type { ScoreResult } from '$lib/engine/score';
 
 	let {
 		profile,
-		composite
-	}: { profile: Profile; composite: number } = $props();
+		composite,
+		result
+	}: { profile: Profile; composite: number; result: ScoreResult } = $props();
 
 	// idle → a flash state → back to idle. `failed` shows the manual-copy input.
 	let flashState = $state<'idle' | 'score-copied' | 'data-copied'>('idle');
 	let failedText = $state('');
 	let showData = $state(false);
 	let dataUrl = $state('');
+	// The branded PNG card, rendered on-device. Precomputed so the share/download click runs
+	// synchronously — an await between click and navigator.share drops user activation (Safari).
+	let cardFile = $state<File | null>(null);
 
 	const scoreN = $derived(Math.round(composite).toLocaleString('en-US'));
 	// What lands on the clipboard / in the share sheet: the number and the brand, no data.
@@ -24,6 +30,21 @@
 		encodeProfile(snapshot).then((encoded) => {
 			if (!cancelled) dataUrl = `${location.origin}/#p=${encoded}`;
 		});
+		return () => {
+			cancelled = true;
+		};
+	});
+
+	// Precompute the score-card PNG whenever the result changes (cheap flat-colour draw), so a
+	// share/download click has the File ready synchronously.
+	$effect(() => {
+		const snapshot = result;
+		let cancelled = false;
+		renderScoreCard(snapshot)
+			.then((blob) => {
+				if (!cancelled) cardFile = new File([blob], 'life-scored.png', { type: 'image/png' });
+			})
+			.catch(() => {});
 		return () => {
 			cancelled = true;
 		};
@@ -43,9 +64,19 @@
 	}
 
 	function shareScore() {
-		// Share the score as TEXT only — no `url`. When a url is present, most share targets
-		// surface only the link and drop the text, so the number never travels. The brand
-		// (lifescored.com) rides along inside the text instead, as plain words.
+		// Prefer sharing the branded card image — it carries the number AND the brand as a visual,
+		// generated entirely on-device (nothing sent anywhere). The image rides with the text.
+		if (cardFile && navigator.canShare?.({ files: [cardFile] })) {
+			navigator.share({ files: [cardFile], text: scoreText }).then(
+				() => {},
+				(e: DOMException) => {
+					if (e?.name !== 'AbortError') copy(scoreText, 'score-copied');
+				}
+			);
+			return;
+		}
+		// No file-share support (most desktop browsers): share/copy the score as TEXT only — no
+		// `url`, since most targets drop the text when a link is present, so the number wouldn't travel.
 		if (navigator.share) {
 			navigator.share({ title: 'life. scored.', text: scoreText }).then(
 				() => {},
@@ -56,6 +87,17 @@
 		} else {
 			copy(scoreText, 'score-copied');
 		}
+	}
+
+	function downloadCard() {
+		if (!cardFile) return;
+		const url = URL.createObjectURL(cardFile);
+		const a = document.createElement('a');
+		a.href = url;
+		a.download = cardFile.name;
+		a.click();
+		// Defer revoke — revoking immediately can abort the download before the browser reads the blob.
+		setTimeout(() => URL.revokeObjectURL(url), 10000);
 	}
 
 	function shareData() {
@@ -85,6 +127,14 @@
 		style:border-color="var(--line)"
 		onclick={shareScore}
 	>{flashState === 'score-copied' ? 'copied ✓ — just the number' : 'share my score'}</button>
+
+	<button
+		class="text-[0.6875rem] underline"
+		style:font-family="var(--font-mono)"
+		style:color="var(--ink-dim)"
+		disabled={!cardFile}
+		onclick={downloadCard}
+	>download score card ↓</button>
 
 	<button
 		class="text-[0.6875rem] underline"

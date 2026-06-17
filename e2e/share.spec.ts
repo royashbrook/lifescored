@@ -19,6 +19,18 @@ test('the default share is the score number, not the profile data', async ({ pag
 	expect(copied).not.toContain('999999'); // no raw inputs
 });
 
+test('the score card renders on-device and downloads as a PNG', async ({ page }) => {
+	await page.goto('/');
+	await page.waitForLoadState('networkidle');
+
+	// The button is disabled until the card has been rendered client-side — proves renderScoreCard ran.
+	const dl = page.getByRole('button', { name: /download score card/ });
+	await expect(dl).toBeEnabled({ timeout: 5000 });
+
+	const [download] = await Promise.all([page.waitForEvent('download'), dl.click()]);
+	expect(download.suggestedFilename()).toBe('life-scored.png');
+});
+
 test('the explicit answer link round-trips the full profile', async ({ page }) => {
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
