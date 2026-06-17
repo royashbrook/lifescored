@@ -1,8 +1,27 @@
 # MCP registry listing — life. scored.
 
-Ready-to-submit metadata for listing the life. scored. MCP server in public registries
-(e.g. the official MCP registry at https://registry.modelcontextprotocol.io, Smithery,
-PulseMCP, Glama). **Submitting is a publish action — do it when you're ready.**
+**Status: PUBLISHED to the official registry** as `com.lifescored/mcp` (v1.0.0, active).
+Source of truth is [`server.json`](../server.json) at the repo root.
+
+## How it's published / how to re-publish
+
+- **Namespace:** `com.lifescored/mcp` (reverse-DNS of the domain we own).
+- **Ownership proof:** HTTP file auth — `static/.well-known/mcp-registry-auth` serves the Ed25519
+  **public** key at https://lifescored.com/.well-known/mcp-registry-auth. No DNS record involved.
+- **Signing key:** the private seed lives only in the macOS Keychain as `mcp-registry-signing-key`
+  (minted via the secrets skill; never committed, never printed). Re-mint = re-prove (regenerate the
+  proof file from the new seed and redeploy).
+- **Re-publish after a change** (e.g. bump `version` in `server.json`):
+  ```bash
+  SECRET=/Users/roy/.claude/skills/secrets/scripts/secret
+  $SECRET run KEY=mcp-registry-signing-key -- bash -c \
+    'mcp-publisher login http --domain lifescored.com --private-key "$KEY"'
+  mcp-publisher publish
+  ```
+  Verify: `curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=lifescored"`.
+
+Other registries (Smithery, PulseMCP, Glama) largely ingest from the official registry; the metadata
+below is kept for any that still need a manual form.
 
 ## Core fields
 
