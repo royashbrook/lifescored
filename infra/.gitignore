@@ -1,0 +1,8 @@
+# Local OpenTofu state can contain sensitive values — never commit it.
+*.tfstate
+*.tfstate.*
+.terraform/
+crash.log
+crash.*.log
+# generated-config scratch from `tofu plan -generate-config-out`
+generated.tf

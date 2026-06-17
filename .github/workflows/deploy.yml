@@ -5,6 +5,9 @@ name: deploy
 on:
   push:
     branches: [main]
+    # Infra changes (Cloudflare clicky-layer) are handled by infra.yml (OpenTofu); a tofu-only
+    # change shouldn't trigger a code rebuild + redeploy of the worker.
+    paths-ignore: ['infra/**']
   workflow_dispatch: {}
 
 permissions:
