@@ -83,6 +83,9 @@ const err = (id: Rpc['id'], code: number, message: string) => ({ jsonrpc: '2.0',
 
 /** Handle one JSON-RPC message. Returns a response object, or null for notifications. */
 function handle(msg: Rpc): object | null {
+	// A null / primitive / array element is not a valid JSON-RPC message. Per spec, respond with an
+	// error object (id null) rather than crashing on msg.id below.
+	if (msg === null || typeof msg !== 'object' || Array.isArray(msg)) return err(null, -32600, 'Invalid Request');
 	const isNotification = msg.id === undefined;
 	const { id, method, params } = msg;
 
@@ -133,6 +136,8 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	const batch = Array.isArray(payload);
+	// An empty batch is itself an invalid request per JSON-RPC (not an "all-notifications" 202).
+	if (Array.isArray(payload) && payload.length === 0) return json(err(null, -32600, 'Invalid Request: empty batch'), { headers: CORS });
 	const messages = (batch ? payload : [payload]) as Rpc[];
 	const responses = messages.map(handle).filter((r): r is object => r !== null);
 

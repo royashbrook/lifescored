@@ -1,4 +1,9 @@
 import type { NarrativePayload } from '../engine/quantize';
+import { RULES } from '../rulebook';
+
+// Levers are echoed into the LLM prompt and into the cache key, so only real rule ids are allowed:
+// keeps arbitrary strings out of the prompt (injection) and out of the cache key (budget entropy).
+const RULE_IDS = new Set(RULES.map((r) => r.id));
 
 export interface KVLike {
 	get(key: string): Promise<string | null>;
@@ -28,7 +33,9 @@ function validate(body: unknown): NarrativePayload | null {
 	if (!b || b.v !== 1 || !b.domains || !b.tiers || !Array.isArray(b.levers)) return null;
 	const nums = [...DOMAIN_ORDER.map((d) => b.domains[d]), b.tiers.starting_point, b.tiers.your_moves];
 	if (!nums.every((n) => typeof n === 'number' && Number.isFinite(n) && Math.abs(n) <= 10_000_000)) return null;
-	if (b.levers.length > 20 || !b.levers.every((l) => typeof l === 'string' && l.length < 40)) return null;
+	if (b.levers.length > 50 || !b.levers.every((l) => typeof l === 'string')) return null;
+	// Drop anything that isn't a known rule id — unknown strings never reach the prompt or cache key.
+	b.levers = b.levers.filter((l) => RULE_IDS.has(l));
 	return b;
 }
 
@@ -91,6 +98,9 @@ export async function handleNarrative(
 	try {
 		const res = await deps.fetchFn(GEMINI_URL, {
 			method: 'POST',
+			// Bound the upstream call so a hung Gemini doesn't hold the worker open (and waste budget).
+			// AbortError falls through to the catch -> { fallback: true }, like any other failure.
+			signal: AbortSignal.timeout(8000),
 			headers: { 'content-type': 'application/json', 'x-goog-api-key': deps.apiKey },
 			body: JSON.stringify({
 				contents: [{ parts: [{ text: buildPrompt(payload) }] }],

@@ -58,8 +58,13 @@ export async function decodeProfile(encoded: string): Promise<Profile | null> {
 	try {
 		const dot = encoded.indexOf('.');
 		if (dot < 0 || encoded.slice(0, dot) !== VERSION) return null;
-		const bytes = fromB64url(encoded.slice(dot + 1));
+		const payload = encoded.slice(dot + 1);
+		// A real profile encodes to a few hundred chars; reject absurd input and cap the inflated
+		// size so a crafted deflate bomb can't blow up the tab on link-open.
+		if (payload.length > 16384) return null;
+		const bytes = fromB64url(payload);
 		const inflated = await pipe(bytes, new DecompressionStream('deflate-raw'));
+		if (inflated.length > 262144) return null;
 		const parsed = JSON.parse(new TextDecoder().decode(inflated));
 		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object') return null;
 		const migrated = migrateLegacyInputs(parsed.inputs as Record<string, unknown>);
