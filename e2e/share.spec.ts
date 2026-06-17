@@ -50,6 +50,9 @@ test('the explicit answer link round-trips the full profile', async ({ page }) =
 	// (A genuine new page load is needed for the layout's import-on-load $effect to fire.)
 	const freshPage = await page.context().newPage();
 	await freshPage.goto(url);
+	// The fragment must be gone the instant the document loads — stripped by the inline <head> script
+	// BEFORE hydration and the async import, so it can never leak through the browser's native share.
+	expect(await freshPage.evaluate(() => location.hash)).toBe('');
 	await expect(freshPage.getByText('Showing answers from a shared link')).toBeVisible({ timeout: 5000 });
 	await expect(freshPage.locator('label', { hasText: 'Assets' }).locator('input')).toHaveValue('424242');
 	// The recipient's address bar should be clean after import — the hash is stripped.
