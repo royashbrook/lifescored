@@ -1,0 +1,73 @@
+name: Infra (OpenTofu)
+
+# The lifescored.com Cloudflare clicky-layer (DNS, zone settings, the www->apex redirect rule,
+# email routing catch-all) as IaC. PRs touching infra/ get a `tofu plan` posted back as a comment;
+# merges to main run `tofu apply`. State lives in an R2 bucket (S3 backend, locked). wrangler still
+# owns the worker code + the apex custom domain (deploy.yml); this owns everything around it.
+# See infra/README.md.
+#
+# Secrets (repo): TF_CLOUDFLARE_API_TOKEN (zone-scoped, NOT the wrangler CLOUDFLARE_API_TOKEN),
+# R2_ACCESS_KEY_ID + R2_SECRET_ACCESS_KEY (the R2 state bucket's S3 creds).
+
+on:
+  pull_request:
+    paths: ['infra/**']
+  push:
+    branches: [main]
+    paths: ['infra/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write # to post the plan as a PR comment
+
+concurrency:
+  group: infra-tofu # serialize applies so two runs never fight the state lock
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: infra
+
+jobs:
+  tofu:
+    runs-on: ubuntu-latest
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.TF_CLOUDFLARE_API_TOKEN }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: opentofu/setup-opentofu@v2
+        with:
+          tofu_version: 1.12.2
+          tofu_wrapper: false
+
+      - name: Init
+        run: tofu init
+
+      - name: Plan (pull requests)
+        if: github.event_name == 'pull_request'
+        id: plan
+        run: |
+          set -o pipefail
+          tofu plan -no-color -input=false | tee plan.txt
+          {
+            echo '### tofu plan'
+            echo '```'
+            tail -c 60000 plan.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment plan on PR
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo '### tofu plan'; echo '```'; tail -c 60000 plan.txt; echo '```'; } > body.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file body.md --repo "$GITHUB_REPOSITORY" || true
+
+      - name: Apply (push to main / manual)
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        run: tofu apply -auto-approve -input=false
