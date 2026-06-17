@@ -9,8 +9,11 @@
 
 	let { children } = $props();
 
-	// Capture the incoming hash synchronously, BEFORE any effect can overwrite it.
-	const initialHash = browser ? location.hash : '';
+	// The inline <head> script in app.html strips a #p= share fragment synchronously (pre-hydration)
+	// and stashes the payload on window.__lsShared, so the answers never linger in the address bar
+	// where native share could grab them. Fall back to location.hash if that script was ever blocked.
+	const stashed = browser ? (window as Window & { __lsShared?: string }).__lsShared : undefined;
+	const initialHash = stashed ? `#p=${stashed}` : browser ? location.hash : '';
 
 	// Probe localStorage once. Merely ACCESSING the getter throws (SecurityError) when cookies are
 	// fully blocked or in a sandboxed iframe, so we can't reach the try/catch inside the store
@@ -46,6 +49,9 @@
 	$effect(() => {
 		if (!browser) return;
 		if (!initialHash.startsWith('#p=')) return;
+		// Fallback only: if the inline head script was blocked, the fragment is still live — strip it
+		// NOW, before the async decode, so it doesn't sit in the URL while decompression runs.
+		if (location.hash.startsWith('#p=')) replaceState(`${location.pathname}${location.search}`, {});
 		decodeProfile(initialHash.slice(3)).then((decoded) => {
 			if (decoded) {
 				profile.replace(decoded);
@@ -54,7 +60,6 @@
 			} else {
 				shareNotice = 'bad';
 			}
-			replaceState(`${location.pathname}${location.search}`, {});
 		});
 	});
 

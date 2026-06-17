@@ -3,6 +3,22 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script>
+			/* A #p= share fragment carries the user's exact answers (income, assets, debt…). Strip it
+			   from the URL synchronously here — before SvelteKit hydrates and before the browser's own
+			   native share (Safari's share button, the "⋯" menu) can read location.href — so the answers
+			   can never leak through a re-share. The payload is stashed for the app to import. */
+			(function () {
+				try {
+					if (location.hash.indexOf('#p=') === 0) {
+						window.__lsShared = location.hash.slice(3);
+						history.replaceState(null, '', location.pathname + location.search);
+					}
+				} catch (e) {
+					/* no-op: app falls back to reading location.hash */
+				}
+			})();
+		</script>
 		<link rel="icon" href="%sveltekit.assets%/favicon.svg" />
 		<meta name="description" content="You are already a number. life. scored. rebuilds the world's scoring systems in the open — every rule cited, every weight editable." />
 		<meta property="og:site_name" content="life. scored." />
