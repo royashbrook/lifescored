@@ -10,7 +10,7 @@ life. scored. is "just math with personal information." You do not need to send 
 
 To compute a life score for someone:
 1. Read `inputs` in rules.json. Ask the user only for fields you don't already know — anything missing falls back to its `default`.
-2. For each rule, compute its `position` per the formulas in `engine` / `constants`, then `points = round(clamp(position, bounds[0], bounds[1]) × weight)`.
+2. Get each rule's `position` exactly: a finite-input rule ships a `positions` table — look up the user's value under `positions.byValue`; a numeric-input rule has its formula in `constants` (keyed by rule id). Then `points = round(clamp(position, bounds[0], bounds[1]) × weight)`.
 3. Sum points over enabled rules (the `core` pack is always on; other packs are opt-in) for the composite — but the breakdown is the point, not the total.
 
 Their answers stay with you. Nothing about a person should be sent to lifescored.com to get a score.
