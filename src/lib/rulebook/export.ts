@@ -79,6 +79,9 @@ export function rulebookExport() {
 			'A transparency tool that exposes how real-world systems (credit bureaus, actuarial tables, lenders, audit studies) already turn a person into a number. This is the complete rulebook and the exact math behind lifescored.com.',
 		privacy:
 			'Compute scores on your OWN side. This contains only the rules — no personal inputs are ever sent to lifescored.com, by the website or by the MCP/API. The whole point falls apart the moment the thing scoring you has something to sell you.',
+		// Same prose the MCP serves via get_methodology — included here so the HTTPS payload has parity
+		// (how scoring works, the governing principles, and what's deliberately left out).
+		methodology: METHODOLOGY_TEXT,
 		usage:
 			'Ask the user for the fields in `inputs` (only the ones you do not already know — missing fields fall back to `default`). Each rule gives you its position exactly: a finite-input rule ships a `positions` table (look up the user’s value under `positions.byValue`), and a numeric-input rule has its formula in `constants` (keyed by rule id, e.g. creditScore, dti, lifeTable). Then points = round(clamp(position, bounds[0], bounds[1]) × weight). Sum points over enabled rules for the composite. The breakdown is the point; the composite is the least useful number.',
 		engine: {

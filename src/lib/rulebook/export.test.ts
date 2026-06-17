@@ -40,6 +40,11 @@ describe('rulebookExport position tables', () => {
 		}
 	});
 
+	it('includes methodology prose so the HTTPS payload has parity with the MCP', () => {
+		expect(typeof (exp as { methodology?: unknown }).methodology).toBe('string');
+		expect((exp as { methodology: string }).methodology.length).toBeGreaterThan(200);
+	});
+
 	it('every rule is reproducible: a positions table OR a constants formula', () => {
 		const withoutTable = rules
 			.filter((r) => !r.positions)
