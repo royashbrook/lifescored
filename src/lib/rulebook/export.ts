@@ -41,6 +41,33 @@ export function inputSchema() {
 	});
 }
 
+/** Finite categorical domain for an input key, or null if it's numeric / unbounded. */
+function inputDomain(key: keyof Inputs): (string | number | boolean)[] | null {
+	if (key === 'country') return Object.keys(COUNTRIES);
+	if (key in STRING_ENUMS) return [...STRING_ENUMS[key as keyof typeof STRING_ENUMS]];
+	if (ordinalSet.has(key)) return [0, 1, 2];
+	if (booleanSet.has(key)) return [true, false];
+	return null; // numeric / unbounded — reproduced via `constants` formulas instead
+}
+
+/**
+ * Exact input→position table for a single-input categorical rule, derived by running the rule's
+ * REAL position() over its whole domain. Single source of truth — it can never drift from the
+ * engine. Returns null for multi-input or numeric-input rules (those are covered by `constants`).
+ */
+function exactPositions(rule: (typeof RULES)[number]): { input: string; byValue: Record<string, number> } | null {
+	if (rule.inputs.length !== 1) return null;
+	const key = rule.inputs[0] as keyof Inputs;
+	const domain = inputDomain(key);
+	if (!domain) return null;
+	const byValue: Record<string, number> = {};
+	for (const v of domain) {
+		const pos = rule.position({ ...DEFAULT_INPUTS, [key]: v } as Inputs);
+		byValue[String(v)] = Math.round(pos * 1e6) / 1e6;
+	}
+	return { input: key as string, byValue };
+}
+
 /** The complete machine-readable rulebook + exact math. No personal data, ever. */
 export function rulebookExport() {
 	return {
@@ -53,7 +80,7 @@ export function rulebookExport() {
 		privacy:
 			'Compute scores on your OWN side. This contains only the rules — no personal inputs are ever sent to lifescored.com, by the website or by the MCP/API. The whole point falls apart the moment the thing scoring you has something to sell you.',
 		usage:
-			'Ask the user for the fields in `inputs` (only the ones you do not already know — missing fields fall back to `default`). For each rule, compute its position per `engine.positionContract` and `constants`, then points = round(clamp(position, bounds[0], bounds[1]) × weight). Sum points over enabled rules for the composite. The breakdown is the point; the composite is the least useful number.',
+			'Ask the user for the fields in `inputs` (only the ones you do not already know — missing fields fall back to `default`). Each rule gives you its position exactly: a finite-input rule ships a `positions` table (look up the user’s value under `positions.byValue`), and a numeric-input rule has its formula in `constants` (keyed by rule id, e.g. creditScore, dti, lifeTable). Then points = round(clamp(position, bounds[0], bounds[1]) × weight). Sum points over enabled rules for the composite. The breakdown is the point; the composite is the least useful number.',
 		engine: {
 			formula: 'points = round(clamp(position, bounds[0], bounds[1]) × weight)',
 			composite: 'sum of points over enabled rules (core pack always on; other packs opt-in)',
@@ -82,26 +109,40 @@ export function rulebookExport() {
 				position: 'let m = medianForAge(age); if netWorth < m: max(-0.5, (netWorth − m) / (2 × m)); else: sqrt(netWorth / m) − 1'
 			},
 			dti: { benchmark: 0.43, position: '(0.43 − debt/income) / 0.43, clamped to [-1, 1]; income 0 with debt > 0 ⇒ worst' },
-			creditScore: { position: 'clamp((score − 580) / (760 − 580), 0, 1) — subprime floor 580, best-rate plateau 760' }
+			creditScore: { position: 'clamp((score − 580) / (760 − 580), 0, 1) — subprime floor 580, best-rate plateau 760' },
+			// The remaining numeric-input rules (no finite `positions` table). Clamp each to the rule's
+			// declared bounds before weighting.
+			lifeTable: { position: "((sex === 'f' ? 81 : 76) − age) / 60" },
+			exercise: { position: 'exerciseMins / 150' },
+			sleep: { position: '7–9 h ⇒ 1; 6–10 h ⇒ 0.6; otherwise ⇒ 0.2' },
+			emergencyFund: { position: 'emergencyMonths / 3' },
+			parenthood: { position: 'min(1, 0.5 + 0.18 × children)' },
+			driving: { position: '1 − 0.4 × drivingIncidents' }
 		},
 		inputs: inputSchema(),
-		rules: RULES.map((r) => ({
-			id: r.id,
-			label: r.label,
-			domain: r.domain,
-			tier: r.tier,
-			pack: r.pack,
-			controllable: r.controllable,
-			weight: r.defaultWeight,
-			weightMultiple: r.defaultWeight / BASELINE_WEIGHT,
-			evidence: r.evidence,
-			bounds: [r.bounds[0], r.bounds[1] === Infinity ? null : r.bounds[1]],
-			inputs: r.inputs,
-			logic: r.logic,
-			weightRationale: r.weightRationale,
-			...(r.caveat ? { caveat: r.caveat } : {}),
-			source: r.source
-		})),
+		rules: RULES.map((r) => {
+			const positions = exactPositions(r);
+			return {
+				id: r.id,
+				label: r.label,
+				domain: r.domain,
+				tier: r.tier,
+				pack: r.pack,
+				controllable: r.controllable,
+				weight: r.defaultWeight,
+				weightMultiple: r.defaultWeight / BASELINE_WEIGHT,
+				evidence: r.evidence,
+				bounds: [r.bounds[0], r.bounds[1] === Infinity ? null : r.bounds[1]],
+				inputs: r.inputs,
+				logic: r.logic,
+				// Exact, engine-derived input→position table for finite-input rules; numeric-input
+				// rules omit this and are reproduced from `constants` instead.
+				...(positions ? { positions } : {}),
+				weightRationale: r.weightRationale,
+				...(r.caveat ? { caveat: r.caveat } : {}),
+				source: r.source
+			};
+		}),
 		feedback: {
 			summary:
 				'Weights are editorial and the rules are arguable — that is the design. If a weight looks wrong, a source is stale, or a rule is missing, propose it. Improvements from many users are aggregated in the open.',
