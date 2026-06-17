@@ -15,6 +15,10 @@ describe('share codec', () => {
 		expect(decoded).toEqual(profile);
 	});
 
+	it('rejects an oversized encoded payload (decompression-bomb guard)', async () => {
+		expect(await decodeProfile('1.' + 'A'.repeat(20000))).toBeNull();
+	});
+
 	it('returns null for unknown versions, garbage, and empty input', async () => {
 		const good = await encodeProfile({ inputs: DEFAULT_INPUTS, overrides: {}, packs: {} });
 		expect(await decodeProfile('9.' + good.slice(2))).toBeNull();

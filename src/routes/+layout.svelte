@@ -12,7 +12,22 @@
 	// Capture the incoming hash synchronously, BEFORE any effect can overwrite it.
 	const initialHash = browser ? location.hash : '';
 
-	const profile = createProfileState(loadStoredProfile(browser ? localStorage : null));
+	// Probe localStorage once. Merely ACCESSING the getter throws (SecurityError) when cookies are
+	// fully blocked or in a sandboxed iframe, so we can't reach the try/catch inside the store
+	// helpers — guard here and fall back to in-memory (null) so the app still mounts.
+	const safeStorage = (() => {
+		if (!browser) return null;
+		try {
+			const probe = '__ls_probe__';
+			localStorage.setItem(probe, '1');
+			localStorage.removeItem(probe);
+			return localStorage;
+		} catch {
+			return null;
+		}
+	})();
+
+	const profile = createProfileState(loadStoredProfile(safeStorage));
 	setContext('profile', profile);
 
 	let shareNotice = $state<'ok' | 'bad' | null>(null);
@@ -48,7 +63,7 @@
 	$effect(() => {
 		const snap = profile.snapshot();
 		if (sharedBaseline !== null && JSON.stringify(snap) === sharedBaseline) return;
-		storeProfile(browser ? localStorage : null, snap);
+		storeProfile(safeStorage, snap);
 	});
 
 	const links = [

@@ -46,3 +46,20 @@ test('mcp returns a JSON-RPC error for an unknown method', async ({ request }) =
 	const res = await (await request.post('/mcp', { data: rpc(9, 'does/notExist') })).json();
 	expect(res.error.code).toBe(-32601);
 });
+
+test('mcp does not crash on null / [null] / empty-batch bodies', async ({ request }) => {
+	// literal JSON null
+	const nullRes = await request.post('/mcp', { headers: { 'content-type': 'application/json' }, data: 'null' });
+	expect(nullRes.status()).toBe(200);
+	expect((await nullRes.json()).error.code).toBe(-32600);
+
+	// a batch containing a null member -> per-member error, no crash
+	const batchNull = await request.post('/mcp', { data: [null] });
+	expect(batchNull.status()).toBe(200);
+	const bn = await batchNull.json();
+	expect((Array.isArray(bn) ? bn[0] : bn).error.code).toBe(-32600);
+
+	// empty batch -> single invalid-request error (not 202)
+	const empty = await request.post('/mcp', { data: [] });
+	expect((await empty.json()).error.code).toBe(-32600);
+});
