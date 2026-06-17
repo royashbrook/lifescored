@@ -26,8 +26,20 @@ Source of truth is [`server.json`](../server.json) at the repo root.
   and redeploy, then push the new key to GitHub: `$SECRET pipe mcp-registry-signing-key -- gh secret set MCP_PRIVATE_KEY`.
 - Verify any publish: `curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=lifescored"`.
 
-Other registries (Smithery, PulseMCP, Glama) largely ingest from the official registry; the metadata
-below is kept for any that still need a manual form.
+## Other directories
+
+Only **PulseMCP** auto-mirrors the official registry (≈weekly) — no action needed; we appear there
+automatically and updates flow through. The rest are independent, one-time submissions (not per-change
+maintenance), and most are account/OAuth-gated web forms:
+
+- **PulseMCP** — automatic (mirrors the official registry). Nothing to do.
+- **Glama** — crawls public GitHub on its own; *claiming/verifying* the listing is a one-time web form + build checks.
+- **Smithery** — independent submission; oriented to hosted HTTP endpoints.
+- **mcp.so** — web form + GitHub login.
+- **awesome-mcp-servers** — GitHub PR (wants a Glama badge).
+
+`server.json` is a stable remote URL + description that essentially never changes, so there's no
+ongoing cross-directory sync to keep up with. The metadata below is kept for any manual form.
 
 ## Core fields
 
