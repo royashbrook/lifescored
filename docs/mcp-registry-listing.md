@@ -11,14 +11,20 @@ Source of truth is [`server.json`](../server.json) at the repo root.
 - **Signing key:** the private seed lives only in the macOS Keychain as `mcp-registry-signing-key`
   (minted via the secrets skill; never committed, never printed). Re-mint = re-prove (regenerate the
   proof file from the new seed and redeploy).
-- **Re-publish after a change** (e.g. bump `version` in `server.json`):
+- **Re-publish (CI — the normal path):** edit `server.json`, **bump `version`**, and merge to `main`.
+  `.github/workflows/publish-mcp.yml` runs on `server.json` changes (and manual dispatch),
+  authenticates with the `MCP_PRIVATE_KEY` repo secret, and publishes. A guard skips the publish if
+  the version is already live, so re-runs and non-version edits don't fail.
+- **Re-publish (local fallback):**
   ```bash
   SECRET=/Users/roy/.claude/skills/secrets/scripts/secret
   $SECRET run KEY=mcp-registry-signing-key -- bash -c \
     'mcp-publisher login http --domain lifescored.com --private-key "$KEY"'
   mcp-publisher publish
   ```
-  Verify: `curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=lifescored"`.
+- **Rotate the signing key:** re-mint locally, regenerate the proof file (`static/.well-known/mcp-registry-auth`)
+  and redeploy, then push the new key to GitHub: `$SECRET pipe mcp-registry-signing-key -- gh secret set MCP_PRIVATE_KEY`.
+- Verify any publish: `curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=lifescored"`.
 
 Other registries (Smithery, PulseMCP, Glama) largely ingest from the official registry; the metadata
 below is kept for any that still need a manual form.
