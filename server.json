@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.lifescored/mcp",
+  "title": "life. scored.",
+  "description": "Rebuilds the scores real systems run on you — credit, actuarial, lending — in the open, cited.",
+  "version": "1.0.0",
+  "repository": {
+    "url": "https://github.com/royashbrook/lifescored",
+    "source": "github"
+  },
+  "websiteUrl": "https://lifescored.com",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://lifescored.com/mcp"
+    }
+  ]
+}
