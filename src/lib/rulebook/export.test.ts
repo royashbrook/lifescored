@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { rulebookExport } from './export';
+import { rulebookExport, llmsFullText } from './export';
 import { RULES, DEFAULT_INPUTS } from './index';
 
 const exp = rulebookExport();
@@ -43,6 +43,16 @@ describe('rulebookExport position tables', () => {
 	it('includes methodology prose so the HTTPS payload has parity with the MCP', () => {
 		expect(typeof (exp as { methodology?: unknown }).methodology).toBe('string');
 		expect((exp as { methodology: string }).methodology.length).toBeGreaterThan(200);
+	});
+
+	it('renders llms-full.txt with methodology and every rule + source', () => {
+		const txt = llmsFullText();
+		expect(txt).toContain('# life. scored. — full reference');
+		expect(txt).toContain('## How scoring works'); // methodology section
+		expect(txt).toContain('## The complete rulebook');
+		// every rule shows up by id, and at least one real citation is present
+		for (const r of RULES) expect(txt).toContain(`(\`${r.id}\`)`);
+		expect(txt).toContain('World Bank');
 	});
 
 	it('every rule is reproducible: a positions table OR a constants formula', () => {
