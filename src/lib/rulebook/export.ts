@@ -156,6 +156,115 @@ export function rulebookExport() {
 	};
 }
 
+/**
+ * The full rulebook rendered as one flat markdown document — the prose twin of rules.json, for the
+ * llms-full.txt convention. Built from the same `rulebookExport()` source, so it can never drift.
+ */
+export function llmsFullText(): string {
+	const x = rulebookExport();
+	type FullRule = {
+		id: string; label: string; domain: string; tier: string; pack: string; controllable: boolean;
+		weight: number; weightMultiple: number; evidence: string; bounds: [number, number | null];
+		inputs: string[]; logic: string; weightRationale: string; caveat?: string;
+		positions?: { input: string; byValue: Record<string, number> };
+		source: { name: string; finding: string; url: string };
+	};
+	const rules = x.rules as unknown as FullRule[];
+	const inputs = x.inputs as unknown as Array<{
+		key: string; type: string; help: string; default: unknown; values?: unknown[]; min?: number; max?: number;
+	}>;
+
+	const out: string[] = [];
+	const p = (s = '') => out.push(s);
+
+	p('# life. scored. — full reference (llms-full.txt)');
+	p();
+	p(`> ${x.description}`);
+	p();
+	p(`Homepage: ${x.url} · Rulebook JSON: ${x.url}/rules.json · MCP: com.lifescored/mcp · Concise index: ${x.url}/llms.txt`);
+	p();
+	p(`**Privacy.** ${x.privacy}`);
+	p();
+	p('## How scoring works');
+	p();
+	p(x.methodology);
+	p();
+
+	p('## Engine');
+	p();
+	p(`- ${x.engine.formula}`);
+	p(`- Composite: ${x.engine.composite}`);
+	p(`- Baseline weight: ${x.engine.baselineWeight} (1.0×). ${x.engine.weightInterpretation}`);
+	p(`- Position contract: ${x.engine.positionContract}`);
+	p();
+	p('**Tiers**');
+	for (const [k, v] of Object.entries(x.engine.tiers)) p(`- \`${k}\` — ${v.label}: ${v.sub}`);
+	p();
+	p('**Domains**');
+	for (const [k, v] of Object.entries(x.engine.domains)) p(`- \`${k}\` — ${v.label}: ${v.blurb}`);
+	p();
+	p('**Packs**');
+	for (const [k, v] of Object.entries(x.engine.packs)) p(`- \`${k}\` — ${v.label} (${v.defaultOn ? 'on by default' : 'opt-in'}): ${v.blurb}`);
+	p();
+
+	p('### Constants (formulas for numeric-input rules)');
+	p();
+	for (const [k, v] of Object.entries(x.constants)) {
+		p(`**${k}**`);
+		for (const [fk, fv] of Object.entries(v as Record<string, unknown>)) {
+			p(`- ${fk}: ${typeof fv === 'string' || typeof fv === 'number' ? fv : '(see rules.json for the full table)'}`);
+		}
+		p();
+	}
+
+	p('## Inputs (ask the user only for what you don’t already know; missing falls back to default)');
+	p();
+	for (const i of inputs) {
+		const dom =
+			i.type === 'number' ? `number ${i.min}–${i.max}` : i.values ? `${i.type}: ${i.values.join(', ')}` : i.type;
+		p(`- \`${i.key}\` (${dom}) — default \`${JSON.stringify(i.default)}\` — ${i.help}`);
+	}
+	p();
+
+	p(`## The complete rulebook (${x.rulesCount} rules)`);
+	p();
+	for (const [dk, dv] of Object.entries(x.engine.domains)) {
+		const inDomain = rules.filter((r) => r.domain === dk);
+		if (!inDomain.length) continue;
+		p(`### ${dv.label} — ${dv.blurb}`);
+		p();
+		for (const r of inDomain) {
+			const hi = r.bounds[1] === null ? '∞' : r.bounds[1];
+			p(`#### ${r.label} (\`${r.id}\`)`);
+			p(`- ${r.tier} · weight ${r.weight} (${r.weightMultiple}× baseline) · ${r.evidence} · ${r.controllable ? 'controllable' : 'not controllable'} · pack \`${r.pack}\``);
+			p(`- Bounds: [${r.bounds[0]}, ${hi}]`);
+			p(`- Logic: ${r.logic}`);
+			if (r.positions) {
+				const tbl = Object.entries(r.positions.byValue).map(([k, val]) => `${k}=${val}`).join(', ');
+				p(`- Position by \`${r.positions.input}\`: ${tbl}`);
+			} else {
+				p(`- Position: numeric input — formula in \`constants\`.`);
+			}
+			p(`- Source: ${r.source.name} — ${r.source.finding} (${r.source.url})`);
+			p(`- Weight rationale: ${r.weightRationale}`);
+			if (r.caveat) p(`- Caveat: ${r.caveat}`);
+			p();
+		}
+	}
+
+	p('## Contributing & feedback');
+	p();
+	p(x.feedback.summary);
+	p();
+	p(x.feedback.how);
+	p();
+	p(`- Issues: ${x.feedback.issuesUrl}`);
+	p(`- Contributing guide: ${x.feedback.contributing}`);
+	p();
+
+	return out.join('\n');
+}
+
 export const METHODOLOGY_TEXT = `life. scored. rebuilds the scores that real systems already run on you — credit bureaus, actuarial life tables, lenders, audit-study research — in the open.
 
 How scoring works:

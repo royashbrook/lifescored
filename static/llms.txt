@@ -7,6 +7,7 @@
 life. scored. is "just math with personal information." You do not need to send anything to our servers to use it — and you shouldn't. The complete rulebook and the exact formulas are published as machine-readable data:
 
 - [Rulebook + math (rules.json)](https://lifescored.com/rules.json): every rule's weight, bounds, evidence, citation, and formula; the input schema (what to ask the user); the engine constants (medians, the household-income equivalence, the net-worth age curve, the credit-score mapping); and the methodology prose.
+- [Full reference (llms-full.txt)](https://lifescored.com/llms-full.txt): the entire rulebook + methodology as one flat markdown document — every rule's logic, evidence, cited source, and weight rationale in prose. The readable twin of rules.json.
 - [Ready-made skill (SKILL.md)](https://github.com/royashbrook/lifescored/blob/main/skills/lifescored/SKILL.md): a drop-in agent skill that does everything below. Copy the `skills/lifescored/` folder into your agent's skills directory (e.g. `~/.claude/skills/`), or just follow the steps here.
 
 To compute a life score for someone:
