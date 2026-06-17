@@ -65,6 +65,14 @@ Add a rule, and the UI, weight editor, share
 codec, and about-page source list pick it up automatically. `npm test` enforces
 the invariants (bounds, integer scores, citation present).
 
+## Use it from an agent (MCP or skill)
+
+The whole rulebook + exact math is published so any agent can compute a score **on its own side** — nothing about a person is ever sent to lifescored.com.
+
+- **MCP server** — `com.lifescored/mcp` on the [official registry](https://registry.modelcontextprotocol.io); endpoint `https://lifescored.com/mcp` (stateless Streamable HTTP, no auth, accepts no personal data). Tools: `get_rulebook`, `get_input_schema`, `get_methodology`, `how_to_give_feedback`.
+- **Skill** — a drop-in [`skills/lifescored/`](skills/lifescored/SKILL.md) skill. Copy it into your agent's skills directory (e.g. `~/.claude/skills/`). It prefers the MCP and falls back to `rules.json`.
+- **Raw data** — [`https://lifescored.com/rules.json`](https://lifescored.com/rules.json) and [`/llms.txt`](https://lifescored.com/llms.txt).
+
 ## Contributing
 
 Every commit must reference a GitHub issue number, e.g. `feat: add presets (#2)` or `refs #5`. A `commit-msg` hook enforces this automatically — it is installed via `core.hooksPath` pointing to `.githooks/`, which activates on `npm install` (the `prepare` script runs `git config core.hooksPath .githooks`). Merge commits and reverts are exempt. To find or open an issue: `gh issue list` / `gh issue create`.
