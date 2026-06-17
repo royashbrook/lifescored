@@ -139,6 +139,7 @@
 		<ShareButton
 			profile={profile.snapshot()}
 			composite={result.composite}
+			{result}
 		/>
 	</div>
 </div>
