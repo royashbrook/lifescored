@@ -29,6 +29,11 @@ runs the full test suite + typecheck, and only then builds and deploys.
 
 **One-time setup:**
 
+Secrets are kept in [hush](https://github.com/royashbrook/hush): stored once in your OS keychain,
+then piped straight into the consumer — they never get pasted into a terminal, echoed, or printed.
+(No hush? Drop the `hush pipe … --` prefix and run the bare `npx wrangler` / `gh` command; hush just
+wraps it.) Local dev needs no secrets at all — the narrative falls back to a local composer.
+
 1. Create the KV namespace and paste its id into `wrangler.jsonc`:
 
        npx wrangler kv namespace create NARRATIVE_KV
@@ -36,13 +41,15 @@ runs the full test suite + typecheck, and only then builds and deploys.
 2. Set the Gemini key as a Worker secret (persists across deploys; optional —
    omit to run AI-free with the local narrative fallback):
 
-       npx wrangler secret put GEMINI_API_KEY
+       hush set gemini-api-key                                          # paste it once, hidden dialog
+       hush pipe gemini-api-key -- npx wrangler secret put GEMINI_API_KEY
 
-3. Add two repository secrets in GitHub
+3. Give GitHub Actions the deploy credentials
    (Settings → Secrets and variables → Actions):
 
-   - `CLOUDFLARE_API_TOKEN` — a token with the *Edit Cloudflare Workers* template
-   - `CLOUDFLARE_ACCOUNT_ID` — your account id
+       hush set cloudflare-api-token                                    # "Edit Cloudflare Workers" token
+       hush pipe cloudflare-api-token -- gh secret set CLOUDFLARE_API_TOKEN
+       gh secret set CLOUDFLARE_ACCOUNT_ID --body "<your-account-id>"    # account id isn't secret
 
 Push to `main` and the action ships it. To deploy by hand instead:
 
