@@ -31,6 +31,7 @@ runs the full test suite + typecheck, and only then builds and deploys.
 
 Secrets are kept in [hush](https://github.com/royashbrook/hush): stored once in your OS keychain,
 then piped straight into the consumer — they never get pasted into a terminal, echoed, or printed.
+This project's hush items use a `lifescored-` prefix so they group together in a keychain search.
 (No hush? Drop the `hush pipe … --` prefix and run the bare `npx wrangler` / `gh` command; hush just
 wraps it.) Local dev needs no secrets at all — the narrative falls back to a local composer.
 
@@ -41,14 +42,14 @@ wraps it.) Local dev needs no secrets at all — the narrative falls back to a l
 2. Set the Gemini key as a Worker secret (persists across deploys; optional —
    omit to run AI-free with the local narrative fallback):
 
-       hush set gemini-api-key                                          # paste it once, hidden dialog
-       hush pipe gemini-api-key -- npx wrangler secret put GEMINI_API_KEY
+       hush set lifescored-gemini-key                                   # paste it once, hidden dialog
+       hush pipe lifescored-gemini-key -- npx wrangler secret put GEMINI_API_KEY
 
 3. Give GitHub Actions the deploy credentials
    (Settings → Secrets and variables → Actions):
 
-       hush set cloudflare-api-token                                    # "Edit Cloudflare Workers" token
-       hush pipe cloudflare-api-token -- gh secret set CLOUDFLARE_API_TOKEN
+       hush set lifescored-cloudflare-api-token                         # "Edit Cloudflare Workers" token
+       hush pipe lifescored-cloudflare-api-token -- gh secret set CLOUDFLARE_API_TOKEN
        gh secret set CLOUDFLARE_ACCOUNT_ID --body "<your-account-id>"    # account id isn't secret
 
 Push to `main` and the action ships it. To deploy by hand instead:

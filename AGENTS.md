@@ -50,8 +50,9 @@ automatically. `npm test` enforces the invariants (bounds, integer points, citat
 
 ### Secrets
 Managed with [hush](https://github.com/royashbrook/hush) (see the README "Deploy" setup): stored once
-in the keychain, piped straight into `wrangler` / `gh`, never printed or committed. `.env` and
-`.dev.vars` are gitignored.
+in the keychain, piped straight into `wrangler` / `gh`, never printed or committed. This project's
+hush items use a `lifescored-` prefix (e.g. `lifescored-gemini-key`) so they group in a keychain
+search. `.env` and `.dev.vars` are gitignored.
 
 ### Infra
 Cloudflare free tier. OpenTofu owns DNS / zone settings / redirect / email (`infra/`, plan-on-PR /
