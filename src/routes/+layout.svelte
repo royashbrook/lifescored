@@ -6,6 +6,7 @@
 	import { setContext } from 'svelte';
 	import { createProfileState, loadStoredProfile, storeProfile } from '$lib/state/profile.svelte';
 	import { decodeProfile } from '$lib/share/codec';
+	import MakerMark from '$lib/ui/MakerMark.svelte';
 
 	let { children } = $props();
 
@@ -112,27 +113,22 @@
 	{@render children()}
 
 	<footer
-		class="mt-10 flex items-center justify-between gap-x-1.5 border-t pt-4 text-[0.6875rem] sm:gap-x-2 sm:text-[0.75rem]"
+		class="mt-10 border-t pt-4 pb-8 text-center text-[0.6875rem] sm:text-[0.75rem]"
 		style:border-color="var(--line)"
 		style:font-family="var(--font-mono)"
 		style:color="var(--ink-dim)"
 	>
-		<div class="flex flex-wrap items-center gap-x-1 gap-y-1 sm:gap-x-1.5">
-			<span>life. scored.</span>
-			<span aria-hidden="true" style:opacity="0.5">·</span>
+		<div class="flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
 			<a href="/about#how-it-works" class="underline" style:color="var(--ink-dim)">no tracking</a>
 			<span aria-hidden="true" style:opacity="0.5">·</span>
 			<a href="https://github.com/royashbrook/lifescored" target="_blank" rel="noreferrer" class="underline" style:color="var(--ink-dim)">open source</a>
 			<span aria-hidden="true" style:opacity="0.5">·</span>
-			<a href="/agents" class="underline" style:color="var(--ink-dim)">use with AI</a>
+			<a href="/agents" class="underline" style:color="var(--ink-dim)">use with ai</a>
 		</div>
-		<a
-			href="https://github.com/sponsors/royashbrook"
-			target="_blank"
-			rel="noreferrer"
-			class="shrink-0 rounded-full border px-1.5 py-1 sm:px-2.5"
-			style:color="var(--moves)"
-			style:border-color="rgba(217,164,65,0.35)"
-		>sponsor ↗</a>
+		<div class="mt-2.5" style:color="var(--ink)">life. scored.</div>
+		<div class="mx-auto mt-6 h-px w-40" style:background="var(--line)"></div>
+		<div class="mt-4">
+			<MakerMark />
+		</div>
 	</footer>
 </div>

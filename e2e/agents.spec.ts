@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test('footer links to the agents page, which shows the MCP endpoint', async ({ page }) => {
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
-	const link = page.getByRole('link', { name: 'use with AI' });
+	const link = page.getByRole('link', { name: 'use with ai' });
 	await expect(link).toHaveAttribute('href', '/agents');
 	await link.click();
 	await expect(page).toHaveURL(/\/agents/);
