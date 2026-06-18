@@ -15,7 +15,7 @@
 </script>
 
 <svelte:head>
-	<title>use with AI · life. scored.</title>
+	<title>use with ai · life. scored.</title>
 </svelte:head>
 
 <div class="mt-2 space-y-5 text-[0.9375rem] leading-relaxed" style:color="var(--ink)">
