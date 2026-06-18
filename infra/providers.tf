@@ -2,9 +2,10 @@
 # settings, redirect rules, email routing) as declarative IaC. wrangler still owns the worker
 # code deploy and the apex custom domain; this owns everything around it.
 #
-# Auth: the CF API token is injected from the keychain at run time, never written here:
-#   secret run CLOUDFLARE_API_TOKEN=lifescored-iac-token -- tofu plan
-# (the cloudflare provider reads CLOUDFLARE_API_TOKEN from the env automatically.)
+# Auth: creds are injected from the keychain at run time (never written here) via hush + `.hush`:
+#   hush exec -- tofu plan        (run from infra/; injects the CF token + the R2 S3 keys)
+# The cloudflare provider reads CLOUDFLARE_API_TOKEN from the env; the s3 backend reads AWS_* — both
+# mapped in infra/.hush to the lifescored-* hush secrets.
 
 terraform {
   required_version = ">= 1.9"

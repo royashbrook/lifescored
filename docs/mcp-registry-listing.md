@@ -17,13 +17,12 @@ Source of truth is [`server.json`](../server.json) at the repo root.
   the version is already live, so re-runs and non-version edits don't fail.
 - **Re-publish (local fallback):**
   ```bash
-  SECRET=/Users/roy/.claude/skills/secrets/scripts/secret
-  $SECRET run KEY=mcp-registry-signing-key -- bash -c \
+  hush run KEY=lifescored-mcp-signing-key -- bash -c \
     'mcp-publisher login http --domain lifescored.com --private-key "$KEY"'
   mcp-publisher publish
   ```
 - **Rotate the signing key:** re-mint locally, regenerate the proof file (`static/.well-known/mcp-registry-auth`)
-  and redeploy, then push the new key to GitHub: `$SECRET pipe mcp-registry-signing-key -- gh secret set MCP_PRIVATE_KEY`.
+  and redeploy, then push the new key to GitHub: `hush pipe lifescored-mcp-signing-key -- gh secret set MCP_PRIVATE_KEY`.
 - Verify any publish: `curl -s "https://registry.modelcontextprotocol.io/v0/servers?search=lifescored"`.
 
 ## Other directories
