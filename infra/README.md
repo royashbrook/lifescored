@@ -34,13 +34,14 @@ The CF API token is account-owned, scoped to the `lifescored.com` zone, with: DN
 Zone Settings:Edit, Dynamic URL Redirects:Edit, Email Routing Rules. It is injected from the
 keychain at run time and never written to disk. The R2 state-bucket creds come the same way.
 
+Creds live in [hush](https://github.com/royashbrook/hush); [`infra/.hush`](.hush) maps the env vars
+tofu needs (`CLOUDFLARE_API_TOKEN`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`) to the `lifescored-*`
+secrets, so `hush exec` injects them — never printed, never on disk. Run from this `infra/` dir:
+
 ```sh
-SECRET=/Users/roy/.claude/skills/secrets/scripts/secret
-RUN="$SECRET run CLOUDFLARE_API_TOKEN=lifescored-iac-token \
-  AWS_ACCESS_KEY_ID=lifescored-r2-access-key-id \
-  AWS_SECRET_ACCESS_KEY=lifescored-r2-secret-access-key --"
-$RUN tofu -chdir=infra plan     # review the diff
-$RUN tofu -chdir=infra apply    # apply it
+cd infra
+hush exec -- tofu plan     # review the diff
+hush exec -- tofu apply    # apply it
 ```
 
 ## state

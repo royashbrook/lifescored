@@ -1,0 +1,6 @@
+# hush manifest for OpenTofu. tofu reads its creds from the environment, so run it through hush:
+#   hush exec -- tofu plan        (from this infra/ dir; injects the values below from the keychain)
+# Only env-var -> hush-secret-name mappings here. No secret values — safe to commit.
+CLOUDFLARE_API_TOKEN=lifescored-iac-token
+AWS_ACCESS_KEY_ID=lifescored-r2-access-key-id
+AWS_SECRET_ACCESS_KEY=lifescored-r2-secret-access-key
