@@ -17,6 +17,7 @@ jobs:
   test:
     name: test + typecheck
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -30,6 +31,7 @@ jobs:
   e2e:
     name: e2e
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
@@ -37,13 +39,23 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      # Cache the browser binaries so the install is fast (and far less likely to wedge on a
+      # stuck apt mirror — a hung install once ate an hour before timeouts were added).
+      - name: Cache Playwright browsers
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright (browsers + system deps)
+        timeout-minutes: 6
+        run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
 
   deploy:
     name: build + deploy
     needs: [test, e2e]
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v6
       - uses: actions/setup-node@v6
