@@ -6,6 +6,8 @@
 
 A credit score, an actuarial row, a callback probability — this app rebuilds those numbers in the open: every rule cited or flagged as a guess, every weight visible and editable. Transparency, not judgment.
 
+[check it out - lifescored.com](https://lifescored.com)
+
 ## Stack
 
 - Svelte 5 + SvelteKit, prerendered static pages, deployed to Cloudflare Workers
