@@ -21,6 +21,7 @@ test('enabling the Foundations layer raises the composite and shows its inputs',
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
 	const before = Number((await page.getByTestId('composite').textContent())!.replace(/[^0-9-]/g, ''));
+	await page.getByText('Advanced: choose optional rule packs', { exact: true }).click();
 	await page.getByRole('button', { name: /Foundations/ }).click();
 	await expect(cleanWaterField(page)).toBeVisible();
 	const after = Number((await page.getByTestId('composite').textContent())!.replace(/[^0-9-]/g, ''));
@@ -30,9 +31,10 @@ test('enabling the Foundations layer raises the composite and shows its inputs',
 	await expect(cleanWaterField(page)).toHaveCount(0);
 });
 
-test('enabling the Speculative layer reveals the quarantined inputs', async ({ page }) => {
+	test('enabling the Speculative layer reveals the quarantined inputs', async ({ page }) => {
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
+	await page.getByText('Advanced: choose optional rule packs', { exact: true }).click();
 	await page.getByRole('button', { name: /Speculative/ }).click();
 	await page.getByRole('button', { name: /add detail/ }).click();
 	await expect(registeredToVoteField(page)).toBeVisible();

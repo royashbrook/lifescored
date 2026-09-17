@@ -1,5 +1,6 @@
 import type { Overrides } from '../engine/score';
-import { DEFAULT_INPUTS, migrateLegacyInputs, PACKS } from '../rulebook';
+import { PACKS } from '../rulebook';
+import { normalizeInputs } from '../rulebook/inputs';
 import type { Inputs } from '../rulebook';
 
 export interface Profile {
@@ -12,7 +13,7 @@ export function sanitizePacks(raw: unknown): Record<string, boolean> {
 	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return {};
 	const result: Record<string, boolean> = {};
 	for (const [id, val] of Object.entries(raw as Record<string, unknown>)) {
-		if ((id in PACKS) && typeof val === 'boolean') {
+		if (Object.hasOwn(PACKS, id) && typeof val === 'boolean') {
 			result[id] = val;
 		}
 	}
@@ -21,9 +22,27 @@ export function sanitizePacks(raw: unknown): Record<string, boolean> {
 
 const VERSION = '1';
 
-async function pipe(bytes: Uint8Array, stream: CompressionStream | DecompressionStream): Promise<Uint8Array> {
+async function pipe(bytes: Uint8Array, stream: CompressionStream | DecompressionStream, limit = Infinity): Promise<Uint8Array> {
 	const out = new Blob([bytes as BlobPart]).stream().pipeThrough(stream);
-	return new Uint8Array(await new Response(out).arrayBuffer());
+	const reader = out.getReader();
+	const chunks: Uint8Array[] = [];
+	let size = 0;
+	try {
+		while (true) {
+			const { value, done } = await reader.read();
+			if (done) break;
+			size += value.byteLength;
+			if (size > limit) {
+				await reader.cancel();
+				throw new Error('profile exceeds decoded size limit');
+			}
+			chunks.push(value);
+		}
+	} finally { reader.releaseLock(); }
+	const result = new Uint8Array(size);
+	let offset = 0;
+	for (const chunk of chunks) { result.set(chunk, offset); offset += chunk.byteLength; }
+	return result;
 }
 
 const toB64url = (bytes: Uint8Array) =>
@@ -63,14 +82,10 @@ export async function decodeProfile(encoded: string): Promise<Profile | null> {
 		// size so a crafted deflate bomb can't blow up the tab on link-open.
 		if (payload.length > 16384) return null;
 		const bytes = fromB64url(payload);
-		const inflated = await pipe(bytes, new DecompressionStream('deflate-raw'));
-		if (inflated.length > 262144) return null;
+		const inflated = await pipe(bytes, new DecompressionStream('deflate-raw'), 262144);
 		const parsed = JSON.parse(new TextDecoder().decode(inflated));
-		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object') return null;
-		const migrated = migrateLegacyInputs(parsed.inputs as Record<string, unknown>);
-		const inputs = Object.fromEntries(
-			(Object.keys(DEFAULT_INPUTS) as (keyof typeof DEFAULT_INPUTS)[]).map((k) => [k, migrated[k] ?? DEFAULT_INPUTS[k]]) // Missing keys fill from defaults — deliberately generous for old links/profiles; do not "fix" to adverse assumptions.
-		) as unknown as Profile['inputs'];
+		if (!parsed || !parsed.inputs || typeof parsed.inputs !== 'object' || Array.isArray(parsed.inputs)) return null;
+		const inputs = normalizeInputs(parsed.inputs);
 		return {
 			inputs,
 			overrides: sanitizeOverrides((parsed as { overrides?: unknown }).overrides),

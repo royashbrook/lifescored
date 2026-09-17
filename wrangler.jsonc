@@ -1,11 +1,14 @@
 {
 	"name": "lifescored",
 	"compatibility_date": "2026-06-01",
+	"compatibility_flags": ["nodejs_als"],
 	"main": ".svelte-kit/cloudflare/_worker.js",
 	"assets": { "binding": "ASSETS", "directory": ".svelte-kit/cloudflare" },
 	// KV ids are not secret — they belong in version control.
 	// Recreate with: `npx wrangler kv namespace create NARRATIVE_KV`
-	"kv_namespaces": [{ "binding": "NARRATIVE_KV", "id": "ea15ae68befb4760a203ee726590029c" }]
+	"kv_namespaces": [{ "binding": "NARRATIVE_KV", "id": "ea15ae68befb4760a203ee726590029c" }],
+	"durable_objects": { "bindings": [{ "name": "NARRATIVE_BUDGET", "class_name": "NarrativeBudget" }] },
+	"migrations": [{ "tag": "v1-narrative-budget", "new_sqlite_classes": ["NarrativeBudget"] }]
 	// GEMINI_API_KEY is a Worker secret set once: `wrangler secret put GEMINI_API_KEY`
 	// (it persists across deploys, so CI never needs it)
 }

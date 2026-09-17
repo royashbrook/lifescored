@@ -6,7 +6,7 @@ export const prerender = false;
 
 export const POST: RequestHandler = async ({ request, platform, getClientAddress }) => {
 	const env = platform?.env;
-	if (!env?.NARRATIVE_KV) return json({ fallback: true });
+	if (!env?.NARRATIVE_KV || !env.NARRATIVE_BUDGET) return json({ fallback: true });
 	let body: unknown;
 	try {
 		body = await request.json();
@@ -19,6 +19,7 @@ export const POST: RequestHandler = async ({ request, platform, getClientAddress
 		// Bind to globalThis: calling it as `deps.fetchFn(...)` would otherwise rebind
 		// `this` to the deps object, which the Workers runtime rejects (Illegal invocation).
 		fetchFn: fetch.bind(globalThis),
+		reserve: (day, ipHash) => env.NARRATIVE_BUDGET.getByName('global').reserve(day, ipHash),
 		today: () => new Date().toISOString().slice(0, 10)
 	});
 	return json(result);

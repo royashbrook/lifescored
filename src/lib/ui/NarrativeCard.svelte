@@ -5,10 +5,18 @@
 	let { result }: { result: ScoreResult } = $props();
 	let narrative = $state<Narrative | null>(null);
 	let loading = $state(false);
+	let narrativeKey = $state('');
+	const resultKey = $derived(JSON.stringify(result));
+	const stale = $derived(narrative !== null && narrativeKey !== resultKey);
 
 	async function generate() {
 		loading = true;
-		narrative = await fetchNarrative(result);
+		const key = resultKey;
+		const next = await fetchNarrative(result);
+		if (key === resultKey) {
+			narrative = next;
+			narrativeKey = key;
+		}
 		loading = false;
 	}
 </script>
@@ -29,6 +37,7 @@
 		>{loading ? '…' : narrative ? 'regenerate' : 'tell me the story'}</button>
 	</div>
 	{#if narrative}
+		{#if stale}<p role="status" class="text-[0.8125rem]" style:color="var(--moves)">Your score changed. Regenerate to describe the current numbers.</p>{/if}
 		<p class="text-[0.9375rem] leading-snug" style:color="var(--ink)">{narrative.text}</p>
 		{#if narrative.source === 'local'}
 			<p class="mt-1 text-[0.6875rem]" style:color="var(--ink-dim)">composed locally from the rulebook — the AI narrator wasn't needed or wasn't available</p>

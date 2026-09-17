@@ -5,7 +5,7 @@ test('the default share is the score number, not the profile data', async ({ pag
 	await page.waitForLoadState('networkidle');
 
 	// Put a sensitive value in so we can prove it does NOT leak into the default share.
-	await page.locator('label', { hasText: 'Assets' }).locator('input').fill('999999');
+	await page.getByLabel('Household assets', { exact: true }).fill('999999');
 
 	const shareBtn = page.getByRole('button', { name: 'share my score' });
 	await shareBtn.click();
@@ -34,7 +34,7 @@ test('the score card renders on-device and downloads as a PNG', async ({ page })
 test('the explicit answer link round-trips the full profile', async ({ page }) => {
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
-	await page.locator('label', { hasText: 'Assets' }).locator('input').fill('424242');
+	await page.getByLabel('Household assets', { exact: true }).fill('424242');
 	await page.waitForTimeout(400); // let the data link recompute
 
 	await page.getByRole('button', { name: /share my exact answers/ }).click();
@@ -54,7 +54,7 @@ test('the explicit answer link round-trips the full profile', async ({ page }) =
 	// BEFORE hydration and the async import, so it can never leak through the browser's native share.
 	expect(await freshPage.evaluate(() => location.hash)).toBe('');
 	await expect(freshPage.getByText('Showing answers from a shared link')).toBeVisible({ timeout: 5000 });
-	await expect(freshPage.locator('label', { hasText: 'Assets' }).locator('input')).toHaveValue('424242');
+	await expect(freshPage.getByLabel('Household assets', { exact: true })).toHaveValue('424242');
 	// The recipient's address bar should be clean after import — the hash is stripped.
 	expect(freshPage.url()).not.toContain('#p=');
 });
@@ -62,7 +62,7 @@ test('the explicit answer link round-trips the full profile', async ({ page }) =
 test('opening a shared link never clobbers your own saved answers until you edit', async ({ page, context }) => {
 	await page.goto('/');
 	await page.waitForLoadState('networkidle');
-	const assets = (p = page) => p.locator('label', { hasText: 'Assets' }).locator('input');
+	const assets = (p = page) => p.getByLabel('Household assets', { exact: true });
 
 	// Build a shareable link carrying DIFFERENT answers (222222)...
 	await assets().fill('222222');

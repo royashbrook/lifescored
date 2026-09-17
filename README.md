@@ -22,12 +22,26 @@ A credit score, an actuarial row, a callback probability — this app rebuilds t
     npm run dev      # app at localhost:5173 (narrative falls back to local composer)
     npm test         # vitest suite: rulebook invariants, engine, codec, worker handler
     npm run check    # svelte-check
+    npm run types    # regenerate Cloudflare bindings after changing wrangler.jsonc
+
+Narrative cache misses reserve one call atomically in the `NarrativeBudget` SQLite
+Durable Object: at most 200 per UTC day globally and 10 per address per day. Failed
+upstream calls consume a reservation; failed reservations use the local fallback.
+Cache hits do not consume quota. The coordinator stores only a daily address hash,
+and removes previous-day entries on the next day's first reservation. It never sees
+profile inputs or narrative text. KV is used only for the narrative cache.
+
+`npm run build` adds the Durable Object export to the adapter-generated Worker;
+deploy that build through the existing workflow. Wrangler creates the coordinator
+through the versioned migration in `wrangler.jsonc`. Run `npm run types` after binding
+changes; its helper resolves the class from source so checks work on a clean clone.
 
 ## Deploy (Cloudflare free tier)
 
 Deploys run automatically from GitHub Actions on every push to `main`
 ([`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)): the workflow
-runs the full test suite + typecheck, and only then builds and deploys.
+runs the full test suite + typecheck, and only then builds and deploys. Pull requests
+run the same gates and a Worker dry run without deploying.
 
 **One-time setup:**
 

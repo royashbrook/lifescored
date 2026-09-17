@@ -1,4 +1,9 @@
 @import 'tailwindcss';
+
+:focus-visible { outline: 2px solid var(--moves); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) {
+	*, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
 @import '@fontsource-variable/fraunces';
 @import '@fontsource-variable/jetbrains-mono';
 @import '@fontsource/newsreader';

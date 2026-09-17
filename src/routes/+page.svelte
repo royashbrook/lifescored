@@ -54,20 +54,24 @@
 	</div>
 </div>
 
-<a
-	href="/start"
-	class="mb-3 inline-block text-[0.75rem] underline"
-	style:font-family="var(--font-mono)"
-	style:color="var(--ink-dim)"
->new here? walk through it one question at a time →</a>
+<div class="mb-5 rounded-lg border p-4" style:border-color="var(--line)">
+	<p class="mb-3 text-[0.9375rem]" style:color="var(--ink-dim)">Start with a few questions, or explore the examples below. Your answers stay in this browser.</p>
+	<div class="flex flex-wrap items-center gap-4 text-[0.8125rem]" style:font-family="var(--font-mono)">
+		<a href="/start" class="rounded-full border px-4 py-2" style:border-color="var(--moves)" style:color="var(--moves)">start with a few questions →</a>
+		<a href="#profile" class="underline" style:color="var(--ink-dim)">explore the full form ↓</a>
+	</div>
+</div>
 
 <PresetBar {profile} />
 
-<PackBar {profile} />
+<details class="mb-3 text-[0.8125rem]" style:color="var(--ink-dim)">
+	<summary class="cursor-pointer mb-2">Advanced: choose optional rule packs</summary>
+	<PackBar {profile} />
+</details>
 
 <div class="mt-6 mb-5 border-t" style:border-color="var(--line)"></div>
 
-<InputsPanel {profile} />
+<div id="profile"><InputsPanel {profile} /></div>
 
 <TopMovers {result} />
 

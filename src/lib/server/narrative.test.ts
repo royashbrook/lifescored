@@ -22,7 +22,7 @@ const geminiOk = (text: string) =>
 	vi.fn(async () => new Response(JSON.stringify({ candidates: [{ content: { parts: [{ text }] } }] }), { status: 200 }));
 
 const deps = (kv: KVLike, fetchFn: typeof fetch) => ({
-	kv, fetchFn, apiKey: 'test-key', today: () => '2026-06-11'
+	kv, fetchFn, reserve: vi.fn(async (_day: string, _ipHash: string) => true), apiKey: 'test-key', today: () => '2026-06-11'
 });
 
 describe('handleNarrative', () => {
@@ -67,27 +67,21 @@ describe('handleNarrative', () => {
 		expect(r).toEqual({ fallback: true });
 	});
 
-	it('enforces the per-IP daily limit (10)', async () => {
-		const kv = memKV();
-		const fetchFn = geminiOk('hi');
-		const d = deps(kv, fetchFn);
-		for (let n = 0; n < 10; n++) {
-			// vary payload so each request is a cache miss
-			const p = { ...PAYLOAD, tiers: { ...PAYLOAD.tiers, your_moves: n * 5 } };
-			expect('text' in (await handleNarrative(p, '9.9.9.9', d))).toBe(true);
-		}
-		const p11 = { ...PAYLOAD, tiers: { ...PAYLOAD.tiers, your_moves: 990 } };
-		expect(await handleNarrative(p11, '9.9.9.9', d)).toEqual({ fallback: true });
+	it("falls back without spending when the atomic reservation is denied", async () => {
+		const fetchFn = geminiOk("hi");
+		const d = deps(memKV(), fetchFn);
+		d.reserve.mockResolvedValue(false);
+		expect(await handleNarrative(PAYLOAD, "1.2.3.4", d)).toEqual({ fallback: true });
+		expect(fetchFn).not.toHaveBeenCalled();
+		expect(d.reserve.mock.calls[0][1]).toMatch(/^[a-f0-9]{64}$/);
 	});
 
-	it('enforces the global daily Gemini budget (200 calls)', async () => {
-		const kv = memKV();
-		kv.store.set('budget:2026-06-11', '200');
-		const fetchFn = geminiOk('hi');
-		const r = await handleNarrative(PAYLOAD, '1.2.3.4', deps(kv, fetchFn));
-		expect(r).toEqual({ fallback: true });
+	it("fails closed when reservation storage is unavailable", async () => {
+		const fetchFn = geminiOk("hi");
+		const d = deps(memKV(), fetchFn);
+		d.reserve.mockRejectedValue(new Error("unavailable"));
+		expect(await handleNarrative(PAYLOAD, "1.2.3.4", d)).toEqual({ fallback: true });
 		expect(fetchFn).not.toHaveBeenCalled();
-		expect(kv.store.has('rl:1.2.3.4:2026-06-11')).toBe(false);
 	});
 
 	it('drops unknown levers so they never reach the prompt (injection) or the cache key', async () => {
@@ -116,8 +110,10 @@ describe('handleNarrative', () => {
 		const kv = memKV();
 		const fetchFn = geminiOk('cached story');
 		await handleNarrative(PAYLOAD, '1.2.3.4', deps(kv, fetchFn));
-		kv.store.set('budget:2026-06-11', '200');
-		const r = await handleNarrative(PAYLOAD, '5.5.5.5', deps(kv, fetchFn));
+		const d = deps(kv, fetchFn);
+		d.reserve.mockResolvedValue(false);
+		const r = await handleNarrative(PAYLOAD, '5.5.5.5', d);
+		expect(d.reserve).not.toHaveBeenCalled();
 		expect(r).toEqual({ text: 'cached story' });
 	});
 });
