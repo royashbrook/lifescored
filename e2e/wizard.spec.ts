@@ -65,7 +65,7 @@ test('the wizard yes/no partner step carries through to the score', async ({ pag
 
 test('the score page links to the guided setup', async ({ page }) => {
 	await page.goto('/');
-	await expect(page.getByRole('link', { name: /walk through it one question at a time/ })).toHaveAttribute('href', '/start');
+	await expect(page.getByRole('link', { name: /start with a few questions/ })).toHaveAttribute('href', '/start');
 });
 
 test('the wizard shows an early privacy reassurance linking to the why page', async ({ page }) => {

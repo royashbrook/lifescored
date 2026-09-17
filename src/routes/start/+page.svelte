@@ -3,6 +3,7 @@
 	import { goto } from '$app/navigation';
 	import { computeScore } from '$lib/engine/score';
 	import { FIELD_HELP, type Inputs } from '$lib/rulebook';
+	import { NUMERIC_CLAMPS } from '$lib/rulebook/inputs';
 	import { activePacks } from '$lib/state/profile.svelte';
 	import type { createProfileState } from '$lib/state/profile.svelte';
 	import { WIZARD_STEPS } from '$lib/wizard/steps';
@@ -12,6 +13,7 @@
 	let i = $state(0);
 	const total = WIZARD_STEPS.length;
 	const step = $derived(WIZARD_STEPS[i]);
+	const bounds = $derived(NUMERIC_CLAMPS[step.key as keyof typeof NUMERIC_CLAMPS]);
 	const result = $derived(computeScore(profile.inputs, profile.overrides, activePacks(profile)));
 
 	function set(value: string | number | boolean) {
@@ -39,20 +41,21 @@
 	</p>
 
 	<!-- question -->
-	<h2 class="mt-7 text-[1.375rem] leading-snug" style:font-family="var(--font-display)" style:color="var(--ink)">
+	<h2 id="question" class="mt-7 text-[1.375rem] leading-snug" style:font-family="var(--font-display)" style:color="var(--ink)">
 		{step.question}
 	</h2>
-	<p class="mt-1.5 text-[0.9375rem] leading-relaxed" style:color="var(--ink-dim)">
+	<p id="question-help" class="mt-1.5 text-[0.9375rem] leading-relaxed" style:color="var(--ink-dim)">
 		{FIELD_HELP[step.key].help}
 	</p>
 
 	<!-- input area -->
 	<div class="mt-6">
 		{#if step.kind === 'options'}
-			<div class="flex flex-col gap-2">
+			<div role="group" aria-labelledby="question" aria-describedby="question-help" class="flex flex-col gap-2">
 				{#each step.options ?? [] as opt (opt.value)}
 					{@const active = profile.inputs[step.key] === opt.value}
-					<button
+						<button
+							aria-pressed={active}
 						type="button"
 						class="w-full rounded-lg border px-4 py-[0.8125rem] text-left text-[0.9375rem] transition-all"
 						style:font-family="var(--font-body)"
@@ -66,9 +69,11 @@
 		{:else if step.kind === 'select'}
 			<div class="border-b pb-2" style:border-color="var(--line)">
 				<select
+					aria-labelledby="question"
+					aria-describedby="question-help"
 					value={profile.inputs[step.key]}
 					onchange={(e) => set(e.currentTarget.value)}
-					class="w-full bg-transparent text-[1.375rem] outline-none"
+					class="w-full bg-transparent text-[1.375rem]"
 					style:font-family="var(--font-body)"
 					style:color="var(--ink)"
 				>
@@ -81,11 +86,15 @@
 			<div class="flex items-baseline gap-1 border-b pb-2" style:border-color="var(--line)">
 				{#if step.prefix}<span class="text-[1.5rem]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)">{step.prefix}</span>{/if}
 				<input
+					aria-labelledby="question"
+					aria-describedby="question-help"
+					min={bounds?.[0]}
+					max={bounds?.[1]}
 					type="number"
 					step={step.step ?? 1}
 					value={profile.inputs[step.key]}
 					oninput={(e) => set(Number(e.currentTarget.value) || 0)}
-					class="w-full bg-transparent text-[1.5rem] tabular-nums outline-none"
+					class="min-w-0 w-full bg-transparent text-[1.5rem] tabular-nums"
 					style:font-family="var(--font-mono)"
 					style:color="var(--ink)"
 				/>

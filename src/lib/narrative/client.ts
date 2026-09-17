@@ -11,6 +11,7 @@ export async function fetchNarrative(result: ScoreResult, fetchFn: typeof fetch 
 	try {
 		const res = await fetchFn('/api/narrative', {
 			method: 'POST',
+			signal: AbortSignal.timeout(10_000),
 			headers: { 'content-type': 'application/json' },
 			body: JSON.stringify(quantizeForNarrative(result))
 		});

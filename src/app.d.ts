@@ -7,11 +7,7 @@ declare global {
 		// interface PageData {}
 		// interface PageState {}
 		interface Platform {
-			env: {
-				NARRATIVE_KV: {
-					get(key: string): Promise<string | null>;
-					put(key: string, value: string, opts?: { expirationTtl?: number }): Promise<void>;
-				};
+			env: Env & {
 				GEMINI_API_KEY?: string;
 			};
 		}

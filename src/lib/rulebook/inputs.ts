@@ -156,6 +156,20 @@ export const ORDINALS = ['familySupport', 'neighborhood', 'socialConnection', 'd
 
 export const BOOLEANS = ['parentsDegree', 'insured', 'homeowner', 'partnered', 'volunteers', 'criminalRecord', 'voterRegistered'] as const;
 
+const numeric = (value: unknown): number => typeof value === 'number' || typeof value === 'string' ? Number(value) : NaN;
+
+/** Only known, correctly typed fields cross the storage/share boundary. Missing legacy fields keep defaults. */
+export function normalizeInputs(raw: unknown): Inputs {
+	const migrated = migrateLegacyInputs(raw && typeof raw === 'object' && !Array.isArray(raw) ? raw as Record<string, unknown> : {});
+	const out = { ...DEFAULT_INPUTS };
+	for (const key of Object.keys(out) as (keyof Inputs)[]) {
+		const value = migrated[key];
+		if (typeof value !== typeof DEFAULT_INPUTS[key] || (typeof value === 'number' && !Number.isFinite(value))) continue;
+		(out as Record<string, unknown>)[key] = value;
+	}
+	return clampInputs(out);
+}
+
 /**
  * Migrate older stored/shared profiles.
  * - v1 used `degree: boolean`; map it onto the education ladder.
@@ -170,8 +184,8 @@ export function migrateLegacyInputs(raw: Record<string, unknown>): Record<string
 	}
 	delete out.degree;
 	if (!('assets' in out) && 'netWorth' in out) {
-		const nw = Number(out.netWorth) || 0;
-		const debt = Number(out.debt) || 0;
+		const nw = numeric(out.netWorth) || 0;
+		const debt = numeric(out.debt) || 0;
 		out.assets = Math.max(0, nw + debt);
 	}
 	delete out.netWorth;
@@ -179,9 +193,9 @@ export function migrateLegacyInputs(raw: Record<string, unknown>): Record<string
 	// payment-history + utilization so existing profiles keep a sensible creditworthiness.
 	if (!('creditScore' in out) && ('latePayments' in out || 'creditUtil' in out)) {
 		let s = 740;
-		const lp = Number(out.latePayments) || 0;
+		const lp = numeric(out.latePayments) || 0;
 		s -= lp >= 2 ? 120 : lp === 1 ? 60 : 0;
-		const u = Number(out.creditUtil);
+		const u = numeric(out.creditUtil);
 		if (Number.isFinite(u)) s -= u > 80 ? 110 : u > 50 ? 70 : u > 30 ? 40 : u > 10 ? 10 : 0;
 		out.creditScore = Math.max(300, Math.min(850, s));
 	}
@@ -193,10 +207,10 @@ export function migrateLegacyInputs(raw: Record<string, unknown>): Record<string
 export function clampInputs(i: Inputs): Inputs {
 	const out = { ...i };
 	for (const [key, [lo, hi]] of Object.entries(NUMERIC_CLAMPS) as [NumericKey, [number, number]][]) {
-		const v = Number(out[key]);
+		const v = numeric(out[key]);
 		out[key] = clamp(Number.isFinite(v) ? v : lo, lo, hi);
 	}
-	if (!COUNTRIES[out.country]) out.country = 'us';
+	if (typeof out.country !== 'string' || !Object.hasOwn(COUNTRIES, out.country)) out.country = 'us';
 	for (const key of Object.keys(STRING_ENUMS) as (keyof typeof STRING_ENUMS)[]) {
 		const valid = STRING_ENUMS[key] as readonly string[];
 		if (!valid.includes(out[key] as string)) {
@@ -204,7 +218,7 @@ export function clampInputs(i: Inputs): Inputs {
 		}
 	}
 	for (const key of ORDINALS) {
-		const v = Number(out[key]);
+		const v = numeric(out[key]);
 		const rounded = Number.isFinite(v) ? Math.round(v) : (DEFAULT_INPUTS[key] as number);
 		out[key] = clamp(rounded, 0, 2) as 0 | 1 | 2;
 	}

@@ -66,7 +66,7 @@
 		<span> = assets − debt · this is the figure scored against your age-band median</span>
 	</div>
 
-	<button class="mt-3 text-[0.75rem]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)" onclick={() => (expanded = !expanded)}>
+	<button aria-expanded={expanded} class="mt-3 text-[0.75rem]" style:font-family="var(--font-mono)" style:color="var(--ink-dim)" onclick={() => (expanded = !expanded)}>
 		{expanded ? '− less detail' : '+ add detail (more inputs — each one feeds a cited rule)'}
 	</button>
 

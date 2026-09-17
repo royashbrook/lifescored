@@ -15,14 +15,12 @@ export interface NarrativeDeps {
 	apiKey: string | undefined;
 	fetchFn: typeof fetch;
 	today(): string; // 'YYYY-MM-DD' — injected so tests control the clock
+	reserve(day: string, ipHash: string): Promise<boolean>;
 }
 
 export type NarrativeResponse = { text: string } | { fallback: true };
 
 const CACHE_TTL = 60 * 60 * 24 * 30; // 30 days
-const COUNTER_TTL = 60 * 60 * 48;
-const IP_DAILY_LIMIT = 10;
-const GLOBAL_DAILY_BUDGET = 200; // Gemini calls/day — well under free tier
 const GEMINI_URL =
 	'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent';
 
@@ -78,24 +76,16 @@ export async function handleNarrative(
 
 	const hash = await sha256(canonical(payload));
 	const cacheKey = `narr:${hash}`;
-	const cached = await deps.kv.get(cacheKey);
+	let cached: string | null;
+	try { cached = await deps.kv.get(cacheKey); } catch { return { fallback: true }; }
 	if (cached) return { text: cached };
 
 	if (!deps.apiKey) return { fallback: true };
 
 	const day = deps.today();
-	const ipKey = `rl:${ip}:${day}`;
-	const budgetKey = `budget:${day}`;
-	const ipCount = Number((await deps.kv.get(ipKey)) ?? '0');
-	if (ipCount >= IP_DAILY_LIMIT) return { fallback: true };
-	const budget = Number((await deps.kv.get(budgetKey)) ?? '0');
-	if (budget >= GLOBAL_DAILY_BUDGET) return { fallback: true };
-
-	// Count the attempt before calling: fail toward fallback, never toward unmetered calls.
-	await deps.kv.put(ipKey, String(ipCount + 1), { expirationTtl: COUNTER_TTL });
-	await deps.kv.put(budgetKey, String(budget + 1), { expirationTtl: COUNTER_TTL });
-
 	try {
+		// Count attempts before the upstream call, including failures. Never spend when reservation fails.
+		if (!await deps.reserve(day, await sha256(`${day}:${ip}`))) return { fallback: true };
 		const res = await deps.fetchFn(GEMINI_URL, {
 			method: 'POST',
 			// Bound the upstream call so a hung Gemini doesn't hold the worker open (and waste budget).
