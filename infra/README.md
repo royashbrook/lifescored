@@ -64,7 +64,10 @@ import id needs the `zones/<zone_id>/<ruleset_id>` prefix; DNS records use the p
 
 ## CI
 
-`.github/workflows/infra.yml`: PRs touching `infra/**` get a `tofu plan` posted as a comment; merges
-to main run `tofu apply`. Reads `TF_CLOUDFLARE_API_TOKEN` + `R2_ACCESS_KEY_ID` +
-`R2_SECRET_ACCESS_KEY` from repo secrets. `deploy.yml` ignores `infra/**` so a tofu change doesn't
-rebuild the worker.
+`.github/workflows/infra.yml`: PRs validate with `init -backend=false -lockfile=readonly` and
+`validate`, without cloud or state credentials. Review local plans through hush before merging.
+Main pushes and manual runs from main apply using the `infrastructure` GitHub environment.
+Restrict that environment to the `main` branch, store `TF_CLOUDFLARE_API_TOKEN`,
+`R2_ACCESS_KEY_ID`, and `R2_SECRET_ACCESS_KEY` there, and remove repository-level copies after
+verifying the environment secrets. Otherwise another PR workflow can still access the credentials.
+`deploy.yml` ignores `infra/**` so a tofu change doesn't rebuild the worker.

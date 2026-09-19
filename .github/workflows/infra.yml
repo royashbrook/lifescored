@@ -1,28 +1,19 @@
 name: Infra (OpenTofu)
 
-# The lifescored.com Cloudflare clicky-layer (DNS, zone settings, the www->apex redirect rule,
-# email routing catch-all) as IaC. PRs touching infra/ get a `tofu plan` posted back as a comment;
-# merges to main run `tofu apply`. State lives in an R2 bucket (S3 backend, locked). wrangler still
-# owns the worker code + the apex custom domain (deploy.yml); this owns everything around it.
-# See infra/README.md.
-#
-# Secrets (repo): TF_CLOUDFLARE_API_TOKEN (zone-scoped, NOT the wrangler CLOUDFLARE_API_TOKEN),
-# R2_ACCESS_KEY_ID + R2_SECRET_ACCESS_KEY (the R2 state bucket's S3 creds).
-
+# PRs validate without cloud/state credentials. Main applies use an environment restricted to main.
 on:
   pull_request:
-    paths: ['infra/**']
+    paths: ['infra/**', '.github/workflows/infra.yml']
   push:
     branches: [main]
-    paths: ['infra/**']
+    paths: ['infra/**', '.github/workflows/infra.yml']
   workflow_dispatch:
 
 permissions:
   contents: read
-  pull-requests: write # to post the plan as a PR comment
 
 concurrency:
-  group: infra-tofu # serialize applies so two runs never fight the state lock
+  group: infra-${{ github.event_name == 'pull_request' && github.ref || 'apply' }}
   cancel-in-progress: false
 
 defaults:
@@ -30,7 +21,24 @@ defaults:
     working-directory: infra
 
 jobs:
-  tofu:
+  validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2
+        with:
+          tofu_version: 1.12.2
+          tofu_wrapper: false
+      - run: tofu init -backend=false -input=false -lockfile=readonly
+      - run: tofu validate -no-color
+
+  apply:
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+    environment: infrastructure
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -38,37 +46,12 @@ jobs:
       AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
     steps:
-      - uses: actions/checkout@v6
-
-      - uses: opentofu/setup-opentofu@v2
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: opentofu/setup-opentofu@a1320f892987e89d278cc92dc5adc984fb93aca4 # v2
         with:
           tofu_version: 1.12.2
           tofu_wrapper: false
-
-      - name: Init
-        run: tofu init
-
-      - name: Plan (pull requests)
-        if: github.event_name == 'pull_request'
-        id: plan
-        run: |
-          set -o pipefail
-          tofu plan -no-color -input=false | tee plan.txt
-          {
-            echo '### tofu plan'
-            echo '```'
-            tail -c 60000 plan.txt
-            echo '```'
-          } >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Comment plan on PR
-        if: github.event_name == 'pull_request'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          { echo '### tofu plan'; echo '```'; tail -c 60000 plan.txt; echo '```'; } > body.md
-          gh pr comment "${{ github.event.pull_request.number }}" --body-file body.md --repo "$GITHUB_REPOSITORY" || true
-
-      - name: Apply (push to main / manual)
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-        run: tofu apply -auto-approve -input=false
+      - run: tofu init -input=false -lockfile=readonly
+      - run: tofu apply -auto-approve -input=false

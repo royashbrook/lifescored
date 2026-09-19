@@ -26,6 +26,24 @@ const deps = (kv: KVLike, fetchFn: typeof fetch) => ({
 });
 
 describe('handleNarrative', () => {
+	it('shares IPv6 /64 and mapped IPv4 allowances without sharing across networks or days', async () => {
+		const reservation = async (ip: string, day = '2026-06-11') => {
+			const d = { ...deps(memKV(), geminiOk('story')), today: () => day };
+			await handleNarrative(PAYLOAD, ip, d);
+			expect(d.reserve).toHaveBeenCalledOnce();
+			return d.reserve.mock.calls[0][1];
+		};
+		const hash = await reservation('2001:db8:1234:5678::1');
+		expect(await reservation('2001:0db8:1234:5678:0000:0000:0000:0001')).toBe(hash);
+		expect(await reservation('2001:db8:1234:5678:abcd:ffff:1234:5678')).toBe(hash);
+		expect(await reservation('2001:db8:1234:5679::1')).not.toBe(hash);
+		expect(await reservation('2001:db8:1234:5678::1', '2026-06-12')).not.toBe(hash);
+		expect(await reservation('::ffff:192.0.2.1')).toBe(await reservation('192.0.2.1'));
+		expect(await reservation('0:0:0:0:0:ffff:c000:201')).toBe(await reservation('192.0.2.1'));
+		expect(await reservation('192.0.2.2')).not.toBe(await reservation('192.0.2.1'));
+		expect(await reservation('::1')).toBe(await reservation('::2'));
+	});
+
 	it('rejects malformed payloads', async () => {
 		const r = await handleNarrative({ nope: true }, '1.2.3.4', deps(memKV(), geminiOk('x')));
 		expect(r).toEqual({ fallback: true });

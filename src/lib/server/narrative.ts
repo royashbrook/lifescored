@@ -52,6 +52,22 @@ async function sha256(s: string): Promise<string> {
 	return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+// IPv6 privacy addresses share a /64 allowance. Normalize through the platform URL parser;
+// IPv4-mapped IPv6 uses the same allowance as its IPv4 address.
+function quotaAddress(ip: string): string {
+	if (!ip.includes(':')) return ip;
+	const normalized = new URL(`http://[${ip}]/`).hostname.slice(1, -1);
+	const [left, right] = normalized.split('::');
+	const start = left ? left.split(':') : [];
+	const end = right ? right.split(':') : [];
+	const words = (right === undefined ? start : [...start, ...Array(8 - start.length - end.length).fill('0'), ...end])
+		.map((word) => parseInt(word, 16));
+	if (words.slice(0, 5).every((word) => word === 0) && words[5] === 0xffff) {
+		return [words[6] >> 8, words[6] & 255, words[7] >> 8, words[7] & 255].join('.');
+	}
+	return `${words.slice(0, 4).map((word) => word.toString(16)).join(':')}::/64`;
+}
+
 function buildPrompt(p: NarrativePayload): string {
 	const domains = DOMAIN_ORDER.map((d) => `${d}: ${p.domains[d]}`).join(', ');
 	return [
@@ -85,7 +101,7 @@ export async function handleNarrative(
 	const day = deps.today();
 	try {
 		// Count attempts before the upstream call, including failures. Never spend when reservation fails.
-		if (!await deps.reserve(day, await sha256(`${day}:${ip}`))) return { fallback: true };
+		if (!await deps.reserve(day, await sha256(`${day}:${quotaAddress(ip)}`))) return { fallback: true };
 		const res = await deps.fetchFn(GEMINI_URL, {
 			method: 'POST',
 			// Bound the upstream call so a hung Gemini doesn't hold the worker open (and waste budget).

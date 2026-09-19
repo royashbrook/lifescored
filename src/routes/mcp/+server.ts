@@ -1,4 +1,5 @@
 import { json } from '@sveltejs/kit';
+import { BodyTooLarge, readJson } from '$lib/server/read-json';
 import type { RequestHandler } from './$types';
 import { rulebookExport, inputSchema, METHODOLOGY_TEXT, FEEDBACK_TEXT } from '$lib/rulebook/export';
 
@@ -130,12 +131,14 @@ function handle(msg: Rpc): object | null {
 export const POST: RequestHandler = async ({ request }) => {
 	let payload: unknown;
 	try {
-		payload = await request.json();
-	} catch {
+		payload = await readJson(request, 64 * 1024);
+	} catch (error) {
+		if (error instanceof BodyTooLarge) return json(err(null, -32600, 'Request exceeds 64 KiB'), { status: 413, headers: CORS });
 		return json(err(null, -32700, 'Parse error'), { status: 200, headers: CORS });
 	}
 
 	const batch = Array.isArray(payload);
+	if (Array.isArray(payload) && payload.length > 16) return json(err(null, -32600, 'Batch exceeds 16 messages'), { status: 413, headers: CORS });
 	// An empty batch is itself an invalid request per JSON-RPC (not an "all-notifications" 202).
 	if (Array.isArray(payload) && payload.length === 0) return json(err(null, -32600, 'Invalid Request: empty batch'), { headers: CORS });
 	const messages = (batch ? payload : [payload]) as Rpc[];
