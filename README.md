@@ -25,7 +25,9 @@ A credit score, an actuarial row, a callback probability — this app rebuilds t
     npm run types    # regenerate Cloudflare bindings after changing wrangler.jsonc
 
 Narrative cache misses reserve one call atomically in the `NarrativeBudget` SQLite
-Durable Object: at most 200 per UTC day globally and 10 per address per day. Failed
+Durable Object: at most 200 per UTC day globally and 10 per IPv4 address or IPv6 /64
+network per day. IPv4-mapped IPv6 shares the IPv4 allowance. People on the same
+network may share an allowance; cache hits and the local composer remain available. Failed
 upstream calls consume a reservation; failed reservations use the local fallback.
 Cache hits do not consume quota. The coordinator stores only a daily address hash,
 and removes previous-day entries on the next day's first reservation. It never sees

@@ -13,6 +13,7 @@
 		"types": "wrangler types src/worker-configuration.d.ts && node scripts/binding-types.mjs",
 		"test": "vitest run --passWithNoTests",
 		"test:e2e": "playwright test",
+		"test:production": "node --test tests/*.test.mjs",
 		"deploy": "npm run build && wrangler deploy"
 	},
 	"devDependencies": {

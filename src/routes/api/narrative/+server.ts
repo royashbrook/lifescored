@@ -1,16 +1,24 @@
 import { json } from '@sveltejs/kit';
 import { handleNarrative } from '$lib/server/narrative';
+import { BodyTooLarge, readJson } from '$lib/server/read-json';
 import type { RequestHandler } from './$types';
 
 export const prerender = false;
 
-export const POST: RequestHandler = async ({ request, platform, getClientAddress }) => {
+export const POST: RequestHandler = async ({ request, url, platform, getClientAddress }) => {
+	// JSON requires a browser preflight. Also reject explicit foreign/opaque origins.
+	const origin = request.headers.get('origin');
+	if (origin !== null && origin !== url.origin) return json({ fallback: true }, { status: 403 });
+	if (request.headers.get('content-type')?.split(';')[0].trim().toLowerCase() !== 'application/json') {
+		return json({ fallback: true }, { status: 415 });
+	}
 	const env = platform?.env;
 	if (!env?.NARRATIVE_KV || !env.NARRATIVE_BUDGET) return json({ fallback: true });
 	let body: unknown;
 	try {
-		body = await request.json();
-	} catch {
+		body = await readJson(request, 8 * 1024);
+	} catch (error) {
+		if (error instanceof BodyTooLarge) return json({ fallback: true }, { status: 413 });
 		return json({ fallback: true });
 	}
 	const result = await handleNarrative(body, getClientAddress(), {
